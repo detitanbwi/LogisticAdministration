@@ -27,24 +27,10 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <x-back.text-input label="No Invoice" name="no_invoice" :value="$invoice->no_invoice ?? null" required
+                                <x-back.text-input label="No Invoice" name="no_invoice" :value="$invoice->no_invoice ?? null"
                                     placeholder="Masukkan No Invoice" hint="Masukkan nomor invoice secara manual" />
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <x-back.select2 label="Kapal" name="kapal_id" :options="$kapals->pluck('nama_kapal', 'id')->toArray()" :selected="$invoice->kapal_id ?? null" required
-                                    placeholder="Pilih Kapal" createOptionForm="#createKapalModal" />
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <x-back.select2 label="Lokasi Asal" name="asal_id" :options="$tujuans->pluck('nama_tujuan', 'id')->toArray()" :selected="$invoice->asal_id ?? null"
-                                    required placeholder="Pilih Asal" createOptionForm="#createTujuanModal" />
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <x-back.select2 label="Lokasi Tujuan" name="tujuan_id" :options="$tujuans->pluck('nama_tujuan', 'id')->toArray()" :selected="$invoice->tujuan_id ?? null"
-                                    required placeholder="Pilih Tujuan" createOptionForm="#createTujuanModal" />
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -58,23 +44,47 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <x-back.select2 label="Pengirim" name="pengirim_id" :options="$customers
-                                    ->mapWithKeys(fn($item) => [$item->id => $item->nama . ' (' . $item->no_hp . ')'])
-                                    ->toArray()" :selected="$invoice->pengirim_id ?? null"
-                                    required placeholder="Pilih Pengirim" createOptionForm="#createCustomerModal" />
+        ->mapWithKeys(fn($item) => [$item->id => $item->nama . ' (' . $item->no_hp . ')'])
+        ->toArray()" :selected="$invoice->pengirim_id ?? null"
+                                    placeholder="Pilih Pengirim" createOptionForm="#collapseCustomer" toggleType="collapse" />
                             </div>
 
                             <div class="col-md-6">
                                 <x-back.select2 label="Penerima" name="penerima_id" :options="$customers
-                                    ->mapWithKeys(fn($item) => [$item->id => $item->nama . ' (' . $item->no_hp . ')'])
-                                    ->toArray()" :selected="$invoice->penerima_id ?? null"
-                                    required placeholder="Pilih Penerima" createOptionForm="#createCustomerModal" />
+        ->mapWithKeys(fn($item) => [$item->id => $item->nama . ' (' . $item->no_hp . ')'])
+        ->toArray()" :selected="$invoice->penerima_id ?? null"
+                                    placeholder="Pilih Penerima" createOptionForm="#collapseCustomer" toggleType="collapse" />
                             </div>
 
                             <div class="col-12">
                                 <x-back.select2 label="Up (Contact Person)" name="up" :options="$customers
-                                    ->mapWithKeys(fn($item) => [$item->id => $item->nama . ' (' . $item->no_hp . ')'])
-                                    ->toArray()"
-                                    :selected="$invoice->up ?? null" placeholder="Pilih Up" createOptionForm="#createCustomerModal" />
+        ->mapWithKeys(fn($item) => [$item->id => $item->nama . ' (' . $item->no_hp . ')'])
+        ->toArray()"
+                                    :selected="$invoice->up ?? null" placeholder="Pilih Up" createOptionForm="#collapseCustomer" toggleType="collapse" />
+                            </div>
+
+                            <!-- Form Tambah Customer Inline -->
+                            <div class="col-12 collapse mt-3" id="collapseCustomer">
+                                <div class="card card-body bg-light border-0 shadow-sm">
+                                    <h6 class="mb-3">Tambah Customer Baru</h6>
+                                    <div id="customerForm">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <x-back.text-input name="nama" label="Nama Customer" placeholder="Masukkan Nama Customer" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <x-back.text-input name="no_hp" label="No HP/WA" placeholder="Masukkan Nomor HP" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <x-back.text-input name="alamat" label="Alamat" placeholder="Masukkan Alamat" />
+                                            </div>
+                                            <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+                                                <button type="button" class="btn btn-sm btn-secondary" onclick="$('#collapseCustomer').collapse('hide')">Batal</button>
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="saveCustomer()">Simpan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -90,14 +100,74 @@
                             <div class="col-md-6 mb-3">
                                 <x-back.text-input type="date" label="Tanggal Masuk" name="tgl_masuk"
                                     :value="isset($invoice) && $invoice->tgl_masuk
-                                        ? $invoice->tgl_masuk->format('Y-m-d')
-                                        : ''" />
+        ? $invoice->tgl_masuk->format('Y-m-d')
+        : ''" />
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <x-back.select2 label="Contr/Seal" name="container_id" :options="$containers->pluck('nomor_container', 'id')->toArray()" :selected="$invoice->container_id ?? null"
-                                    placeholder="Pilih Contr/Seal" createOptionForm="#createContainerModal" />
+                                    placeholder="Pilih Contr/Seal" createOptionForm="#collapseContainer" toggleType="collapse" />
                             </div>
+
+                            <!-- Inline Container Form -->
+                            <div class="col-12 collapse mt-2 mb-3" id="collapseContainer">
+                                <div class="card card-body bg-light border-0 shadow-sm">
+                                    <h6 class="mb-3">Tambah Contr/Seal Baru</h6>
+                                    <div id="containerForm">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <x-back.text-input name="nomor_container" label="Nomor Contr/Seal" placeholder="Masukkan Nomor Container / Seal" />
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <x-back.select2 label="Kapal" name="kapal_id" id="inline_kapal_id" :options="App\Models\Kapal::pluck('nama_kapal', 'id')->toArray()" placeholder="Pilih Kapal" createOptionForm="#collapseKapal" toggleType="collapse" />
+
+                                                <div class="collapse mt-2" id="collapseKapal">
+                                                    <div class="p-2 border rounded bg-white">
+                                                        <x-back.text-input name="new_nama_kapal" id="new_nama_kapal" label="Nama Kapal Baru" placeholder="Nama Kapal" />
+                                                        <div class="d-flex justify-content-end gap-2 mt-2">
+                                                            <button type="button" class="btn btn-sm btn-secondary" onclick="$('#collapseKapal').collapse('hide')">Batal</button>
+                                                            <button type="button" class="btn btn-sm btn-primary" onclick="saveKapalInline()">Simpan Kapal</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <x-back.select2 label="Pelabuhan Asal" name="asal_id" id="inline_asal_id" :options="App\Models\Tujuan::pluck('nama_tujuan', 'id')->toArray()" placeholder="Pilih Asal" createOptionForm="#collapseTujuan" toggleType="collapse" />
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <x-back.select2 label="Tujuan" name="tujuan_id" id="inline_tujuan_id" :options="App\Models\Tujuan::pluck('nama_tujuan', 'id')->toArray()" placeholder="Pilih Tujuan" createOptionForm="#collapseTujuan" toggleType="collapse" />
+
+                                                <div class="collapse mt-2" id="collapseTujuan">
+                                                    <div class="p-2 border rounded bg-white">
+                                                        <x-back.text-input name="new_nama_tujuan" id="new_nama_tujuan" label="Nama Tujuan Baru" placeholder="Nama Tujuan" />
+                                                        <div class="d-flex justify-content-end gap-2 mt-2">
+                                                            <button type="button" class="btn btn-sm btn-secondary" onclick="$('#collapseTujuan').collapse('hide')">Batal</button>
+                                                            <button type="button" class="btn btn-sm btn-primary" onclick="saveTujuanInline()">Simpan Tujuan</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <x-back.text-input type="date" name="etd" label="ETD (Estimasi Berangkat)" />
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <x-back.text-input type="date" name="eta" label="ETA (Estimasi Tiba)" />
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <x-back.select2 label="Tipe Kontainer" name="tipe_kontainer" :options="['20FT' => '20FT', '40FT' => '40FT', '40HC' => '40HC', '45HC' => '45HC']" />
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <x-back.text-input name="catatan" label="Catatan Container" placeholder="Tulis catatan (opsional)" />
+                                            </div>
+                                            <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                                                <button type="button" class="btn btn-sm btn-secondary" onclick="$('#collapseContainer').collapse('hide')">Batal</button>
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="saveContainer()">Simpan Container</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Inline Container Form -->
 
                             <div class="col-md-12 mb-3">
                                 <x-back.textarea label="Catatan" name="catatan_muntahan" rows="3"
@@ -119,37 +189,21 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <x-back.select2 label="Status PKP" name="pkp_status" :options="['Non PKP' => 'Non PKP', 'PKP' => 'PKP']" :selected="$invoice->pkp_status ?? 'Non PKP'"
-                                required onchange="calculateTotal()" id="pkp_status" />
+                                onchange="calculateTotal()" id="pkp_status" />
                         </div>
 
                         <div class="mb-3">
-                            <x-back.select2 label="Metode Pengiriman" name="metode" :options="['FCL' => 'FCL', 'LCL' => 'LCL', 'Break Bulk' => 'Break Bulk']" :selected="$invoice->metode ?? 'FCL'"
-                                required />
-                        </div>
-
-                        <div class="mb-3">
-                            <x-back.select2 label="Tipe Kontainer" name="tipe_kontainer" :options="['20FT' => '20FT', '40FT' => '40FT', '40HC' => '40HC', '45HC' => '45HC']"
-                                :selected="$invoice->tipe_kontainer ?? '20FT'" required />
+                            <x-back.select2 label="Metode Pengiriman" name="metode" :options="['FCL' => 'FCL', 'LCL' => 'LCL', 'Break Bulk' => 'Break Bulk']" :selected="$invoice->metode ?? 'FCL'" />
                         </div>
 
                         <div class="mb-3">
                             <x-back.select2 label="Layanan" name="layanan" :options="[
-                                'Door to Door' => 'DOOR TO DOOR',
-                                'CY to CY' => 'CY TO CY',
-                                'CY to Door' => 'CY TO DOOR',
-                                'Door to CY' => 'DOOR TO CY',
-                                'Port to Port' => 'PORT TO PORT',
-                            ]" :selected="$invoice->layanan ?? 'DOOR TO DOOR'" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <x-back.text-input type="date" label="ETD (Estimasi Berangkat)" name="etd"
-                                :value="isset($invoice) && $invoice->etd ? $invoice->etd->format('Y-m-d') : ''" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <x-back.text-input type="date" label="ETA (Estimasi Tiba)" name="eta"
-                                :value="isset($invoice) && $invoice->eta ? $invoice->eta->format('Y-m-d') : ''" required />
+        'Door to Door' => 'DOOR TO DOOR',
+        'CY to CY' => 'CY TO CY',
+        'CY to Door' => 'CY TO DOOR',
+        'Door to CY' => 'DOOR TO CY',
+        'Port to Port' => 'PORT TO PORT',
+    ]" :selected="$invoice->layanan ?? 'DOOR TO DOOR'" />
                         </div>
                     </div>
                 </div>
@@ -199,7 +253,7 @@
                 <button type="button" class="btn btn-info" onclick="previewInvoice()">
                     <i class="feather-eye me-1"></i> Preview
                 </button>
-                <button type="submit" class="btn btn-primary" onclick="return submitInvoice(this)">Simpan
+                <button type="submit" class="btn btn-primary">Simpan
                     Invoice</button>
             </div>
         </div>
@@ -208,96 +262,6 @@
 
 @push('modals')
     <!-- Modals skipped for brevity -->
-    <!-- Modal Tambah Kapal -->
-    <div class="modal fade" id="createKapalModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Kapal Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="kapalForm">
-                        <x-back.text-input name="nama_kapal" label="Nama Kapal" required
-                            placeholder="Masukkan Nama Kapal" />
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <x-back.button type="button" variant="secondary" data-bs-dismiss="modal">Batal</x-back.button>
-                    <x-back.button type="button" variant="primary" onclick="saveKapal()">Simpan</x-back.button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Tambah Tujuan -->
-    <div class="modal fade" id="createTujuanModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Tujuan Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="tujuanForm">
-                        <x-back.text-input name="nama_tujuan" label="Nama Tujuan" required
-                            placeholder="Masukkan Nama Tujuan" />
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <x-back.button type="button" variant="secondary" data-bs-dismiss="modal">Batal</x-back.button>
-                    <x-back.button type="button" variant="primary" onclick="saveTujuan()">Simpan</x-back.button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Tambah Customer (Pengirim/Penerima) -->
-    <div class="modal fade" id="createCustomerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Customer Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="customerForm">
-                        <x-back.text-input name="nama" label="Nama Customer" required
-                            placeholder="Masukkan Nama Customer" />
-                        <x-back.text-input name="no_hp" label="No HP/WA" required placeholder="Masukkan Nomor HP" />
-                        <x-back.textarea name="alamat" label="Alamat" rows="2" placeholder="Masukkan Alamat" />
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <x-back.button type="button" variant="secondary" data-bs-dismiss="modal">Batal</x-back.button>
-                    <x-back.button type="button" variant="primary" onclick="saveCustomer()">Simpan</x-back.button>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-
-    <!-- Modal Tambah Container -->
-    <div class="modal fade" id="createContainerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Contr/Seal Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="containerForm">
-                        <x-back.text-input name="nomor_container" label="Nomor Contr/Seal" required
-                            placeholder="Masukkan Nomor Container / Seal" />
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <x-back.button type="button" variant="secondary" data-bs-dismiss="modal">Batal</x-back.button>
-                    <x-back.button type="button" variant="primary" onclick="saveContainer()">Simpan</x-back.button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endpush
 
 @push('scripts')
@@ -363,72 +327,16 @@
             });
         }
 
-        function saveKapal() {
-            const form = $('#kapalForm');
-            clearFormErrors(form);
-            if (!form[0].checkValidity()) {
-                form[0].reportValidity();
-                return;
-            }
-            const data = form.serialize();
-
-            $.ajax({
-                url: '{{ route('admin.kapal.store') }}',
-                method: 'POST',
-                data: data + '&_token={{ csrf_token() }}',
-                success: function(response) {
-                    $('#createKapalModal').modal('hide');
-                    form[0].reset();
-                    clearFormErrors(form);
-                    const newOption = new Option(response.nama_kapal || response.name, response.id, true, true);
-                    $('#kapal_id').append(newOption).trigger('change');
-                    Swal.fire('Berhasil', 'Data kapal berhasil ditambahkan', 'success');
-                },
-                error: function(xhr) {
-                    if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                        showFormErrors(form, xhr.responseJSON.errors);
-                    } else {
-                        Swal.fire('Error', 'Gagal menyimpan data.', 'error');
-                    }
-                }
-            });
-        }
-
-        function saveTujuan() {
-            const form = $('#tujuanForm');
-            const data = form.serialize();
-            $.ajax({
-                url: '{{ route('admin.tujuan.store') }}',
-                method: 'POST',
-                data: data + '&_token={{ csrf_token() }}',
-                success: function(response) {
-                    $('#createTujuanModal').modal('hide');
-                    form[0].reset();
-                    const newOption1 = new Option(response.nama_tujuan || response.name, response.id, false,
-                        false);
-                    const newOption2 = new Option(response.nama_tujuan || response.name, response.id, false,
-                        false);
-                    $('#asal_id').append(newOption1).trigger('change');
-                    $('#tujuan_id').append(newOption2).trigger('change');
-                    Swal.fire('Berhasil', 'Data lokasi berhasil ditambahkan. Silakan pilih di dropdown.',
-                        'success');
-                },
-                error: function(xhr) {
-                    Swal.fire('Error', 'Gagal menyimpan data.', 'error');
-                }
-            });
-        }
-
         function saveCustomer() {
             const form = $('#customerForm');
-            const data = form.serialize();
+            const data = form.find(':input').serialize();
             $.ajax({
                 url: '{{ route('admin.customer.store') }}',
                 method: 'POST',
                 data: data + '&_token={{ csrf_token() }}',
                 success: function(response) {
-                    $('#createCustomerModal').modal('hide');
-                    form[0].reset();
+                    $('#collapseCustomer').collapse('hide');
+                    form.find('input, textarea').val('');
                     const newText = response.nama + ' (' + response.no_hp + ')';
                     const newOption1 = new Option(newText, response.id, false, false);
                     const newOption2 = new Option(newText, response.id, false, false);
@@ -446,14 +354,14 @@
 
         function saveContainer() {
             const form = $('#containerForm');
-            const data = form.serialize();
+            const data = form.find(':input').serialize();
             $.ajax({
                 url: '{{ route('admin.container.store') }}',
                 method: 'POST',
                 data: data + '&_token={{ csrf_token() }}',
                 success: function(response) {
-                    $('#createContainerModal').modal('hide');
-                    form[0].reset();
+                    $('#collapseContainer').collapse('hide');
+                    form.find('input, select, textarea').val('').trigger('change');
                     const newOption = new Option(response.nomor_container || response.name, response.id, false,
                         false);
                     $('#container_id').append(newOption).trigger('change');
@@ -464,6 +372,49 @@
                 }
             });
         }
+
+        function saveKapalInline() {
+            const nama = $('#new_nama_kapal').val();
+            if (!nama) return;
+            $.ajax({
+                url: '{{ route('admin.kapal.store') }}',
+                method: 'POST',
+                data: { nama_kapal: nama, _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    $('#collapseKapal').collapse('hide');
+                    $('#new_nama_kapal').val('');
+                    const newHtml = `<option value="${response.id}" selected>${response.nama_kapal}</option>`;
+                    $('#inline_kapal_id').append(newHtml).trigger('change');
+                    Swal.fire('Berhasil', 'Data kapal ditambahkan', 'success');
+                },
+                error: function(xhr) {
+                    Swal.fire('Error', 'Gagal menyimpan data kapal.', 'error');
+                }
+            });
+        }
+
+        function saveTujuanInline() {
+            const nama = $('#new_nama_tujuan').val();
+            if (!nama) return;
+            $.ajax({
+                url: '{{ route('admin.tujuan.store') }}',
+                method: 'POST',
+                data: { nama_tujuan: nama, _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    $('#collapseTujuan').collapse('hide');
+                    $('#new_nama_tujuan').val('');
+                    const newHtml = `<option value="${response.id}" selected>${response.nama_tujuan}</option>`;
+                    $('#inline_asal_id').append(newHtml);
+                    $('#inline_tujuan_id').append(newHtml).trigger('change');
+                    Swal.fire('Berhasil', 'Data lokasi tujuan ditambahkan', 'success');
+                },
+                error: function(xhr) {
+                    Swal.fire('Error', 'Gagal menyimpan data lokasi.', 'error');
+                }
+            });
+        }
+
+
 
         // --- Item Logic ---
 

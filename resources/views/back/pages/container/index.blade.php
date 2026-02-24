@@ -18,16 +18,17 @@
         @endcan
     </div>
 
-    <x-back.datatable id="containerTable" :ajax="route('admin.container.index')" :header="['No', 'Nomor Container/Seal', 'Aksi']" :data="[
-        'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
-        'nomor_container',
-        'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
-    ]" />
+    <x-back.datatable id="containerTable" :ajax="route('admin.container.index')" :header="['No', 'Nomor Container/Seal', 'Jumlah Invoice', 'Aksi']" :data="[
+            'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
+            'nomor_container',
+            'jumlah_invoice' => ['searchable' => false, 'orderable' => false],
+            'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
+        ]" />
 @endsection
 
 @push('scripts')
     <script>
-        $(document).on('click', '.delete-btn', function() {
+        $(document).on('click', '.delete-btn', function () {
             var id = $(this).data('id');
             Swal.fire({
                 title: 'Apakah anda yakin?',
@@ -46,11 +47,11 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire('Terhapus!', response.success, 'success');
                             $('#containerTable').DataTable().ajax.reload();
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             var message = 'Terjadi kesalahan saat menghapus data.';
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 message = xhr.responseJSON.error;

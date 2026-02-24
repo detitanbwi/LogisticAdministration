@@ -13,18 +13,12 @@ class Invoice extends Model
 
     protected $fillable = [
         'no_invoice',
-        'kapal_id',
-        'asal_id',
-        'tujuan_id',
         'pengirim_id',
         'penerima_id',
         'up',
-        'etd',
-        'eta',
         'tgl_masuk',
         'container_id',
         'metode',
-        'tipe_kontainer',
         'layanan',
         'status_pembayaran',
         'pkp_status',
@@ -33,26 +27,11 @@ class Invoice extends Model
     ];
 
     protected $casts = [
-        'etd' => 'date',
-        'eta' => 'date',
         'tgl_masuk' => 'date',
         'terima_barang' => 'date',
     ];
 
-    public function kapal(): BelongsTo
-    {
-        return $this->belongsTo(Kapal::class);
-    }
 
-    public function tujuan(): BelongsTo
-    {
-        return $this->belongsTo(Tujuan::class);
-    }
-
-    public function asal(): BelongsTo
-    {
-        return $this->belongsTo(Tujuan::class, 'asal_id');
-    }
 
     public function pengirim(): BelongsTo
     {

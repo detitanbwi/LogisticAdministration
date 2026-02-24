@@ -25,8 +25,8 @@ class InvoiceController extends Controller
         abort_unless(auth()->user()->can('view.invoice'), 403);
 
         if ($request->ajax()) {
-            $query = Invoice::with(['kapal', 'tujuan', 'asal', 'pengirim', 'penerima', 'finance', 'container'])->select('invoice.*');
-            
+            $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance'])->select('invoice.*');
+
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
@@ -35,7 +35,7 @@ class InvoiceController extends Controller
                     $query->whereBetween('invoice.created_at', [$start_date, $end_date]);
                 }
             }
-            
+
             if ($request->filled('status')) {
                 $query->where('status_pembayaran', $request->status);
             }
@@ -47,53 +47,53 @@ class InvoiceController extends Controller
             if ($request->filled('tujuan_id')) {
                 $query->where('tujuan_id', $request->tujuan_id);
             }
-            
+
             return DataTables::of($query)
                 ->addIndexColumn()
-                ->editColumn('no_invoice', function($row){
+                ->editColumn('no_invoice', function ($row) {
                     return $row->no_invoice;
                 })
-                ->editColumn('etd', function($row){
-                    return $row->etd ? $row->etd->format('d-m-Y') : '-';
+                ->editColumn('etd', function ($row) {
+                    return $row->container && $row->container->etd ? $row->container->etd->format('d-m-Y') : '-';
                 })
-                ->addColumn('asal', function($row){
-                    return $row->asal ? $row->asal->nama_tujuan : '-';
+                ->addColumn('asal', function ($row) {
+                    return $row->container && $row->container->asal ? $row->container->asal->nama_tujuan : '-';
                 })
-                ->addColumn('tujuan', function($row){
-                    return $row->tujuan ? $row->tujuan->nama_tujuan : '-';
+                ->addColumn('tujuan', function ($row) {
+                    return $row->container && $row->container->tujuan ? $row->container->tujuan->nama_tujuan : '-';
                 })
-                ->addColumn('pengirim', function($row){
+                ->addColumn('pengirim', function ($row) {
                     return $row->pengirim ? $row->pengirim->nama : '-';
                 })
-                ->addColumn('penerima', function($row){
+                ->addColumn('penerima', function ($row) {
                     return $row->penerima ? $row->penerima->nama : '-';
                 })
-                ->addColumn('total_tagihan', function($row){
+                ->addColumn('total_tagihan', function ($row) {
                     return $row->finance ? number_format($row->finance->total_tagihan, 0, ',', '.') : '-';
                 })
-                ->addColumn('catatan_muntahan', function($row){
+                ->addColumn('catatan_muntahan', function ($row) {
                     return $row->catatan_muntahan ? \Illuminate\Support\Str::limit($row->catatan_muntahan, 50) : '-';
                 })
-                ->editColumn('status_pembayaran', function($row){
+                ->editColumn('status_pembayaran', function ($row) {
                     $color = $row->status_pembayaran == 'Serahkan' ? 'success' : 'warning';
-                    return '<span class="badge bg-soft-'.$color.' text-'.$color.'">'.$row->status_pembayaran.'</span>';
+                    return '<span class="badge bg-soft-' . $color . ' text-' . $color . '">' . $row->status_pembayaran . '</span>';
                 })
-                ->addColumn('action', function($row){
+                ->addColumn('action', function ($row) {
                     $editUrl = route('admin.invoice.edit', $row->id);
                     $btn = '<div class="hstack gap-2 justify-content-end">';
-                    
+
                     if (auth()->user()->can('edit.invoice')) {
-                        $btn .= '<a href="'.$editUrl.'" class="avatar-text avatar-md bg-soft-warning text-warning"><i class="feather feather-edit-3"></i></a>';
+                        $btn .= '<a href="' . $editUrl . '" class="avatar-text avatar-md bg-soft-warning text-warning"><i class="feather feather-edit-3"></i></a>';
                     }
-                    
+
                     if (auth()->user()->can('print_per_invoice.invoice')) {
-                         $btn .= '<a href="'.route('admin.invoice.print', $row->id).'" class="avatar-text avatar-md bg-soft-info text-info" target="_blank"><i class="feather feather-printer"></i></a>';
+                        $btn .= '<a href="' . route('admin.invoice.print', $row->id) . '" class="avatar-text avatar-md bg-soft-info text-info" target="_blank"><i class="feather feather-printer"></i></a>';
                     }
 
                     if (auth()->user()->can('delete.invoice')) {
-                        $btn .= '<a href="javascript:void(0)" class="avatar-text avatar-md bg-soft-danger text-danger delete-btn" data-id="'.$row->id.'"><i class="feather feather-trash-2"></i></a>';
+                        $btn .= '<a href="javascript:void(0)" class="avatar-text avatar-md bg-soft-danger text-danger delete-btn" data-id="' . $row->id . '"><i class="feather feather-trash-2"></i></a>';
                     }
-                    
+
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -111,13 +111,11 @@ class InvoiceController extends Controller
     public function create()
     {
         abort_unless(auth()->user()->can('create.invoice'), 403);
-        
-        $kapals = Kapal::all();
-        $tujuans = Tujuan::all();
+
         $customers = Customer::all();
         $containers = Container::all();
-        
-        return view('back.pages.invoice.form', compact('kapals', 'tujuans', 'customers', 'containers'));
+
+        return view('back.pages.invoice.form', compact('customers', 'containers'));
     }
 
     /**
@@ -126,22 +124,22 @@ class InvoiceController extends Controller
     public function store(StoreInvoiceRequest $request)
     {
         abort_unless(auth()->user()->can('create.invoice'), 403);
-        
+
         DB::beginTransaction();
         try {
             $validated = $request->validated();
-            
+
             // Create Invoice
             $invoice = Invoice::create($request->except('items'));
-            
+
             // Create Items & Calculate Total
             $totalTagihan = 0;
-            
+
             if ($request->has('items')) {
                 foreach ($request->items as $item) {
                     $subtotal = $item['jumlah'] * $item['harga_satuan'];
                     $totalTagihan += $subtotal;
-                    
+
                     $invoice->items()->create([
                         'jenis_barang' => $item['jenis_barang'],
                         'koli' => $item['koli'],
@@ -152,7 +150,7 @@ class InvoiceController extends Controller
                     ]);
                 }
             }
-            
+
             // Calculate PPN if PKP
             if ($request->pkp_status == 'PKP') {
                 $totalTagihan += ($totalTagihan * 0.011);
@@ -164,9 +162,9 @@ class InvoiceController extends Controller
                 'ditagih_ke' => 'Penerima', // Default
                 'status_tagihan' => 'Belum',
             ]);
-            
+
             DB::commit();
-            
+
             return redirect()->route('admin.invoice.index')->with('success', 'Invoice berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -180,14 +178,12 @@ class InvoiceController extends Controller
     public function edit(Invoice $invoice)
     {
         abort_unless(auth()->user()->can('edit.invoice'), 403);
-        
+
         $invoice->load('items', 'finance');
-        $kapals = Kapal::all();
-        $tujuans = Tujuan::all();
         $customers = Customer::all();
         $containers = Container::all();
-        
-        return view('back.pages.invoice.form', compact('invoice', 'kapals', 'tujuans', 'customers', 'containers'));
+
+        return view('back.pages.invoice.form', compact('invoice', 'customers', 'containers'));
     }
 
     /**
@@ -196,21 +192,21 @@ class InvoiceController extends Controller
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
         abort_unless(auth()->user()->can('edit.invoice'), 403);
-        
+
         DB::beginTransaction();
         try {
             $invoice->update($request->except('items'));
-            
+
             // Re-create items
             $invoice->items()->delete();
-            
+
             $totalTagihan = 0;
-            
+
             if ($request->has('items')) {
                 foreach ($request->items as $item) {
                     $subtotal = $item['jumlah'] * $item['harga_satuan'];
                     $totalTagihan += $subtotal;
-                    
+
                     $invoice->items()->create([
                         'jenis_barang' => $item['jenis_barang'],
                         'koli' => $item['koli'],
@@ -221,7 +217,7 @@ class InvoiceController extends Controller
                     ]);
                 }
             }
-            
+
             // Calculate PPN if PKP
             if ($request->pkp_status == 'PKP') {
                 $totalTagihan += ($totalTagihan * 0.011);
@@ -231,15 +227,15 @@ class InvoiceController extends Controller
             if ($invoice->finance) {
                 $invoice->finance->update(['total_tagihan' => $totalTagihan]);
             } else {
-                 $invoice->finance()->create([
+                $invoice->finance()->create([
                     'total_tagihan' => $totalTagihan,
                     'ditagih_ke' => 'Penerima',
                     'status_tagihan' => 'Belum',
                 ]);
             }
-            
+
             DB::commit();
-            
+
             return redirect()->route('admin.invoice.index')->with('success', 'Invoice berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -253,7 +249,7 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         abort_unless(auth()->user()->can('delete.invoice'), 403);
-        
+
         DB::beginTransaction();
         try {
             if ($invoice->finance) {
@@ -261,7 +257,7 @@ class InvoiceController extends Controller
             }
             $invoice->items()->delete();
             $invoice->delete();
-            
+
             DB::commit();
             return response()->json(['success' => 'Invoice berhasil dihapus.']);
         } catch (\Exception $e) {
@@ -273,9 +269,9 @@ class InvoiceController extends Controller
     public function print(Invoice $invoice)
     {
         abort_unless(auth()->user()->can('print.invoice') || auth()->user()->can('view.invoice'), 403);
-        
-        $invoice->load(['kapal', 'tujuan', 'asal', 'pengirim', 'penerima', 'finance', 'items', 'upDetail']);
-        
+
+        $invoice->load(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'items', 'upDetail']);
+
         return view('back.pages.invoice.print', compact('invoice'));
     }
 
@@ -285,15 +281,14 @@ class InvoiceController extends Controller
 
         $invoice = new Invoice($request->except('items'));
         $invoice->created_at = now(); // For date parsing 
-        
+
         // Load relationships manually from DB
-        $invoice->setRelation('kapal', Kapal::find($request->kapal_id));
-        $invoice->setRelation('asal', Tujuan::find($request->asal_id));
-        $invoice->setRelation('tujuan', Tujuan::find($request->tujuan_id));
         $invoice->setRelation('pengirim', Customer::find($request->pengirim_id));
         $invoice->setRelation('penerima', Customer::find($request->penerima_id));
         $invoice->setRelation('upDetail', Customer::find($request->up));
-        $invoice->setRelation('container', Container::find($request->container_id));
+
+        $container = Container::with(['kapal', 'asal', 'tujuan'])->find($request->container_id);
+        $invoice->setRelation('container', $container);
 
         $items = collect();
         $totalTagihan = 0;
@@ -301,7 +296,7 @@ class InvoiceController extends Controller
             foreach ($request->items as $itemData) {
                 $subtotal = ($itemData['jumlah'] ?? 0) * ($itemData['harga_satuan'] ?? 0);
                 $totalTagihan += $subtotal;
-                
+
                 $itemData['subtotal'] = $subtotal;
                 $items->push(new \App\Models\InvoiceItem($itemData));
             }

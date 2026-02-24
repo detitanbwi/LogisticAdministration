@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Back;
 
 use App\Http\Controllers\Controller;
 use App\Models\Container;
+use App\Models\Kapal;
+use App\Models\Tujuan;
 use Illuminate\Http\Request;
 
 class ContainerController extends Controller
@@ -14,11 +16,17 @@ class ContainerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Container::select('*');
+            $query = Container::withCount('invoices');
             return datatables()->of($query)
                 ->addIndexColumn()
+                ->addColumn('jumlah_invoice', function ($row) {
+                    return '<span class="badge bg-soft-info text-info">' . $row->invoices_count . ' Invoice</span>';
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '<div class="hstack gap-2 justify-content-end">';
+                    if (auth()->user()->can('view.container') || auth()->user()->can('print.invoice')) {
+                        $btn .= '<a href="' . route('admin.container.print', $row->id) . '" class="avatar-text avatar-md bg-soft-primary text-primary" title="Print Rekap Container" target="_blank"><i class="feather feather-printer"></i></a>';
+                    }
                     if (auth()->user()->can('edit.container')) {
                         $btn .= '<a href="' . route('admin.container.edit', $row->id) . '" class="avatar-text avatar-md bg-soft-warning text-warning" title="Edit"><i class="feather feather-edit-3"></i></a>';
                     }
@@ -28,7 +36,7 @@ class ContainerController extends Controller
                     $btn .= '</div>';
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['jumlah_invoice', 'action'])
                 ->make(true);
         }
 
@@ -40,7 +48,9 @@ class ContainerController extends Controller
      */
     public function create()
     {
-        return view('back.pages.container.form');
+        $kapals = Kapal::all();
+        $tujuans = Tujuan::all();
+        return view('back.pages.container.form', compact('kapals', 'tujuans'));
     }
 
     /**
@@ -50,6 +60,14 @@ class ContainerController extends Controller
     {
         $request->validate([
             'nomor_container' => 'required|string|max:255|unique:container,nomor_container',
+            'kapal_id' => 'nullable|exists:kapal,id',
+            'asal_id' => 'nullable|exists:tujuan,id',
+            'tujuan_id' => 'nullable|exists:tujuan,id|different:asal_id',
+            'etd' => 'nullable|date',
+            'eta' => 'nullable|date|after_or_equal:etd',
+            'metode' => 'nullable|in:FCL,LCL,Break Bulk',
+            'tipe_kontainer' => 'nullable|in:20FT,40FT,40HC,45HC',
+            'catatan' => 'nullable|string',
         ]);
 
         $container = Container::create($request->all());
@@ -66,7 +84,9 @@ class ContainerController extends Controller
      */
     public function edit(Container $container)
     {
-        return view('back.pages.container.form', compact('container'));
+        $kapals = Kapal::all();
+        $tujuans = Tujuan::all();
+        return view('back.pages.container.form', compact('container', 'kapals', 'tujuans'));
     }
 
     /**
@@ -76,6 +96,14 @@ class ContainerController extends Controller
     {
         $request->validate([
             'nomor_container' => 'required|string|max:255|unique:container,nomor_container,' . $container->id,
+            'kapal_id' => 'nullable|exists:kapal,id',
+            'asal_id' => 'nullable|exists:tujuan,id',
+            'tujuan_id' => 'nullable|exists:tujuan,id|different:asal_id',
+            'etd' => 'nullable|date',
+            'eta' => 'nullable|date|after_or_equal:etd',
+            'metode' => 'nullable|in:FCL,LCL,Break Bulk',
+            'tipe_kontainer' => 'nullable|in:20FT,40FT,40HC,45HC',
+            'catatan' => 'nullable|string',
         ]);
 
         $container->update($request->all());
@@ -94,5 +122,11 @@ class ContainerController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Gagal menghapus data. ' . $e->getMessage()], 500);
         }
+    }
+
+    public function print(Container $container)
+    {
+        $container->load(['kapal', 'asal', 'tujuan', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance']);
+        return view('back.pages.container.print', compact('container'));
     }
 }

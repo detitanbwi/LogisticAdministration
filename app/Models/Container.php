@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Container extends Model
 {
@@ -11,7 +12,34 @@ class Container extends Model
 
     protected $fillable = [
         'nomor_container',
+        'kapal_id',
+        'asal_id',
+        'tujuan_id',
+        'etd',
+        'eta',
+        'tipe_kontainer',
+        'catatan',
     ];
+
+    protected $casts = [
+        'etd' => 'date',
+        'eta' => 'date',
+    ];
+
+    public function kapal(): BelongsTo
+    {
+        return $this->belongsTo(Kapal::class);
+    }
+
+    public function asal(): BelongsTo
+    {
+        return $this->belongsTo(Tujuan::class, 'asal_id');
+    }
+
+    public function tujuan(): BelongsTo
+    {
+        return $this->belongsTo(Tujuan::class);
+    }
 
     public function invoices(): HasMany
     {

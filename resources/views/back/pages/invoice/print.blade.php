@@ -168,11 +168,11 @@
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Pelabuhan Asal</td>
-                            <td>: {{ $invoice->asal->nama_tujuan ?? '-' }}</td>
+                            <td>: {{ $invoice->container->asal->nama_tujuan ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Tujuan</td>
-                            <td>: {{ $invoice->tujuan->nama_tujuan ?? '-' }}</td>
+                            <td>: {{ $invoice->container->tujuan->nama_tujuan ?? '-' }}</td>
                         </tr>
                     </table>
                 </td>
@@ -180,23 +180,23 @@
                     <table style="width: 100%; font-size: 10.5pt;">
                         <tr>
                             <td style="width: 120px; padding: 2px;">Kapal</td>
-                            <td>: {{ $invoice->kapal->nama_kapal ?? '-' }}</td>
+                            <td>: {{ $invoice->container->kapal->nama_kapal ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">ETD</td>
                             <td>:
-                                {{ $invoice->etd ? Carbon\Carbon::parse($invoice->etd)->translatedFormat('d F Y') : '-' }}
+                                {{ $invoice->container && $invoice->container->etd ? Carbon\Carbon::parse($invoice->container->etd)->translatedFormat('d F Y') : '-' }}
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">ETA</td>
                             <td>:
-                                {{ $invoice->eta ? Carbon\Carbon::parse($invoice->eta)->translatedFormat('d F Y') : '-' }}
+                                {{ $invoice->container && $invoice->container->eta ? Carbon\Carbon::parse($invoice->container->eta)->translatedFormat('d F Y') : '-' }}
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Kontainer</td>
-                            <td>: {{ $invoice->tipe_kontainer ?? '-' }}</td>
+                            <td>: {{ $invoice->container->tipe_kontainer ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Contr/Seal</td>

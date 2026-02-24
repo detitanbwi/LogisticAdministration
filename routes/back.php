@@ -39,6 +39,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('kapal', KapalController::class);
         Route::resource('tujuan', TujuanController::class);
         Route::resource('customer', CustomerController::class);
+        Route::get('container/{container}/print', [ContainerController::class, 'print'])->name('container.print');
         Route::resource('container', ContainerController::class);
         Route::resource('transaksi-kategori', App\Http\Controllers\Back\TransaksiKategoriController::class);
         Route::resource('bank-rekening', App\Http\Controllers\Back\BankRekeningController::class);

@@ -10,8 +10,9 @@
     'selected' => [],
     'hint' => '',
     'selector' => 'tag',
-    'createOptionForm' => null, // URL or Identifier for the modal form
+    'createOptionForm' => null, // URL or Identifier for the modal/collapse form
     'createOptionLabel' => 'Tambah Baru',
+    'toggleType' => 'modal',
 ])
 
 @php
@@ -59,8 +60,8 @@
         </select>
 
         @if ($createOptionForm)
-            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal"
-                data-bs-target="{{ $createOptionForm }}">
+            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="{{ $toggleType }}"
+                data-bs-target="{{ $createOptionForm }}" aria-expanded="false" aria-controls="{{ ltrim($createOptionForm, '#') }}">
                 <i class="feather-plus"></i>
             </button>
         @endif
