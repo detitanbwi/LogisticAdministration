@@ -33,7 +33,7 @@ class UserController extends Controller
                 ->addColumn('action', function ($user) {
                     $editUrl = route('admin.users.edit', $user->id);
                     $action = '<div class="hstack gap-2 justify-content-end">';
-                    
+
                     if (auth()->user()->can('edit.user')) {
                         $action .= '<a href="' . $editUrl . '" class="avatar-text avatar-md bg-soft-warning text-warning">
                                 <i class="feather feather-edit-3"></i>
@@ -50,7 +50,7 @@ class UserController extends Controller
                     }
 
                     $action .= '</div>';
-                    
+
                     return $action;
                 })
                 ->rawColumns(['roles', 'action'])
@@ -106,6 +106,14 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
+        // Restriction: Minimal 1 akun dengan all role (admin)
+        if ($user->hasRole('admin') && !in_array('admin', (array) $request->roles)) {
+            $adminCount = User::role('admin')->count();
+            if ($adminCount <= 1) {
+                return redirect()->back()->with('error', 'Gagal memperbarui: Harus ada minimal 1 akun dengan Role Admin (All Role).')->withInput();
+            }
+        }
+
         $user->update($data);
         $user->syncRoles($request->roles);
 
@@ -118,6 +126,14 @@ class UserController extends Controller
 
         if (auth()->id() === $user->id) {
             return response()->json(['error' => 'Tidak dapat menghapus akun sendiri.'], 403);
+        }
+
+        // Restriction: Minimal 1 akun dengan all role (admin)
+        if ($user->hasRole('admin')) {
+            $adminCount = User::role('admin')->count();
+            if ($adminCount <= 1) {
+                return response()->json(['error' => 'Tidak dapat dihapus: Harus ada minimal 1 akun dengan Role Admin (All Role).'], 403);
+            }
         }
 
         $user->roles()->detach();

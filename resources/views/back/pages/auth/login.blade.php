@@ -1,27 +1,31 @@
 @extends('back.layouts.guest')
 @section('title', 'Login')
 @section('content')
-    <h2 class="fs-20 fw-bolder mb-4">Login</h2>
-    <h4 class="fs-13 fw-bold mb-2">Login to your account</h4>
-    <p class="fs-12 fw-medium text-muted">Thank you for get back <strong>{{ config('app.name') }}</strong> web applications,
-        let's access our the best recommendation for you.</p>
+    <h3 class="fs-18 fw-bolder mb-2 text-dark">Portal Administrator</h3>
+    <p class="fs-13 fw-medium text-muted">Silakan masuk menggunakan email dan kata sandi Anda.</p>
 
-    <form action="{{ route('admin.login.store') }}" class="w-100 mt-4 pt-2" method="POST">
+    <form action="{{ route('admin.login.store') }}" class="w-100 mt-4" method="POST">
         @csrf
 
-        <x-back.text-input type="email" class="form-control" name="email" placeholder="Email or Username" :value="old('email')"
-            required autofocus />
-
-        <x-back.text-input type="password" class="form-control" name="password" placeholder="Password" required />
-
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <x-back.checkbox name="remember" label="Remember Me" />
-            </div>
+        <div class="mb-4">
+            <x-back.text-input type="email" class="form-control" name="email" placeholder="Email or Username"
+                :value="old('email', 'admin@gmail.com')" required autofocus />
         </div>
-        <div class="mt-5">
-            <x-back.button type="submit" variant="primary" size="lg" block>
-                Login
+
+        <div class="mb-3">
+            <x-back.text-input type="password" class="form-control" name="password" placeholder="Password" value="password"
+                required />
+        </div>
+
+        <div class="mb-4">
+            <x-back.checkbox name="remember" label="Remember Me" />
+        </div>
+
+
+
+        <div class="mt-4">
+            <x-back.button type="submit" variant="primary" size="lg" block class="w-100 fw-bold rounded-3">
+                <i class="feather-log-in me-2"></i> Log In
             </x-back.button>
         </div>
     </form>

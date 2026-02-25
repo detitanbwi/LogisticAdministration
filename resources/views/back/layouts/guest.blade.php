@@ -41,18 +41,44 @@
     <!--! ================================================================ !-->
     <!--! [Start] Main Content !-->
     <!--! ================================================================ !-->
-    <main class="auth-minimal-wrapper">
-        <div class="auth-minimal-inner">
-            <div class="minimal-card-wrapper">
-                <div class="card mb-4 mt-5 mx-4 mx-sm-0 position-relative">
-                    <div class="bg-white p-2 rounded-circle shadow-lg position-absolute translate-middle top-0 start-50"
-                        style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
-                        <img src="{{ asset('back/assets/images/logo-scj.png') }}" alt="SCJ Logo" class="img-fluid"
-                            style="border-radius: 50%; width: 100px; height: 100px; object-fit: contain;">
+    <main class="auth-cover-wrapper">
+        <div class="auth-cover-content-inner">
+            <div class="auth-cover-content-wrapper p-0 m-0"
+                style="background-image: url('https://images.unsplash.com/photo-1494412651409-8963ce7935a7?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; position: relative; height: 100%;">
+                <div
+                    style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(6,56,128,0.85) 0%, rgba(13,110,253,0.5) 100%);">
+                </div>
+
+                <div
+                    style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; padding: 2rem; text-align: center;">
+                    <h1 class="text-white fw-bolder mb-4"
+                        style="font-size: 3.5rem; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">Pioneering <br> Maritime
+                        Logistics</h1>
+                    <p class="text-white fs-16"
+                        style="max-width: 500px; text-shadow: 0 2px 8px rgba(0,0,0,0.5); opacity: 0.9;">
+                        Platform administrasi dan manajemen invoice kapal terdepan. Kami memastikan setiap proses
+                        berjalan akurat, aman, dan efisien.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="auth-cover-sidebar-inner">
+            <div class="auth-cover-card-wrapper">
+                <div class="auth-cover-card p-4 p-sm-5 shadow-none border-0 mb-5">
+
+                    <!-- Branding Section -->
+                    <div class="text-center mb-5">
+                        <img src="{{ asset('back/assets/images/logo-scj.png') }}" alt="SCJ Logo" class="img-fluid mb-3"
+                            style="height: 100px; object-fit: contain;">
+                        <h2 class="fw-black mb-1" style="font-size: 1.5rem; letter-spacing: 0.5px; color: #1e293b;">
+                            PT. SINAR <span style="color: #ef4444;">CEMARA</span> JAYA
+                        </h2>
+                        <span class="fs-12 fw-medium text-muted text-uppercase tracking-wider">Shipping & Logistics
+                            Operations</span>
                     </div>
-                    <div class="card-body p-sm-5">
-                        @yield('content')
-                    </div>
+
+                    @yield('content')
+
                 </div>
             </div>
         </div>

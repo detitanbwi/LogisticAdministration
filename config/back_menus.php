@@ -10,7 +10,7 @@ return [
     [
         'title' => 'Invoice',
         'can' => ['view.invoice', 'create.invoice'],
-        'icon' => 'feather-shopping-cart',
+        'icon' => 'feather-file-text',
         'children' => [
             [
                 'title' => 'Buat Invoice',
@@ -29,7 +29,7 @@ return [
     [
         'title' => 'Finance',
         'can' => ['view.finance', 'edit.finance'],
-        'icon' => 'feather-dollar-sign',
+        'icon' => 'feather-credit-card',
         'children' => [
             [
                 'title' => 'Rekapitulasi',
@@ -40,7 +40,7 @@ return [
     ],
     [
         'title' => 'Arus Kas',
-        'icon' => 'feather-dollar-sign',
+        'icon' => 'feather-trending-up',
         'can' => ['view.kategori_keuangan', 'create.kategori_keuangan'],
         'children' => [
             [
