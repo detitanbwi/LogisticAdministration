@@ -94,7 +94,7 @@
         </tr>
     </table>
 
-    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">MANIFEST CONTAINER / REKAP DATA
+    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">MANIFEST CONTAINER_PACKING LIST
     </h2>
 
     <table class="w-100 collapse" style="margin-bottom: 15px; font-size: 10pt;">
