@@ -16,7 +16,8 @@
                 <div class="card-body">
                     <h6 class="text-success mb-2">Total Pemasukan</h6>
                     <h4 class="mb-0 text-success" id="summary-pemasukan">Rp
-                        {{ number_format($total_pemasukan, 0, ',', '.') }}</h4>
+                        {{ number_format($total_pemasukan, 0, ',', '.') }}
+                    </h4>
                 </div>
             </div>
         </div>
@@ -25,7 +26,8 @@
                 <div class="card-body">
                     <h6 class="text-danger mb-2">Total Pengeluaran</h6>
                     <h4 class="mb-0 text-danger" id="summary-pengeluaran">Rp
-                        {{ number_format($total_pengeluaran, 0, ',', '.') }}</h4>
+                        {{ number_format($total_pengeluaran, 0, ',', '.') }}
+                    </h4>
                 </div>
             </div>
         </div>
@@ -43,7 +45,8 @@
         <div class="col-md-3">
             <div class="form-group mb-0">
                 <label class="form-label">Range Tanggal:</label>
-                <input type="text" class="form-control" name="daterange" id="filterDate" placeholder="Pilih Tanggal">
+                <input type="text" class="form-control dt-filter" name="daterange" id="filterDate"
+                    placeholder="Pilih Tanggal">
             </div>
         </div>
         <div class="col-md-3">
@@ -71,14 +74,7 @@
         </div>
     </div>
 
-    <x-back.datatable id="transaksiTable" :ajax="[
-            'url' => route('admin.transaksi.index'),
-            'data' => 'function(d) {
-                d.bank_rekening_id = $(\'#filterBank\').val();
-                d.jenis = $(\'#filterJenis\').val();
-                d.daterange = $(\'#filterDate\').val();
-            }'
-        ]" :header="['No', 'Tanggal', 'Jenis', 'Kategori', 'Rekening', 'Nominal', 'Aksi']" :data="[
+    <x-back.datatable id="transaksiTable" :ajax="route('admin.transaksi.index')" :header="['No', 'Tanggal', 'Jenis', 'Kategori', 'Rekening', 'Nominal', 'Aksi']" :data="[
             'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
             'tanggal',
             'jenis',
