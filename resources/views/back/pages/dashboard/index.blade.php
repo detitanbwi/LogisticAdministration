@@ -41,24 +41,26 @@
         <!-- [Total Invoice] end -->
 
         <!-- [Total Pendapatan] start -->
-        <div class="col-xxl-3 col-md-6">
-            <div class="card stretch stretch-full">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-4">
-                        <div class="d-flex gap-4 align-items-center">
-                            <div class="avatar-text avatar-lg bg-soft-success text-success">
-                                <i class="feather-dollar-sign"></i>
-                            </div>
-                            <div>
-                                <div class="fs-4 fw-bold text-dark">Rp <span
-                                        class="counter">{{ number_format($total_pendapatan, 0, ',', '.') }}</span></div>
-                                <h3 class="fs-13 fw-semibold text-truncate-1-line">Total Pendapatan</h3>
+        @can('view_total_pendapatan.dashboard')
+            <div class="col-xxl-3 col-md-6">
+                <div class="card stretch stretch-full">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between mb-4">
+                            <div class="d-flex gap-4 align-items-center">
+                                <div class="avatar-text avatar-lg bg-soft-success text-success">
+                                    <i class="feather-dollar-sign"></i>
+                                </div>
+                                <div>
+                                    <div class="fs-4 fw-bold text-dark">Rp <span
+                                            class="counter">{{ number_format($total_pendapatan, 0, ',', '.') }}</span></div>
+                                    <h3 class="fs-13 fw-semibold text-truncate-1-line">Total Pendapatan</h3>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endcan
         <!-- [Total Pendapatan] end -->
 
         <!-- [Belum Ditagih] start -->
@@ -220,8 +222,7 @@
                                                 $status = $invoice->finance->status_tagihan ?? 'Belum';
                                                 $color = $status == 'Sudah ditagih' ? 'success' : 'warning';
                                             @endphp
-                                            <span
-                                                class="badge bg-soft-{{ $color }} text-{{ $color }}">{{ $status }}</span>
+                                            <span class="badge bg-soft-{{ $color }} text-{{ $color }}">{{ $status }}</span>
                                         </td>
                                         <td class="text-end">
                                             <a href="{{ route('admin.invoice.print', $invoice->id) }}" target="_blank"
@@ -246,7 +247,7 @@
 
 @push('scripts')
     <script>
-        $(function() {
+        $(function () {
             if ($('#dashboardDaterange').length) {
                 $('#dashboardDaterange').daterangepicker({
                     autoUpdateInput: false,
@@ -256,13 +257,13 @@
                     }
                 });
 
-                $('#dashboardDaterange').on('apply.daterangepicker', function(ev, picker) {
+                $('#dashboardDaterange').on('apply.daterangepicker', function (ev, picker) {
                     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format(
                         'MM/DD/YYYY'));
                     $('#filterForm').submit();
                 });
 
-                $('#dashboardDaterange').on('cancel.daterangepicker', function(ev, picker) {
+                $('#dashboardDaterange').on('cancel.daterangepicker', function (ev, picker) {
                     $(this).val('');
                     window.location.href = "{{ route('admin.dashboard') }}";
                 });

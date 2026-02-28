@@ -177,6 +177,10 @@
                             <td style="padding: 2px;">Tujuan</td>
                             <td>: {{ $invoice->container->tujuan->nama_tujuan ?? '-' }}</td>
                         </tr>
+                        <tr>
+                            <td style="padding: 2px;">Layanan</td>
+                            <td>: {{ strtoupper($invoice->layanan ?? '-') }}</td>
+                        </tr>
                     </table>
                 </td>
                 <td style="width: 50%; vertical-align: top;">
@@ -204,10 +208,6 @@
                         <tr>
                             <td style="padding: 2px;">Contr/Seal</td>
                             <td>: {{ $invoice->container->nomor_container ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 2px;">Layanan</td>
-                            <td>: {{ strtoupper($invoice->layanan ?? '-') }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Up</td>
@@ -306,7 +306,7 @@
                 </td>
             </tr>
             <tr>
-                <td style="padding: 5px 10px;">PKP</td>
+                <td style="padding: 5px 10px;">PKP (1,1%)</td>
                 <td style="padding: 5px 0 5px 5px; color: red;">Rp</td>
                 <td class="text-right" style="padding: 5px 10px 5px 0; color: red;">
                     {{ $ppn > 0 ? number_format($ppn, 0, ',', '.') : '-' }}

@@ -20,7 +20,7 @@ class RolePermissionSeeder extends Seeder
 
         // Define permissions structure
         $resources = [
-            'dashboard' => ['view'],
+            'dashboard' => ['view', 'view_total_pendapatan'],
             'role' => ['*'],
             'user' => ['*'],
             'customer' => ['*'],
@@ -58,7 +58,7 @@ class RolePermissionSeeder extends Seeder
                     'updated_at' => $now,
                 ];
             })->toArray();
-            
+
             Permission::insert($permissionsData);
         }
 
@@ -100,6 +100,6 @@ class RolePermissionSeeder extends Seeder
             $finalPermissions = $permissions;
         }
 
-        return array_map(fn ($action) => "{$action}.{$resource}", $finalPermissions);
+        return array_map(fn($action) => "{$action}.{$resource}", $finalPermissions);
     }
 }
