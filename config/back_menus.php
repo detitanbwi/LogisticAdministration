@@ -24,6 +24,11 @@ return [
                 'can' => 'view.invoice',
                 'active' => ['admin.invoice.index', 'admin.invoice.edit', 'admin.invoice.show'],
             ],
+            [
+                'title' => 'Packing List',
+                'url' => 'admin.packing-list.index',
+                'can' => 'view.container',
+            ],
         ]
     ],
     [
@@ -35,6 +40,11 @@ return [
                 'title' => 'Rekapitulasi',
                 'url' => 'admin.finance.index',
                 'can' => 'view.finance',
+            ],
+            [
+                'title' => 'Container Cost',
+                'url' => 'admin.container-cost.index',
+                'can' => 'view.container',
             ],
         ]
     ],
@@ -112,11 +122,6 @@ return [
                 'title' => 'Customer',
                 'url' => 'admin.customer.index',
                 'can' => 'view.customer',
-            ],
-            [
-                'title' => 'Container / Seal',
-                'url' => 'admin.container.index',
-                'can' => 'view.container',
             ],
         ]
     ],

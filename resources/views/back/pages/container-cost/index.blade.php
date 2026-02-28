@@ -1,24 +1,24 @@
 @extends('back.layouts.app')
 
-@section('title', 'Container / Seal')
+@section('title', 'Container Cost')
 
-@section('page_title', 'Container / Seal')
+@section('page_title', 'Container Cost')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.container.index') }}">Container / Seal</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.container-cost.index') }}">Container Cost</a></li>
 @endsection
 
 @section('content')
     <div class="d-flex justify-content-end mb-4">
         @can('create.container')
-            <a href="{{ route('admin.container.create') }}" class="btn btn-primary">
+            <a href="{{ route('admin.container-cost.create') }}" class="btn btn-primary">
                 <i class="feather-plus me-2"></i>
-                <span>Tambah Container</span>
+                <span>Tambah Container Cost</span>
             </a>
         @endcan
     </div>
 
-    <x-back.datatable id="containerTable" :ajax="route('admin.container.index')" :header="['No', 'Nomor Container/Seal', 'Jumlah Invoice', 'Aksi']" :data="[
+    <x-back.datatable id="containerTable" :ajax="route('admin.container-cost.index')" :header="['No', 'Nomor Container/Seal', 'Jumlah Invoice', 'Aksi']" :data="[
             'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
             'nomor_container',
             'jumlah_invoice' => ['searchable' => false, 'orderable' => false],
@@ -42,7 +42,7 @@
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                        url: '{{ route('admin.container.index') }}/' + id,
+                        url: '{{ route('admin.container-cost.index') }}/' + id,
                         type: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

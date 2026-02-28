@@ -195,10 +195,17 @@
     </table>
 
     <!-- Footer Note -->
-    @if(!empty($container->catatan))
-        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block;">
-            <strong>Catatan Container:</strong><br>
-            {!! nl2br(e($container->catatan)) !!}
+    @if(!empty($container->catatan_invoicing))
+        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
+            <strong>Catatan Invoicing:</strong><br>
+            {!! nl2br(e($container->catatan_invoicing)) !!}
+        </div>
+    @endif
+    
+    @if(!empty($container->catatan_finance))
+        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top; margin-left: 10px;">
+            <strong>Catatan Finance:</strong><br>
+            {!! nl2br(e($container->catatan_finance)) !!}
         </div>
     @endif
 

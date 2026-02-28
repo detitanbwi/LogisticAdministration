@@ -1,12 +1,12 @@
 @extends('back.layouts.app')
 
-@section('title', isset($container) ? 'Edit Container' : 'Tambah Container')
+@section('title', isset($container) ? 'Edit Packing List' : 'Tambah Packing List')
 
-@section('page_title', isset($container) ? 'Edit Container' : 'Tambah Container')
+@section('page_title', isset($container) ? 'Edit Packing List' : 'Tambah Packing List')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.container.index') }}">Container</a></li>
-    <li class="breadcrumb-item active">{{ isset($container) ? 'Edit Container' : 'Tambah Container' }}</li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.packing-list.index') }}">Packing List</a></li>
+    <li class="breadcrumb-item active">{{ isset($container) ? 'Edit' : 'Tambah' }}</li>
 @endsection
 
 @section('content')
@@ -14,11 +14,11 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">{{ isset($container) ? 'Edit Container' : 'Tambah Container' }}</h5>
+                    <h5 class="card-title">{{ isset($container) ? 'Edit Packing List' : 'Tambah Packing List' }}</h5>
                 </div>
                 <div class="card-body">
                     <form
-                        action="{{ isset($container) ? route('admin.container.update', $container->id) : route('admin.container.store') }}"
+                        action="{{ isset($container) ? route('admin.packing-list.update', $container->id) : route('admin.packing-list.store') }}"
                         method="POST">
                         @csrf
                         @if (isset($container))
@@ -60,19 +60,19 @@
                             </div>
 
                             <div class="col-md-12 mb-3">
-                                <x-back.textarea label="Catatan Kontainer" name="catatan" rows="3"
-                                    placeholder="Contoh: Disini ada muntahan kapal T.JAYA TGL 22-12-25" :value="old('catatan', $container->catatan ?? null)" />
+                                <x-back.textarea label="Catatan Invoicing" name="catatan_invoicing" rows="3"
+                                    placeholder="Contoh: Disini ada muntahan kapal T.JAYA TGL 22-12-25" :value="old('catatan_invoicing', $container->catatan_invoicing ?? null)" />
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-4">
-                            <x-back.button variant="light-brand" href="{{ route('admin.container.index') }}">
+                            <x-back.button variant="light-brand" href="{{ route('admin.packing-list.index') }}">
                                 <i class="feather-arrow-left me-2"></i>
                                 <span>Kembali</span>
                             </x-back.button>
                             <x-back.button type="submit">
                                 <i class="feather-save me-2"></i>
-                                <span>{{ isset($container) ? 'Simpan Perubahan' : 'Simpan Container' }}</span>
+                                <span>{{ isset($container) ? 'Simpan Perubahan' : 'Simpan Packing List' }}</span>
                             </x-back.button>
                         </div>
                     </form>

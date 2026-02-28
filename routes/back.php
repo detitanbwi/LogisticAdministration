@@ -8,7 +8,8 @@ use App\Http\Controllers\Back\UserController;
 use App\Http\Controllers\Back\KapalController;
 use App\Http\Controllers\Back\TujuanController;
 use App\Http\Controllers\Back\CustomerController;
-use App\Http\Controllers\Back\ContainerController;
+use App\Http\Controllers\Back\PackingListController;
+use App\Http\Controllers\Back\ContainerCostController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin.guest')->group(function () {
@@ -39,8 +40,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('kapal', KapalController::class);
         Route::resource('tujuan', TujuanController::class);
         Route::resource('customer', CustomerController::class);
-        Route::get('container/{container}/print', [ContainerController::class, 'print'])->name('container.print');
-        Route::resource('container', ContainerController::class);
+        // Packing List (Invoicing) & Container Cost (Finance)
+        Route::get('packing-list/{container}/print', [PackingListController::class, 'print'])->name('packing-list.print');
+        Route::resource('packing-list', PackingListController::class);
+        Route::get('container-cost/{container}/print', [ContainerCostController::class, 'print'])->name('container-cost.print');
+        Route::resource('container-cost', ContainerCostController::class);
         Route::resource('transaksi-kategori', App\Http\Controllers\Back\TransaksiKategoriController::class);
         Route::resource('bank-rekening', App\Http\Controllers\Back\BankRekeningController::class);
         Route::resource('transaksi', App\Http\Controllers\Back\TransaksiController::class);

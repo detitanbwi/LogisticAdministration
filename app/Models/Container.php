@@ -19,6 +19,8 @@ class Container extends Model
         'eta',
         'tipe_kontainer',
         'catatan',
+        'catatan_invoicing',
+        'catatan_finance',
     ];
 
     protected $casts = [

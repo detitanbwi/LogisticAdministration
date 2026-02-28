@@ -8,7 +8,7 @@ use App\Models\Kapal;
 use App\Models\Tujuan;
 use Illuminate\Http\Request;
 
-class ContainerController extends Controller
+class ContainerCostController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -25,10 +25,10 @@ class ContainerController extends Controller
                 ->addColumn('action', function ($row) {
                     $btn = '<div class="hstack gap-2 justify-content-end">';
                     if (auth()->user()->can('view.container') || auth()->user()->can('print.invoice')) {
-                        $btn .= '<a href="' . route('admin.container.print', $row->id) . '" class="avatar-text avatar-md bg-soft-primary text-primary" title="Print Rekap Container" target="_blank"><i class="feather feather-printer"></i></a>';
+                        $btn .= '<a href="' . route('admin.container-cost.print', $row->id) . '" class="avatar-text avatar-md bg-soft-primary text-primary" title="Print Rekap Container" target="_blank"><i class="feather feather-printer"></i></a>';
                     }
                     if (auth()->user()->can('edit.container')) {
-                        $btn .= '<a href="' . route('admin.container.edit', $row->id) . '" class="avatar-text avatar-md bg-soft-warning text-warning" title="Edit"><i class="feather feather-edit-3"></i></a>';
+                        $btn .= '<a href="' . route('admin.container-cost.edit', $row->id) . '" class="avatar-text avatar-md bg-soft-warning text-warning" title="Edit"><i class="feather feather-edit-3"></i></a>';
                     }
                     if (auth()->user()->can('delete.container')) {
                         $btn .= '<a href="javascript:void(0)" class="avatar-text avatar-md bg-soft-danger text-danger delete-btn" data-id="' . $row->id . '" title="Hapus"><i class="feather feather-trash-2"></i></a>';
@@ -40,7 +40,7 @@ class ContainerController extends Controller
                 ->make(true);
         }
 
-        return view('back.pages.container.index');
+        return view('back.pages.container-cost.index');
     }
 
     /**
@@ -50,7 +50,7 @@ class ContainerController extends Controller
     {
         $kapals = Kapal::all();
         $tujuans = Tujuan::all();
-        return view('back.pages.container.form', compact('kapals', 'tujuans'));
+        return view('back.pages.container-cost.form', compact('kapals', 'tujuans'));
     }
 
     /**
@@ -67,7 +67,7 @@ class ContainerController extends Controller
             'eta' => 'nullable|date|after_or_equal:etd',
             'metode' => 'nullable|in:FCL,LCL,Break Bulk',
             'tipe_kontainer' => 'nullable|in:20FT,40FT,40HC,45HC',
-            'catatan' => 'nullable|string',
+            'catatan_finance' => 'nullable|string',
         ]);
 
         $container = Container::create($request->all());
@@ -76,7 +76,7 @@ class ContainerController extends Controller
             return response()->json($container);
         }
 
-        return redirect()->route('admin.container.index')->with('success', 'Data Container berhasil ditambahkan.');
+        return redirect()->route('admin.container-cost.index')->with('success', 'Data Container Cost berhasil ditambahkan.');
     }
 
     /**
@@ -86,7 +86,7 @@ class ContainerController extends Controller
     {
         $kapals = Kapal::all();
         $tujuans = Tujuan::all();
-        return view('back.pages.container.form', compact('container', 'kapals', 'tujuans'));
+        return view('back.pages.container-cost.form', compact('container', 'kapals', 'tujuans'));
     }
 
     /**
@@ -103,12 +103,12 @@ class ContainerController extends Controller
             'eta' => 'nullable|date|after_or_equal:etd',
             'metode' => 'nullable|in:FCL,LCL,Break Bulk',
             'tipe_kontainer' => 'nullable|in:20FT,40FT,40HC,45HC',
-            'catatan' => 'nullable|string',
+            'catatan_finance' => 'nullable|string',
         ]);
 
         $container->update($request->all());
 
-        return redirect()->route('admin.container.index')->with('success', 'Data Container berhasil diupdate.');
+        return redirect()->route('admin.container-cost.index')->with('success', 'Data Container Cost berhasil diupdate.');
     }
 
     /**
@@ -127,6 +127,6 @@ class ContainerController extends Controller
     public function print(Container $container)
     {
         $container->load(['kapal', 'asal', 'tujuan', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance']);
-        return view('back.pages.container.print', compact('container'));
+        return view('back.pages.container-cost.print', compact('container'));
     }
 }
