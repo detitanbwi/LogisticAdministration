@@ -28,19 +28,35 @@
             <div class="d-flex align-items-center">
                 <div class="dropdown nxl-h-item">
                     <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" data-bs-auto-close="outside">
-                        <img src="{{ asset('back/assets/images/avatar/1.png') }}" alt="user-image"
-                            class="img-fluid user-avtar me-0" />
+                        @if(Auth::user()->photo)
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url(Auth::user()->photo) }}" alt="user-image"
+                                class="img-fluid user-avtar me-0 border border-1 border-primary"
+                                style="object-fit: cover;" />
+                        @else
+                            <div class="user-avtar me-0 bg-soft-primary text-primary fw-bold d-flex align-items-center justify-content-center"
+                                style="border-radius: 50%; font-size: 16px;">
+                                {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+                            </div>
+                        @endif
                     </a>
                     <div class="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
                         <div class="dropdown-header">
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('back/assets/images/avatar/1.png') }}" alt="user-image"
-                                    class="img-fluid user-avtar" />
+                                @if(Auth::user()->photo)
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url(Auth::user()->photo) }}"
+                                        alt="user-image" class="img-fluid user-avtar me-3 border border-1 border-primary"
+                                        style="object-fit: cover;" />
+                                @else
+                                    <div class="user-avtar me-3 bg-soft-primary text-primary fw-bold d-flex align-items-center justify-content-center"
+                                        style="border-radius: 50%; font-size: 16px;">
+                                        {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+                                    </div>
+                                @endif
                                 <div>
                                     <h6 class="text-dark mb-0">{{ Auth::user()->name ?? 'Administrator' }} <span
                                             class="badge bg-soft-primary text-primary ms-1">PRO</span></h6>
-                                    <span
-                                        class="fs-12 fw-medium text-muted">{{ Auth::user()->email ?? 'admin@example.com' }}</span>
+                                    <span class="fs-12 fw-medium text-muted">{{ Auth::user()->email ??
+                                        'admin@example.com' }}</span>
                                 </div>
                             </div>
                         </div>

@@ -20,9 +20,15 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
-                        <div class="avatar-text avatar-xl bg-soft-primary text-primary me-3 border border-2 border-primary">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
-                        </div>
+                        @if($user->photo)
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($user->photo) }}"
+                                class="rounded-circle border border-2 border-primary me-3"
+                                style="width: 80px; height: 80px; object-fit: cover;">
+                        @else
+                            <div class="avatar-text avatar-xl bg-soft-primary text-primary me-3 border border-2 border-primary">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                        @endif
                         <div>
                             <h4 class="mb-1">{{ $user->name }}</h4>
                             <p class="mb-0 text-muted">{{ $user->email }}</p>

@@ -41,11 +41,15 @@ class InvoiceController extends Controller
             }
 
             if ($request->filled('asal_id')) {
-                $query->where('asal_id', $request->asal_id);
+                $query->whereHas('container', function ($q) use ($request) {
+                    $q->where('asal_id', $request->asal_id);
+                });
             }
 
             if ($request->filled('tujuan_id')) {
-                $query->where('tujuan_id', $request->tujuan_id);
+                $query->whereHas('container', function ($q) use ($request) {
+                    $q->where('tujuan_id', $request->tujuan_id);
+                });
             }
 
             return DataTables::of($query)

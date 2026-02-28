@@ -134,7 +134,7 @@
                 <th>Koli</th>
                 <th>Jumlah</th>
                 <th>Sat</th>
-                <th>Status Tanda Terima</th>
+                <th>BAP BALIK</th>
                 <th>Status Pembayaran</th>
                 <th>Layanan</th>
                 <th>PKP / Non PKP</th>

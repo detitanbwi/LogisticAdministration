@@ -49,6 +49,29 @@ class ProfileController extends Controller
             $user->password = Hash::make($validated['password']);
         }
 
+        if ($request->filled('cropped_photo')) {
+            try {
+                $base64Image = $request->input('cropped_photo');
+                $imageParts = explode(';base64,', $base64Image);
+                if (count($imageParts) === 2) {
+                    $imageTypeAux = explode('image/', $imageParts[0]);
+                    $imageType = isset($imageTypeAux[1]) ? $imageTypeAux[1] : 'jpg';
+                    $imageBase64 = base64_decode($imageParts[1]);
+                    $fileName = 'avatars/' . uniqid() . '.' . $imageType;
+
+                    if ($user->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->photo)) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($user->photo);
+                    }
+
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $imageBase64);
+                    $user->photo = $fileName;
+                }
+            } catch (\Exception $e) {
+                // Ignore silent failure for photo upload, or log it
+                \Illuminate\Support\Facades\Log::error('Photo upload error: ' . $e->getMessage());
+            }
+        }
+
         $user->save();
 
         return back()->with('success', 'Profile updated successfully.');

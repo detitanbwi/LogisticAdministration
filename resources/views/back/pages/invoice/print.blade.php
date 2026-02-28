@@ -48,6 +48,9 @@
         @media print {
             body {
                 padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .no-print {
@@ -125,15 +128,15 @@
         <!-- Header Section -->
         <table class="w-100 collapse" style="border-bottom: 1px solid #000; margin-bottom: 5px;">
             <tr>
-                <td style="width: 25%; vertical-align: middle; padding: 5px;">
+                <td style="width: 20%; vertical-align: middle; padding: 5px;">
                     <img src="{{ asset('back/assets/images/logo-scj.png') }}" alt="SCJ Logo"
                         style="max-height: 100px; max-width: 150px; object-fit: contain;">
                 </td>
-                <td style="width: 75%; vertical-align: top; text-align: right; padding: 5px;">
+                <td style="width: 80%; vertical-align: top; text-align: right; padding: 5px;">
                     <h1
                         style="margin: 0 0 5px 0; font-family: 'Arial', sans-serif; font-size: 24pt; font-weight: bold;">
                         PT. SINAR <span style="color: red;">CEMARA</span> JAYA</h1>
-                    <div style="font-size: 10.5pt; font-weight: bold; line-height: 1.3;">
+                    <div style="font-size: 10pt; font-weight: bold; line-height: 1.3;">
                         JL. Swasembada Timur XIII No.32 C, Kel. Kebon Bawang, Kec. Tanjung Priok<br>
                         Jakarta Utara 14320 | Email: sinarcemarajaya@gmail.com<br>
                         <a href="http://www.sinarcemarajaya.com"
@@ -297,20 +300,21 @@
                     </div>
                 </td>
                 <td style="width: 20%; padding: 5px 10px;">Total DPP</td>
-                <td style="width: 5%; padding: 5px 0 5px 5px;">Rp</td>
-                <td class="text-right" style="width: 15%; padding: 5px 10px 5px 0;">
+                <td style="width: 5%; padding: 5px 0 5px 5px; color: red;">Rp</td>
+                <td class="text-right" style="width: 15%; padding: 5px 10px 5px 0; color: red;">
                     {{ number_format($dpp, 0, ',', '.') }}
                 </td>
             </tr>
             <tr>
                 <td style="padding: 5px 10px;">PKP</td>
-                <td style="padding: 5px 0 5px 5px;">Rp</td>
-                <td class="text-right" style="padding: 5px 10px 5px 0;">
+                <td style="padding: 5px 0 5px 5px; color: red;">Rp</td>
+                <td class="text-right" style="padding: 5px 10px 5px 0; color: red;">
                     {{ $ppn > 0 ? number_format($ppn, 0, ',', '.') : '-' }}
                 </td>
             </tr>
             <tr style="background-color: yellow;">
-                <td style="padding: 5px 10px; border: 1px solid #000; border-right: none;">Grand Total</td>
+                <td class="text-center" style="padding: 5px 10px; border: 1px solid #000; border-right: none;">TOTAL
+                </td>
                 <td style="padding: 5px 0 5px 5px; border-top: 1px solid #000; border-bottom: 1px solid #000;">Rp</td>
                 <td class="text-right" style="padding: 5px 10px 5px 0; border: 1px solid #000; border-left: none;">
                     {{ number_format($grandTotal, 0, ',', '.') }}
@@ -322,11 +326,11 @@
 
         <!-- Terbilang Block -->
         <table class="w-100 collapse bordered font-bold italic"
-            style="border: 1px solid #000; font-style: italic; margin-bottom: 10px;">
+            style="border: 1px solid #000; font-style: italic; margin-bottom: 10px; background-color: #d9e1f2;">
             <tr>
-                <td style="width: 20%; padding: 4px 10px;">Terbilang :</td>
+                <td style="width: 20%; padding: 4px 10px; border-right: 1px solid #000;">Terbilang :</td>
                 <td class="text-center" style="padding: 4px 10px;">
-                    {{ terbilang($grandTotal) }} rupiah
+                    {{ terbilang($grandTotal) }} Rupiah
                 </td>
             </tr>
         </table>
