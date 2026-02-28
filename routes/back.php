@@ -42,9 +42,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('customer', CustomerController::class);
         // Packing List (Invoicing) & Container Cost (Finance)
         Route::get('packing-list/{container}/print', [PackingListController::class, 'print'])->name('packing-list.print');
-        Route::resource('packing-list', PackingListController::class);
+        Route::resource('packing-list', PackingListController::class)->parameters(['packing-list' => 'container']);
         Route::get('container-cost/{container}/print', [ContainerCostController::class, 'print'])->name('container-cost.print');
-        Route::resource('container-cost', ContainerCostController::class);
+        Route::resource('container-cost', ContainerCostController::class)->parameters(['container-cost' => 'container']);
         Route::resource('transaksi-kategori', App\Http\Controllers\Back\TransaksiKategoriController::class);
         Route::resource('bank-rekening', App\Http\Controllers\Back\BankRekeningController::class);
         Route::resource('transaksi', App\Http\Controllers\Back\TransaksiController::class);
