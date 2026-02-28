@@ -117,7 +117,7 @@ class InvoiceController extends Controller
         abort_unless(auth()->user()->can('create.invoice'), 403);
 
         $customers = Customer::all();
-        $containers = Container::all();
+        $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
 
         return view('back.pages.invoice.form', compact('customers', 'containers'));
     }
@@ -185,7 +185,7 @@ class InvoiceController extends Controller
 
         $invoice->load('items', 'finance');
         $customers = Customer::all();
-        $containers = Container::all();
+        $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
 
         return view('back.pages.invoice.form', compact('invoice', 'customers', 'containers'));
     }

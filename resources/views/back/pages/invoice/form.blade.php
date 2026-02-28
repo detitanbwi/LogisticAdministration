@@ -105,7 +105,12 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <x-back.select2 label="Contr/Seal" name="container_id" :options="$containers->pluck('nomor_container', 'id')->toArray()" :selected="$invoice->container_id ?? null"
+                                <x-back.select2 label="Contr/Seal" name="container_id" :options="$containers->mapWithKeys(function($c) {
+                                    $kapal = $c->kapal ? $c->kapal->nama_kapal : '-';
+                                    $asal = $c->asal ? $c->asal->nama_tujuan : '-';
+                                    $tujuan = $c->tujuan ? $c->tujuan->nama_tujuan : '-';
+                                    return [$c->id => $c->nomor_container . ' (' . $kapal . ' | ' . $asal . ' -> ' . $tujuan . ')'];
+                                })->toArray()" :selected="$invoice->container_id ?? null"
                                     placeholder="Pilih Contr/Seal" createOptionForm="#collapseContainer" toggleType="collapse" />
                             </div>
 
@@ -362,8 +367,10 @@
                 success: function(response) {
                     $('#collapseContainer').collapse('hide');
                     form.find('input, select, textarea').val('').trigger('change');
-                    const newOption = new Option(response.nomor_container || response.name, response.id, false,
-                        false);
+                    const asaltxt = $('#inline_asal_id option:selected').text() || '-';
+                    const tujuantxt = $('#inline_tujuan_id option:selected').text() || '-';
+                    const kapaltxt = $('#inline_kapal_id option:selected').text() || '-';
+                    const newOption = new Option((response.nomor_container || response.name) + ' (' + kapaltxt + ' | ' + asaltxt + ' -> ' + tujuantxt + ')', response.id, false, false);
                     $('#container_id').append(newOption).trigger('change');
                     Swal.fire('Berhasil', 'Data Contr/Seal berhasil ditambahkan', 'success');
                 },

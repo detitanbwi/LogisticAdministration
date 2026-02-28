@@ -41,9 +41,9 @@
         </div>
     </div>
 
-    <div class="row mb-4 align-items-end">
+    <div class="row align-items-end mb-4">
         <div class="col-md-3">
-            <div class="form-group mb-0">
+            <div class="form-group mb-3">
                 <label class="form-label">Range Tanggal:</label>
                 <input type="text" class="form-control dt-filter" name="daterange" id="filterDate"
                     placeholder="Pilih Tanggal">
@@ -64,13 +64,16 @@
                 })
                 ->toArray()" />
         </div>
-        <div class="col-md-3 d-flex justify-content-end align-items-end mt-3 mt-md-0">
-            @can('create.transaksi')
-                <a href="{{ route('admin.transaksi.create') }}" class="btn btn-primary h-100">
-                    <i class="feather-plus me-2"></i>
-                    <span>Tambah Transaksi</span>
-                </a>
-            @endcan
+        <div class="col-md-3">
+            <div class="form-group mb-3">
+                <label class="form-label d-none d-md-block">&nbsp;</label>
+                @can('create.transaksi')
+                    <a href="{{ route('admin.transaksi.create') }}" class="btn btn-primary w-100">
+                        <i class="feather-plus me-2"></i>
+                        <span>Tambah Transaksi</span>
+                    </a>
+                @endcan
+            </div>
         </div>
     </div>
 
@@ -86,90 +89,13 @@
 @endsection
 
 @push('scripts')
-    <script>
-        $(document).ready(function () {
-            // Add dt-filter class manually because component attributes conflict with class attribute
-            $('#filterBank, #filterJenis').addClass('dt-filter');
-
-            if ($('#filterDate').length) {
-                $('#filterDate').daterangepicker({
-                    autoUpdateInput: false,
-                    locale: {
-                        cancelLabel: 'Clear',
-                        format: 'YYYY-MM-DD'
-                    }
-                });
-
-                $('#filterDate').on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-                    reloadTableAndSummary();
-                });
-
-                $('#filterDate').on('cancel.daterangepicker', function (ev, picker) {
-                    $(this).val('');
-                    reloadTableAndSummary();
-                });
-            }
-
-            $('.dt-filter').on('change', function () {
-                reloadTableAndSummary();
-            });
-
-            function reloadTableAndSummary() {
-                if ($.fn.DataTable.isDataTable('#transaksiTable')) {
-                    $('#transaksiTable').DataTable().ajax.reload();
-                }
-
-                $.ajax({
-                    url: '{{ route('admin.transaksi.index') }}',
-                    data: {
-                        summary: true,
-                        bank_rekening_id: $('#filterBank').val(),
-                        jenis: $('#filterJenis').val(),
-                        daterange: $('#filterDate').val()
-                    },
-                    success: function (res) {
-                        $('#summary-pemasukan').text(res.total_pemasukan);
-                        $('#summary-pengeluaran').text(res.total_pengeluaran);
-                        $('#summary-saldo').text(res.saldo);
-                    }
-                });
-            }
-        });
-
-        $(document).on('click', '.delete-btn', function () {
-            var id = $(this).data('id');
-            Swal.fire({
-                title: 'Apakah anda yakin?',
-                text: 'Data transaksi akan dihapus permanen dan saldo rekening akan disesuaikan kembali!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal',
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: '{{ route('admin.transaksi.index') }}/' + id,
-                        type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function (response) {
-                            Swal.fire('Terhapus!', response.success, 'success');
-                            $('#transaksiTable').DataTable().ajax.reload();
-                        },
-                        error: function (xhr) {
-                            var message = 'Terjadi kesalahan saat menghapus data.';
-                            if (xhr.responseJSON && xhr.responseJSON.error) {
-                                message = xhr.responseJSON.error;
-                            }
-                            Swal.fire('Gagal!', message, 'error');
-                        },
-                    });
-                }
-            });
-        });
+    <script>     $(document).ready(function () {         // Add dt-filter class manually because component attributes conflict with class attribute         $('#filterBank, #filterJenis').addClass('dt-filter');
+             if ($('#filterDate').length) {             $('#filterDate').daterangepicker({                 autoUpdateInput: false,                 locale: {                     cancelLabel: 'Clear',                     format: 'YYYY-MM-DD'                 }             });
+                 $('#filterDate').on('apply.daterangepicker', function (ev, picker) {                 $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));                 reloadTableAndSummary();             });
+                 $('#filterDate').on('cancel.daterangepicker', function (ev, picker) {                 $(this).val('');                 reloadTableAndSummary();             });         }
+             $('.dt-filter').on('change', function () {             reloadTableAndSummary();         });
+             function reloadTableAndSummary() {             if ($.fn.DataTable.isDataTable('#transaksiTable')) {                 $('#transaksiTable').DataTable().ajax.reload();             }
+                 $.ajax({                 url: '{{ route('admin.transaksi.index') }}',                 data: {                     summary: true,                     bank_rekening_id: $('#filterBank').val(),                     jenis: $('#filterJenis').val(),                     daterange: $('#filterDate').val()                 },                 success: function (res) {                     $('#summary-pemasukan').text(res.total_pemasukan);                     $('#summary-pengeluaran').text(res.total_pengeluaran);                     $('#summary-saldo').text(res.saldo);                 }             });         }     });
+         $(document).on('click', '.delete-btn', function () {         var id = $(this).data('id');         Swal.fire({             title: 'Apakah anda yakin?',             text: 'Data transaksi akan dihapus permanen dan saldo rekening akan disesuaikan kembali!',             icon: 'warning',             showCancelButton: true,             confirmButtonColor: '#d33',             cancelButtonColor: '#3085d6',             confirmButtonText: 'Ya, hapus!',             cancelButtonText: 'Batal',         }).then((result) => {             if (result.value) {                 $.ajax({                     url: '{{ route('admin.transaksi.index') }}/' + id,                     type: 'DELETE',                     headers: {                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')                     },                     success: function (response) {                         Swal.fire('Terhapus!', response.success, 'success');                         $('#transaksiTable').DataTable().ajax.reload();                     },                     error: function (xhr) {                         var message = 'Terjadi kesalahan saat menghapus data.';                         if (xhr.responseJSON && xhr.responseJSON.error) {                             message = xhr.responseJSON.error;                         }                         Swal.fire('Gagal!', message, 'error');                     },                 });             }         });     });
     </script>
 @endpush
