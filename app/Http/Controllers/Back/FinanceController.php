@@ -106,7 +106,10 @@ class FinanceController extends Controller
 
             // Auto Insert to Transaksi
             if ($finance->tgl_transfer && $finance->total_tagihan > 0) {
-                $rekening = \App\Models\BankRekening::first();
+                $rekening = \App\Models\BankRekening::firstOrCreate(
+                    ['no_rekening' => '0000000000'],
+                    ['nama_bank' => 'Kas / Bank Utama', 'nama_pemilik' => 'Perusahaan', 'saldo' => 0]
+                );
                 $kategori = \App\Models\TransaksiKategori::firstOrCreate(
                     ['nama' => 'Pemasukan Invoice'],
                     ['jenis' => 'pemasukan']
