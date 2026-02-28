@@ -103,6 +103,47 @@ class FinanceController extends Controller
                 'terima_barang' => $request->terima_barang,
                 'status_pembayaran' => $request->status_pembayaran
             ]);
+
+            // Auto Insert to Transaksi
+            if ($finance->tgl_transfer && $finance->total_tagihan > 0) {
+                $rekening = \App\Models\BankRekening::first();
+                $kategori = \App\Models\TransaksiKategori::firstOrCreate(
+                    ['nama' => 'Pemasukan Invoice'],
+                    ['jenis' => 'pemasukan']
+                );
+
+                if ($rekening) {
+                    $keterangan = 'Pembayaran Invoice ' . $finance->invoice->no_invoice;
+                    $existingTransaksi = \App\Models\Transaksi::where('keterangan', $keterangan)->first();
+
+                    if (!$existingTransaksi) {
+                        \App\Models\Transaksi::create([
+                            'tanggal' => $finance->tgl_transfer,
+                            'jenis' => 'pemasukan',
+                            'transaksi_kategori_id' => $kategori->id,
+                            'nominal' => $finance->total_tagihan,
+                            'keterangan' => $keterangan,
+                            'bank_rekening_id' => $rekening->id
+                        ]);
+
+                        $rekening->saldo += $finance->total_tagihan;
+                        $rekening->save();
+                    } else {
+                        // Update if exists
+                        $diff = $finance->total_tagihan - $existingTransaksi->nominal;
+                        $oldRekeningId = $existingTransaksi->bank_rekening_id;
+                        $existingTransaksi->update([
+                            'tanggal' => $finance->tgl_transfer,
+                            'nominal' => $finance->total_tagihan,
+                        ]);
+
+                        if ($diff != 0 && $oldRekeningId == $rekening->id) {
+                            $rekening->saldo += $diff;
+                            $rekening->save();
+                        }
+                    }
+                }
+            }
         }
 
         return redirect()->route('admin.finance.index')->with('success', 'Data finance berhasil diperbarui.');

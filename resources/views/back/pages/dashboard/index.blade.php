@@ -41,7 +41,7 @@
         <!-- [Total Invoice] end -->
 
         <!-- [Total Pendapatan] start -->
-        @can('view_total_pendapatan.dashboard')
+        @if(auth()->user()->hasRole('admin') || auth()->user()->can('view_total_pendapatan.dashboard'))
             <div class="col-xxl-3 col-md-6">
                 <div class="card stretch stretch-full">
                     <div class="card-body">
@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>
-        @endcan
+        @endif
         <!-- [Total Pendapatan] end -->
 
         <!-- [Belum Ditagih] start -->
