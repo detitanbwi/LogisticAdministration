@@ -34,7 +34,7 @@
                                 style="object-fit: cover;" />
                         @else
                             <div class="user-avtar me-0 bg-soft-primary text-primary fw-bold d-flex align-items-center justify-content-center"
-                                style="border-radius: 50%; font-size: 16px;">
+                                style="border-radius: 50%; font-size: 16px; width: 40px; height: 40px; aspect-ratio: 1;">
                                 {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
                             </div>
                         @endif
@@ -48,7 +48,7 @@
                                         style="object-fit: cover;" />
                                 @else
                                     <div class="user-avtar me-3 bg-soft-primary text-primary fw-bold d-flex align-items-center justify-content-center"
-                                        style="border-radius: 50%; font-size: 16px;">
+                                        style="border-radius: 50%; font-size: 16px; width: 40px; height: 40px; aspect-ratio: 1;">
                                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
                                     </div>
                                 @endif
