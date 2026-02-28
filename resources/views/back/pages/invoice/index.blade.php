@@ -60,6 +60,7 @@
             'Pengirim',
             'Penerima',
             'Tagihan',
+            'Tanda Terima',
             'Catatan',
             'Aksi',
         ]" :data="[
@@ -71,6 +72,7 @@
             'pengirim',
             'penerima',
             'total_tagihan' => ['searchable' => false, 'orderable' => false],
+            'tanda_terima',
             'catatan_muntahan' => ['searchable' => false, 'orderable' => false],
             'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
         ]" />
@@ -122,6 +124,7 @@
                     '<td>' + data.pengirim + '</td>' +
                     '<td>' + data.penerima + '</td>' +
                     '<td>' + data.total_tagihan + '</td>' +
+                    '<td>' + (data.tanda_terima ? data.tanda_terima : '-') + '</td>' +
                     '</tr>';
             });
 
@@ -134,41 +137,42 @@
                 '</p>';
 
             printWindow.document.write(`
-                                <html>
-                                <head>
-                                    <title>Rekapitulasi Invoice</title>
-                                    <style>
-                                        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
-                                        h2 { text-align: center; margin-bottom: 5px; }
-                                        .filter-info { margin-bottom: 15px; }
-                                        .filter-info p { margin: 2px 0; font-size: 10pt; }
-                                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                                        th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
-                                        th { background-color: #f0f0f0; font-weight: bold; }
-                                        @media print { body { margin: 0; } }
-                                    </style>
-                                </head>
-                                <body>
-                                    <h2>Rekapitulasi Invoice</h2>
-                                    <h4 style="text-align:center; margin-top:0;">PT. SINAR CEMARA JAYA</h4>
-                                    <div class="filter-info">${filterInfo}</div>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>No Invoice</th>
-                                                <th>ETD</th>
-                                                <th>Pengirim</th>
-                                                <th>Penerima</th>
-                                                <th>Tagihan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>${rows}</tbody>
-                                    </table>
-                                    <script>window.print();<\/script>
-                                </body>
-                                </html>
-                            `);
+                                    <html>
+                                    <head>
+                                        <title>Rekapitulasi Invoice</title>
+                                        <style>
+                                            body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
+                                            h2 { text-align: center; margin-bottom: 5px; }
+                                            .filter-info { margin-bottom: 15px; }
+                                            .filter-info p { margin: 2px 0; font-size: 10pt; }
+                                            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                                            th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
+                                            th { background-color: #f0f0f0; font-weight: bold; }
+                                            @media print { body { margin: 0; } }
+                                        </style>
+                                    </head>
+                                    <body>
+                                        <h2>Rekapitulasi Invoice</h2>
+                                        <h4 style="text-align:center; margin-top:0;">PT. SINAR CEMARA JAYA</h4>
+                                        <div class="filter-info">${filterInfo}</div>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>No Invoice</th>
+                                                    <th>ETD</th>
+                                                    <th>Pengirim</th>
+                                                    <th>Penerima</th>
+                                                    <th>Tagihan</th>
+                                                    <th>Tanda Terima</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>${rows}</tbody>
+                                        </table>
+                                        <script>window.print();<\/script>
+                                    </body>
+                                    </html>
+                                `);
             printWindow.document.close();
         }
 
