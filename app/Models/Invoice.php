@@ -24,6 +24,7 @@ class Invoice extends Model
         'pkp_status',
         'terima_barang',
         'catatan_muntahan',
+        'tanda_terima',
     ];
 
     protected $casts = [

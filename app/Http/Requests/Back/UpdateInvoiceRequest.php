@@ -33,6 +33,7 @@ class UpdateInvoiceRequest extends FormRequest
             'status_pembayaran' => 'nullable|in:Serahkan,Tahan',
             'pkp_status' => 'required|in:PKP,Non PKP',
             'catatan_muntahan' => 'nullable|string',
+            'tanda_terima' => 'required|in:SCJ,Pengirim',
 
             'items' => 'required|array|min:1',
             'items.*.jenis_barang' => 'required|string',

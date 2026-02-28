@@ -210,6 +210,10 @@
         'Port to Port' => 'PORT TO PORT',
     ]" :selected="$invoice->layanan ?? 'DOOR TO DOOR'" />
                         </div>
+
+                        <div class="mb-3">
+                            <x-back.select2 label="Tanda Terima" name="tanda_terima" :options="['SCJ' => 'SCJ', 'Pengirim' => 'Pengirim']" :selected="$invoice->tanda_terima ?? 'SCJ'" />
+                        </div>
                     </div>
                 </div>
             </div>
