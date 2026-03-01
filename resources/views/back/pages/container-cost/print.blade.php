@@ -75,6 +75,7 @@
 
 <body onload="window.print()">
     <!-- Header Section -->
+    @if(!isset($isExport))
     <table class="w-100 collapse" style="border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 5px;">
         <tr>
             <td style="width: 25%; vertical-align: middle; padding: 5px;">
@@ -93,8 +94,9 @@
             </td>
         </tr>
     </table>
+    @endif
 
-    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">LAPORAN PEMBAYARAN
+    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">CONTAINER COST_LAPORAN PEMBAYARAN
     </h2>
 
     <table class="w-100 collapse" style="margin-bottom: 15px; font-size: 10pt;">
@@ -109,7 +111,7 @@
             <td style="padding: 2px;">:
                 {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}</td>
             <td style="padding: 2px; font-weight:bold;">Lokasi Tujuan</td>
-            <td style="padding: 2px;">: {{ $container->tujuan->nama_tujuan ?? '-' }}</td>
+            <td style="padding: 2px;">: {{ $container->tujuan->nama_tujuan ?? '-' }}{{ $container->tujuanDaerah ? ' - ' . $container->tujuanDaerah->nama : '' }}</td>
         </tr>
         <tr>
             <td style="padding: 2px; font-weight:bold;">Contr / Seal</td>
@@ -120,24 +122,25 @@
     </table>
 
     <!-- Table Data Invoice -->
-    <table class="w-100 collapse table-data">
+    <table class="w-100 collapse table-data" {{ isset($isExport) ? 'border="1"' : '' }}>
         <thead>
             <tr>
-                <th>No</th>
-                <th>No Invoice</th>
-                <th>Tgl Masuk</th>
-                <th>Pengirim</th>
-                <th>HP Pengirim</th>
-                <th>Penerima</th>
-                <th>HP Penerima</th>
-                <th style="min-width: 80px;">Jenis</th>
-                <th>Koli</th>
-                <th>Jumlah</th>
-                <th>Sat</th>
-                <th>BAP BALIK</th>
-                <th>Status</th>
-                <th>Layanan</th>
-                <th>STTS PKP</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No Invoice</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tgl Masuk</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Pengirim</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>HP Pengirim</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Penerima</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>HP Penerima</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }} style="min-width: 80px;">Jenis
+                    Barang</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Koli</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Jumlah</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Sat</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>BAP BALIK</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Status</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Layanan</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>STTS PKP</th>
             </tr>
         </thead>
         <tbody>
@@ -195,7 +198,7 @@
     </table>
 
     <!-- Footer Note -->
-    @if(!empty($container->catatan_finance))
+    @if(!isset($isExport) && !empty($container->catatan_finance))
         <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
             <strong>Catatan Finance:</strong><br>
             {!! nl2br(e($container->catatan_finance)) !!}

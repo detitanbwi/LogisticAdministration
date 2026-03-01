@@ -14,6 +14,7 @@ class Finance extends Model
         'total_tagihan',
         'ditagih_ke',
         'status_tagihan',
+        'tanggal_tagih',
         'tgl_transfer',
         'catatan',
         'bap_balik',
@@ -22,6 +23,7 @@ class Finance extends Model
     protected $casts = [
         'total_tagihan' => 'decimal:2',
         'tgl_transfer' => 'date',
+        'tanggal_tagih' => 'date',
     ];
 
     public function invoice(): BelongsTo

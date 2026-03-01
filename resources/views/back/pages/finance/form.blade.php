@@ -44,6 +44,11 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
+                                <x-back.text-input type="date" label="Tanggal Tagih" name="tanggal_tagih"
+                                    :value="$finance->tanggal_tagih ? $finance->tanggal_tagih->format('Y-m-d') : ''" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
                                 <x-back.text-input type="date" label="Tanggal Transfer" name="tgl_transfer"
                                     :value="$finance->tgl_transfer ? $finance->tgl_transfer->format('Y-m-d') : ''" />
                             </div>

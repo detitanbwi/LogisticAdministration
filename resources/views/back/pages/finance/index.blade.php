@@ -23,21 +23,23 @@
             onclick="$('.dt-filter').val(''); $('#filterStatus').val('').trigger('change'); $('#financeTable').DataTable().ajax.reload()">Reset</button>
     </div>
 
-    <x-back.datatable id="financeTable" :ajax="route('admin.finance.index')" :header="['No', 'No Invoice', 'Total Tagihan', 'Status Tagihan', 'Tgl Transfer', 'Aksi']" :data="[
-        'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
-        'no_invoice',
-        'total_tagihan',
-        'status_tagihan',
-        'tgl_transfer',
-        'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
-    ]" />
+    <x-back.datatable id="financeTable" :ajax="route('admin.finance.index')" :header="['No', 'No Invoice', 'Total Tagihan', 'Status Tagihan', 'Tanggal Tagih', 'Masa Tunggakan', 'Tgl Transfer', 'Aksi']" :data="[
+            'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
+            'no_invoice',
+            'total_tagihan',
+            'status_tagihan',
+            'tanggal_tagih',
+            'masa_tunggakan' => ['searchable' => false, 'orderable' => false],
+            'tgl_transfer',
+            'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
+        ]" />
 @endsection
 
 @push('scripts')
     <script>
-        $(function() {
+        $(function () {
             // Native select change handler
-            $('#filterStatus').on('change', function() {
+            $('#filterStatus').on('change', function () {
                 $('#financeTable').DataTable().ajax.reload();
             });
 
@@ -50,13 +52,13 @@
                     }
                 });
 
-                $('#filterDaterange').on('apply.daterangepicker', function(ev, picker) {
+                $('#filterDaterange').on('apply.daterangepicker', function (ev, picker) {
                     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format(
                         'MM/DD/YYYY'));
                     $('#financeTable').DataTable().ajax.reload();
                 });
 
-                $('#filterDaterange').on('cancel.daterangepicker', function(ev, picker) {
+                $('#filterDaterange').on('cancel.daterangepicker', function (ev, picker) {
                     $(this).val('');
                     $('#financeTable').DataTable().ajax.reload();
                 });

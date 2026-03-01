@@ -39,11 +39,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Master Data
         Route::resource('kapal', KapalController::class);
         Route::resource('tujuan', TujuanController::class);
+        Route::resource('tujuan-daerah', App\Http\Controllers\Back\TujuanDaerahController::class)->only(['store']);
         Route::resource('customer', CustomerController::class);
         // Packing List (Invoicing) & Container Cost (Finance)
         Route::get('packing-list/{container}/print', [PackingListController::class, 'print'])->name('packing-list.print');
+        Route::get('packing-list/{container}/export', [PackingListController::class, 'export'])->name('packing-list.export');
         Route::resource('packing-list', PackingListController::class)->parameters(['packing-list' => 'container']);
+
         Route::get('container-cost/{container}/print', [ContainerCostController::class, 'print'])->name('container-cost.print');
+        Route::get('container-cost/{container}/export', [ContainerCostController::class, 'export'])->name('container-cost.export');
         Route::resource('container-cost', ContainerCostController::class)->parameters(['container-cost' => 'container']);
         Route::resource('transaksi-kategori', App\Http\Controllers\Back\TransaksiKategoriController::class);
         Route::resource('bank-rekening', App\Http\Controllers\Back\BankRekeningController::class);

@@ -51,6 +51,24 @@ class FinanceController extends Controller
                     }
                     return '<span class="badge bg-soft-danger text-danger">Belum dibayar</span>';
                 })
+                ->addColumn('tanggal_tagih', function ($row) {
+                    return $row->tanggal_tagih ? \Carbon\Carbon::parse($row->tanggal_tagih)->format('d-m-Y') : '-';
+                })
+                ->addColumn('masa_tunggakan', function ($row) {
+                    if (!$row->tanggal_tagih)
+                        return '-';
+                    if ($row->tgl_transfer)
+                        return '<span class="badge bg-soft-success text-success">Lunas</span>';
+
+                    $today = \Carbon\Carbon::now()->startOfDay();
+                    $tagih = \Carbon\Carbon::parse($row->tanggal_tagih)->startOfDay();
+                    $diffDays = $tagih->diffInDays($today, false);
+
+                    if ($diffDays > 0) {
+                        return '<span class="badge bg-soft-danger text-danger">' . intval($diffDays) . ' Hari</span>';
+                    }
+                    return '-';
+                })
                 ->addColumn('action', function ($row) {
                     $editUrl = route('admin.finance.edit', $row->id);
                     $btn = '<div class="hstack gap-2 justify-content-end">';
@@ -62,7 +80,7 @@ class FinanceController extends Controller
                     $btn .= '</div>';
                     return $btn;
                 })
-                ->rawColumns(['status_tagihan', 'tgl_transfer', 'action'])
+                ->rawColumns(['status_tagihan', 'tgl_transfer', 'masa_tunggakan', 'action'])
                 ->make(true);
         }
 
@@ -89,6 +107,7 @@ class FinanceController extends Controller
         $validated = $request->validate([
             'ditagih_ke' => 'required|in:Pengirim,Penerima',
             'status_tagihan' => 'required|in:Sudah ditagih,Belum',
+            'tanggal_tagih' => 'nullable|date',
             'tgl_transfer' => 'nullable|date',
             'catatan' => 'nullable|string',
             'terima_barang' => 'nullable|date',
@@ -96,7 +115,7 @@ class FinanceController extends Controller
             'status_pembayaran' => 'nullable|in:Serahkan,Tahan',
         ]);
 
-        $finance->update($request->only(['ditagih_ke', 'status_tagihan', 'tgl_transfer', 'catatan', 'bap_balik']));
+        $finance->update($request->only(['ditagih_ke', 'status_tagihan', 'tanggal_tagih', 'tgl_transfer', 'catatan', 'bap_balik']));
 
         if ($finance->invoice) {
             $finance->invoice->update([

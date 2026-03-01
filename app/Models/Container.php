@@ -15,6 +15,7 @@ class Container extends Model
         'kapal_id',
         'asal_id',
         'tujuan_id',
+        'tujuan_daerah_id',
         'etd',
         'eta',
         'tipe_kontainer',
@@ -41,6 +42,11 @@ class Container extends Model
     public function tujuan(): BelongsTo
     {
         return $this->belongsTo(Tujuan::class);
+    }
+
+    public function tujuanDaerah(): BelongsTo
+    {
+        return $this->belongsTo(TujuanDaerah::class);
     }
 
     public function invoices(): HasMany

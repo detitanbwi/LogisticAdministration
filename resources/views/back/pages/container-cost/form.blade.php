@@ -59,6 +59,30 @@
                                     :selected="old('tipe_kontainer', $container->tipe_kontainer ?? '20FT')" required />
                             </div>
 
+                            <div class="col-md-6 mb-3">
+                                <x-back.select2 label="Tujuan Daerah" name="tujuan_daerah_id" id="tujuan_daerah_id"
+                                    :options="$tujuanDaerahs->pluck('nama', 'id')->toArray()"
+                                    :selected="old('tujuan_daerah_id', $container->tujuan_daerah_id ?? null)"
+                                    placeholder="Pilih Tujuan Daerah"
+                                    createOptionForm="#collapseTujuanDaerah" toggleType="collapse" />
+                            </div>
+
+                            <!-- Inline Tujuan Daerah Form -->
+                            <div class="col-12 collapse mt-2 mb-3" id="collapseTujuanDaerah">
+                                <div class="card card-body bg-light border-0 shadow-sm">
+                                    <h6 class="mb-3">Tambah Tujuan Daerah Baru</h6>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <x-back.text-input name="new_tujuan_daerah" id="new_tujuan_daerah" label="Nama Daerah" placeholder="Masukkan Nama Daerah" />
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end gap-2 mb-3">
+                                            <button type="button" class="btn btn-sm btn-secondary" onclick="$('#collapseTujuanDaerah').collapse('hide')">Batal</button>
+                                            <button type="button" class="btn btn-sm btn-primary" onclick="saveTujuanDaerah()">Simpan</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-md-12 mb-3">
                                 <x-back.textarea label="Catatan Finance" name="catatan_finance" rows="3"
                                     placeholder="Contoh: Invoice Finance..." :value="old('catatan_finance', $container->catatan_finance ?? null)" />
@@ -81,3 +105,38 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        function saveTujuanDaerah() {
+            var nama = $('#new_tujuan_daerah').val();
+            if (!nama) {
+                Swal.fire('Error', 'Nama Daerah wajib diisi', 'error');
+                return;
+            }
+            $.ajax({
+                url: '{{ route("admin.tujuan-daerah.store") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    nama: nama
+                },
+                success: function(res) {
+                    var $select = $('#tujuan_daerah_id');
+                    var newOption = new Option(res.nama, res.id, true, true);
+                    $select.append(newOption).trigger('change');
+                    $('#new_tujuan_daerah').val('');
+                    $('#collapseTujuanDaerah').collapse('hide');
+                    Swal.fire('Berhasil', 'Tujuan Daerah berhasil ditambahkan', 'success');
+                },
+                error: function(xhr) {
+                    var message = 'Gagal menambahkan Tujuan Daerah.';
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        message = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                    }
+                    Swal.fire('Error', message, 'error');
+                }
+            });
+        }
+    </script>
+@endpush

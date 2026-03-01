@@ -75,24 +75,26 @@
 
 <body onload="window.print()">
     <!-- Header Section -->
-    <table class="w-100 collapse" style="border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 5px;">
-        <tr>
-            <td style="width: 25%; vertical-align: middle; padding: 5px;">
-                <img src="{{ asset('back/assets/images/logo-scj.png') }}" alt="SCJ Logo"
-                    style="max-height: 80px; max-width: 150px; object-fit: contain;">
-            </td>
-            <td style="width: 75%; vertical-align: top; text-align: right; padding: 5px;">
-                <h1 style="margin: 0 0 5px 0; font-family: 'Arial', sans-serif; font-size: 20pt; font-weight: bold;">
-                    PT. SINAR <span style="color: red;">CEMARA</span> JAYA</h1>
-                <div style="font-size: 10pt; font-weight: bold; line-height: 1.3;">
-                    JL. Swasembada Timur XIII No.32 C, Kel. Kebon Bawang, Kec. Tanjung Priok<br>
-                    Jakarta Utara 14320 | Email: sinarcemarajaya@gmail.com<br>
-                    <a href="http://www.sinarcemarajaya.com"
-                        style="color: blue; text-decoration: underline;">www.sinarcemarajaya.com</a>
-                </div>
-            </td>
-        </tr>
-    </table>
+    @if(!isset($isExport))
+        <table class="w-100 collapse" style="border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 5px;">
+            <tr>
+                <td style="width: 25%; vertical-align: middle; padding: 5px;">
+                    <img src="{{ asset('back/assets/images/logo-scj.png') }}" alt="SCJ Logo"
+                        style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                </td>
+                <td style="width: 75%; vertical-align: top; text-align: right; padding: 5px;">
+                    <h1 style="margin: 0 0 5px 0; font-family: 'Arial', sans-serif; font-size: 20pt; font-weight: bold;">
+                        PT. SINAR <span style="color: red;">CEMARA</span> JAYA</h1>
+                    <div style="font-size: 10pt; font-weight: bold; line-height: 1.3;">
+                        JL. Swasembada Timur XIII No.32 C, Kel. Kebon Bawang, Kec. Tanjung Priok<br>
+                        Jakarta Utara 14320 | Email: sinarcemarajaya@gmail.com<br>
+                        <a href="http://www.sinarcemarajaya.com"
+                            style="color: blue; text-decoration: underline;">www.sinarcemarajaya.com</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    @endif
 
     <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">MANIFEST CONTAINER_PACKING LIST
     </h2>
@@ -107,9 +109,12 @@
         <tr>
             <td style="padding: 2px; font-weight:bold;">Tgl Keberangkatan (ETD)</td>
             <td style="padding: 2px;">:
-                {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}</td>
+                {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}
+            </td>
             <td style="padding: 2px; font-weight:bold;">Lokasi Tujuan</td>
-            <td style="padding: 2px;">: {{ $container->tujuan->nama_tujuan ?? '-' }}</td>
+            <td style="padding: 2px;">:
+                {{ $container->tujuan->nama_tujuan ?? '-' }}{{ $container->tujuanDaerah ? ' - ' . $container->tujuanDaerah->nama : '' }}
+            </td>
         </tr>
         <tr>
             <td style="padding: 2px; font-weight:bold;">Contr / Seal</td>
@@ -120,24 +125,25 @@
     </table>
 
     <!-- Table Data Invoice -->
-    <table class="w-100 collapse table-data">
+    <table class="w-100 collapse table-data" {{ isset($isExport) ? 'border="1"' : '' }}>
         <thead>
             <tr>
-                <th>No</th>
-                <th>No Invoice</th>
-                <th>Tgl Masuk</th>
-                <th>Pengirim</th>
-                <th>HP Pengirim</th>
-                <th>Penerima</th>
-                <th>HP Penerima</th>
-                <th style="min-width: 80px;">Jenis</th>
-                <th>Koli</th>
-                <th>Jumlah</th>
-                <th>Sat</th>
-                <th>BAP BALIK</th>
-                <th>Status</th>
-                <th>Layanan</th>
-                <th>STTS PKP</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No Invoice</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tgl Masuk</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Pengirim</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>HP Pengirim</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Penerima</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>HP Penerima</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }} style="min-width: 80px;">Jenis
+                    Barang</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Koli</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Jumlah</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Sat</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>BAP BALIK</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Status</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Layanan</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>STTS PKP</th>
             </tr>
         </thead>
         <tbody>
@@ -150,7 +156,8 @@
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $no++ }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->no_invoice }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">
-                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}</td>
+                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
+                    </td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->pengirim->no_hp ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
@@ -180,7 +187,8 @@
                             <td>{{ $inv->items[$i]->jenis_barang }}</td>
                             <td class="text-center">{{ $inv->items[$i]->koli }}</td>
                             <td class="text-center">
-                                {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}</td>
+                                {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
+                            </td>
                             <td class="text-center">{{ $inv->items[$i]->satuan }}</td>
                         </tr>
                     @endfor
@@ -195,9 +203,9 @@
     </table>
 
     <!-- Footer Note -->
-    @if(!empty($container->catatan_invoicing))
+    @if(!isset($isExport) && !empty($container->catatan_invoicing))
         <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
-            <strong>Catatan Packing List:</strong><br>
+            <strong>Catatan:</strong><br>
             {!! nl2br(e($container->catatan_invoicing)) !!}
         </div>
     @endif
