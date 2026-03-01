@@ -365,7 +365,7 @@
             const form = $('#containerForm');
             const data = form.find(':input').serialize();
             $.ajax({
-                url: '{{ route('admin.container.store') }}',
+                url: '{{ route('admin.packing-list.store') }}',
                 method: 'POST',
                 data: data + '&_token={{ csrf_token() }}',
                 success: function(response) {

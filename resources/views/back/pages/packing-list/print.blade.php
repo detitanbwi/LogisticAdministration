@@ -127,17 +127,17 @@
                 <th>No Invoice</th>
                 <th>Tgl Masuk</th>
                 <th>Pengirim</th>
-                <th>No HP Pengirim</th>
+                <th>HP Pengirim</th>
                 <th>Penerima</th>
-                <th>No HP Penerima</th>
-                <th>Jenis Barang</th>
+                <th>HP Penerima</th>
+                <th style="min-width: 80px;">Jenis</th>
                 <th>Koli</th>
                 <th>Jumlah</th>
                 <th>Sat</th>
                 <th>BAP BALIK</th>
-                <th>Status Pembayaran</th>
+                <th>Status</th>
                 <th>Layanan</th>
-                <th>PKP / Non PKP</th>
+                <th>STTS PKP</th>
             </tr>
         </thead>
         <tbody>
@@ -197,15 +197,8 @@
     <!-- Footer Note -->
     @if(!empty($container->catatan_invoicing))
         <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
-            <strong>Catatan Invoicing:</strong><br>
+            <strong>Catatan Packing List:</strong><br>
             {!! nl2br(e($container->catatan_invoicing)) !!}
-        </div>
-    @endif
-    
-    @if(!empty($container->catatan_finance))
-        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top; margin-left: 10px;">
-            <strong>Catatan Finance:</strong><br>
-            {!! nl2br(e($container->catatan_finance)) !!}
         </div>
     @endif
 

@@ -26,6 +26,9 @@ class TransaksiController extends Controller
                 ->when($request->jenis, function ($query) use ($request) {
                     $query->where('jenis', $request->jenis);
                 })
+                ->when($request->transaksi_kategori_id, function ($query) use ($request) {
+                    $query->where('transaksi_kategori_id', $request->transaksi_kategori_id);
+                })
                 ->when($request->daterange, function ($query) use ($request) {
                     $dates = explode(' - ', $request->daterange);
                     if (count($dates) == 2) {
@@ -82,6 +85,9 @@ class TransaksiController extends Controller
             ->when($request->jenis, function ($query) use ($request) {
                 $query->where('jenis', $request->jenis);
             })
+            ->when($request->transaksi_kategori_id, function ($query) use ($request) {
+                $query->where('transaksi_kategori_id', $request->transaksi_kategori_id);
+            })
             ->when($request->daterange, function ($query) use ($request) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
@@ -104,7 +110,8 @@ class TransaksiController extends Controller
         }
 
         $rekenings = BankRekening::all();
-        return view('back.pages.transaksi.index', compact('rekenings', 'total_pemasukan', 'total_pengeluaran', 'saldo'));
+        $kategoris = TransaksiKategori::all();
+        return view('back.pages.transaksi.index', compact('rekenings', 'kategoris', 'total_pemasukan', 'total_pengeluaran', 'saldo'));
     }
 
     public function create()

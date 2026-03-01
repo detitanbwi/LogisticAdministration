@@ -111,6 +111,46 @@
     <!--! END: Theme Customizer !-->
     <script src="{{ asset('back/assets/vendors/js/sweetalert2.min.js') }}"></script>
     <x-back.alert />
+
+    {{-- Global AJAX error handler for expired session/token --}}
+    <script>
+        // Setup CSRF token for all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Global AJAX error handler - catch expired sessions (401/419)
+        $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
+            if (jqXHR.status === 401 || jqXHR.status === 419) {
+                // Prevent multiple alerts
+                if (window._sessionExpiredShown) return;
+                window._sessionExpiredShown = true;
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sesi Berakhir',
+                    text: 'Sesi Anda telah berakhir. Silakan login kembali.',
+                    confirmButtonText: 'Login',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                }).then(function () {
+                    window.location.href = '{{ route("admin.login") }}';
+                });
+            }
+        });
+
+        // Override DataTables default error handler to prevent ugly alerts
+        if ($.fn.dataTable) {
+            $.fn.dataTable.ext.errMode = 'none';
+            $(document).on('error.dt', function (e, settings, techNote, message) {
+                // Silently ignore - the global ajaxError handler above will handle 401/419
+                console.warn('DataTables warning:', message);
+            });
+        }
+    </script>
+
     @stack('scripts')
 </body>
 

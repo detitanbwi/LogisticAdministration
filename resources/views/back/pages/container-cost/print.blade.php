@@ -94,7 +94,7 @@
         </tr>
     </table>
 
-    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">MANIFEST CONTAINER_PACKING LIST
+    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">LAPORAN PEMBAYARAN
     </h2>
 
     <table class="w-100 collapse" style="margin-bottom: 15px; font-size: 10pt;">
@@ -127,17 +127,17 @@
                 <th>No Invoice</th>
                 <th>Tgl Masuk</th>
                 <th>Pengirim</th>
-                <th>No HP Pengirim</th>
+                <th>HP Pengirim</th>
                 <th>Penerima</th>
-                <th>No HP Penerima</th>
-                <th>Jenis Barang</th>
+                <th>HP Penerima</th>
+                <th style="min-width: 80px;">Jenis</th>
                 <th>Koli</th>
                 <th>Jumlah</th>
                 <th>Sat</th>
                 <th>BAP BALIK</th>
-                <th>Status Pembayaran</th>
+                <th>Status</th>
                 <th>Layanan</th>
-                <th>PKP / Non PKP</th>
+                <th>STTS PKP</th>
             </tr>
         </thead>
         <tbody>
@@ -195,15 +195,8 @@
     </table>
 
     <!-- Footer Note -->
-    @if(!empty($container->catatan_invoicing))
-        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
-            <strong>Catatan Invoicing:</strong><br>
-            {!! nl2br(e($container->catatan_invoicing)) !!}
-        </div>
-    @endif
-    
     @if(!empty($container->catatan_finance))
-        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top; margin-left: 10px;">
+        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
             <strong>Catatan Finance:</strong><br>
             {!! nl2br(e($container->catatan_finance)) !!}
         </div>

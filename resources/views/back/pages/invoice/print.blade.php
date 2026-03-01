@@ -64,7 +64,7 @@
     @php
         function terbilang($angka)
         {
-            $angka = abs($angka);
+            $angka = abs(intval($angka));
             $baca = [
                 '',
                 'Satu',
@@ -79,27 +79,36 @@
                 'Sepuluh',
                 'Sebelas',
             ];
-            $terbilang = '';
-            if ($angka < 12) {
-                $terbilang = ' ' . $baca[$angka];
+
+            if ($angka == 0) {
+                return '';
+            } elseif ($angka < 12) {
+                return $baca[$angka];
             } elseif ($angka < 20) {
-                $terbilang = terbilang($angka - 10) . ' Belas';
+                return terbilang($angka - 10) . ' Belas';
             } elseif ($angka < 100) {
-                $terbilang = terbilang($angka / 10) . ' Puluh' . terbilang($angka % 10);
+                $sisa = $angka % 10;
+                return terbilang(intval($angka / 10)) . ' Puluh' . ($sisa > 0 ? ' ' . terbilang($sisa) : '');
             } elseif ($angka < 200) {
-                $terbilang = ' Seratus' . terbilang($angka - 100);
+                $sisa = $angka - 100;
+                return 'Seratus' . ($sisa > 0 ? ' ' . terbilang($sisa) : '');
             } elseif ($angka < 1000) {
-                $terbilang = terbilang($angka / 100) . ' Ratus' . terbilang($angka % 100);
+                $sisa = $angka % 100;
+                return terbilang(intval($angka / 100)) . ' Ratus' . ($sisa > 0 ? ' ' . terbilang($sisa) : '');
             } elseif ($angka < 2000) {
-                $terbilang = ' Seribu' . terbilang($angka - 1000);
+                $sisa = $angka - 1000;
+                return 'Seribu' . ($sisa > 0 ? ' ' . terbilang($sisa) : '');
             } elseif ($angka < 1000000) {
-                $terbilang = terbilang($angka / 1000) . ' Ribu' . terbilang($angka % 1000);
+                $sisa = $angka % 1000;
+                return terbilang(intval($angka / 1000)) . ' Ribu' . ($sisa > 0 ? ' ' . terbilang($sisa) : '');
             } elseif ($angka < 1000000000) {
-                $terbilang = terbilang($angka / 1000000) . ' Juta' . terbilang($angka % 1000000);
+                $sisa = $angka % 1000000;
+                return terbilang(intval($angka / 1000000)) . ' Juta' . ($sisa > 0 ? ' ' . terbilang($sisa) : '');
             } elseif ($angka < 1000000000000) {
-                $terbilang = terbilang($angka / 1000000000) . ' Milyar' . terbilang(fmod($angka, 1000000000));
+                $sisa = intval(fmod($angka, 1000000000));
+                return terbilang(intval($angka / 1000000000)) . ' Milyar' . ($sisa > 0 ? ' ' . terbilang($sisa) : '');
             }
-            return trim($terbilang);
+            return '';
         }
 
         $dpp = $invoice->items->sum('subtotal');
