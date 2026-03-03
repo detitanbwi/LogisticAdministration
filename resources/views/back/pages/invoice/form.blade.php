@@ -140,7 +140,7 @@
                                                 <x-back.select2 label="Pelabuhan Asal" name="asal_id" id="inline_asal_id" :options="App\Models\Tujuan::pluck('nama_tujuan', 'id')->toArray()" placeholder="Pilih Asal" createOptionForm="#collapseTujuan" toggleType="collapse" />
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <x-back.select2 label="Tujuan" name="tujuan_id" id="inline_tujuan_id" :options="App\Models\Tujuan::pluck('nama_tujuan', 'id')->toArray()" placeholder="Pilih Tujuan" createOptionForm="#collapseTujuan" toggleType="collapse" />
+                                                <x-back.select2 label="Pelabuhan Tujuan" name="tujuan_id" id="inline_tujuan_id" :options="App\Models\Tujuan::pluck('nama_tujuan', 'id')->toArray()" placeholder="Pilih Tujuan" createOptionForm="#collapseTujuan" toggleType="collapse" />
 
                                                 <div class="collapse mt-2" id="collapseTujuan">
                                                     <div class="p-2 border rounded bg-white">

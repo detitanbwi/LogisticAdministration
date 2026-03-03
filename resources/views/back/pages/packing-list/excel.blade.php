@@ -8,14 +8,14 @@
     <tr>
         <td colspan="2"><b>Nama Kapal</b></td>
         <td colspan="4">: {{ $container->kapal->nama_kapal ?? '-' }}</td>
-        <td colspan="2"><b>Lokasi Asal</b></td>
+        <td colspan="2"><b>Pelabuhan Asal</b></td>
         <td colspan="7">: {{ $container->asal->nama_tujuan ?? '-' }}</td>
     </tr>
     <tr>
         <td colspan="2"><b>Tgl Keberangkatan (ETD)</b></td>
         <td colspan="4">: {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}
         </td>
-        <td colspan="2"><b>Lokasi Tujuan</b></td>
+        <td colspan="2"><b>Pelabuhan Tujuan</b></td>
         <td colspan="7">:
             {{ $container->tujuan->nama_tujuan ?? '-' }}{{ $container->tujuanDaerah ? ' - ' . $container->tujuanDaerah->nama : '' }}
         </td>

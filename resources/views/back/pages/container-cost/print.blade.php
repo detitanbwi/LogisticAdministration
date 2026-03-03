@@ -103,14 +103,14 @@
         <tr>
             <td style="width: 15%; padding: 2px; font-weight:bold;">Nama Kapal</td>
             <td style="width: 35%; padding: 2px;">: {{ $container->kapal->nama_kapal ?? '-' }}</td>
-            <td style="width: 15%; padding: 2px; font-weight:bold;">Lokasi Asal</td>
+            <td style="width: 15%; padding: 2px; font-weight:bold;">Pelabuhan Asal</td>
             <td style="width: 35%; padding: 2px;">: {{ $container->asal->nama_tujuan ?? '-' }}</td>
         </tr>
         <tr>
             <td style="padding: 2px; font-weight:bold;">Tgl Keberangkatan (ETD)</td>
             <td style="padding: 2px;">:
                 {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}</td>
-            <td style="padding: 2px; font-weight:bold;">Lokasi Tujuan</td>
+            <td style="padding: 2px; font-weight:bold;">Pelabuhan Tujuan</td>
             <td style="padding: 2px;">: {{ $container->tujuan->nama_tujuan ?? '-' }}{{ $container->tujuanDaerah ? ' - ' . $container->tujuanDaerah->nama : '' }}</td>
         </tr>
         <tr>

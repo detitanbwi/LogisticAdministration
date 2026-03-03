@@ -183,12 +183,12 @@
                             <td>: {{ $invoice->container->asal->nama_tujuan ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 2px;">Tujuan</td>
+                            <td style="padding: 2px;">Pelabuhan Tujuan</td>
                             <td>: {{ $invoice->container->tujuan->nama_tujuan ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 2px;">Layanan</td>
-                            <td>: {{ strtoupper($invoice->layanan ?? '-') }}</td>
+                            <td style="padding: 2px;">Daerah Tujuan</td>
+                            <td>: {{ $invoice->container->tujuanDaerah->nama ?? '-' }}</td>
                         </tr>
                     </table>
                 </td>
@@ -217,6 +217,10 @@
                         <tr>
                             <td style="padding: 2px;">Contr/Seal</td>
                             <td>: {{ $invoice->container->nomor_container ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 2px;">Layanan</td>
+                            <td>: {{ strtoupper($invoice->layanan ?? '-') }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Up</td>

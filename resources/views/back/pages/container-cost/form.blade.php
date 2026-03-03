@@ -36,11 +36,11 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <x-back.select2 label="Lokasi Asal" name="asal_id" :options="$tujuans->pluck('nama_tujuan', 'id')->toArray()" :selected="old('asal_id', $container->asal_id ?? null)" required placeholder="Pilih Asal" :createOptionUrl="route('admin.tujuan.index')" />
+                                <x-back.select2 label="Pelabuhan Asal" name="asal_id" :options="$tujuans->pluck('nama_tujuan', 'id')->toArray()" :selected="old('asal_id', $container->asal_id ?? null)" required placeholder="Pilih Asal" :createOptionUrl="route('admin.tujuan.index')" />
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <x-back.select2 label="Lokasi Tujuan" name="tujuan_id" :options="$tujuans->pluck('nama_tujuan', 'id')->toArray()" :selected="old('tujuan_id', $container->tujuan_id ?? null)" required placeholder="Pilih Tujuan" :createOptionUrl="route('admin.tujuan.index')" />
+                                <x-back.select2 label="Pelabuhan Tujuan" name="tujuan_id" :options="$tujuans->pluck('nama_tujuan', 'id')->toArray()" :selected="old('tujuan_id', $container->tujuan_id ?? null)" required placeholder="Pilih Tujuan" :createOptionUrl="route('admin.tujuan.index')" />
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -60,17 +60,17 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <x-back.select2 label="Tujuan Daerah" name="tujuan_daerah_id" id="tujuan_daerah_id"
+                                <x-back.select2 label="Daerah Tujuan" name="tujuan_daerah_id" id="tujuan_daerah_id"
                                     :options="$tujuanDaerahs->pluck('nama', 'id')->toArray()"
                                     :selected="old('tujuan_daerah_id', $container->tujuan_daerah_id ?? null)"
-                                    placeholder="Pilih Tujuan Daerah"
+                                    placeholder="Pilih Daerah Tujuan"
                                     createOptionForm="#collapseTujuanDaerah" toggleType="collapse" />
                             </div>
 
                             <!-- Inline Tujuan Daerah Form -->
                             <div class="col-12 collapse mt-2 mb-3" id="collapseTujuanDaerah">
                                 <div class="card card-body bg-light border-0 shadow-sm">
-                                    <h6 class="mb-3">Tambah Tujuan Daerah Baru</h6>
+                                    <h6 class="mb-3">Tambah Daerah Tujuan Baru</h6>
                                     <div class="row">
                                         <div class="col-md-8">
                                             <x-back.text-input name="new_tujuan_daerah" id="new_tujuan_daerah" label="Nama Daerah" placeholder="Masukkan Nama Daerah" />
@@ -127,10 +127,10 @@
                     $select.append(newOption).trigger('change');
                     $('#new_tujuan_daerah').val('');
                     $('#collapseTujuanDaerah').collapse('hide');
-                    Swal.fire('Berhasil', 'Tujuan Daerah berhasil ditambahkan', 'success');
+                    Swal.fire('Berhasil', 'Daerah Tujuan berhasil ditambahkan', 'success');
                 },
                 error: function(xhr) {
-                    var message = 'Gagal menambahkan Tujuan Daerah.';
+                    var message = 'Gagal menambahkan Daerah Tujuan.';
                     if (xhr.responseJSON && xhr.responseJSON.errors) {
                         message = Object.values(xhr.responseJSON.errors).flat().join('\n');
                     }
