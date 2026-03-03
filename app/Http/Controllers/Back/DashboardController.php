@@ -36,28 +36,33 @@ class DashboardController extends Controller
         $non_pkp = (clone $invoiceBase)->where('pkp_status', 'Non PKP')->count();
 
         $lunas = Finance::where('status_tagihan', 'Sudah ditagih')
-            ->whereHas('invoice', function($q) use ($startDate, $endDate) {
+            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
             })->count();
 
         $belum_lunas = Finance::where('status_tagihan', '!=', 'Sudah ditagih')
-            ->whereHas('invoice', function($q) use ($startDate, $endDate) {
+            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
             })->count();
 
+        $total_belum_lunas = Finance::where('status_tagihan', '!=', 'Sudah ditagih')
+            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('created_at', [$startDate, $endDate]);
+            })->sum('total_tagihan');
+
         $total_invoice = (clone $invoiceBase)->count();
 
-        $total_pendapatan = Finance::whereHas('invoice', function($q) use ($startDate, $endDate) {
+        $total_pendapatan = Finance::whereHas('invoice', function ($q) use ($startDate, $endDate) {
             $q->whereBetween('created_at', [$startDate, $endDate]);
         })->sum('total_tagihan');
 
         $belum_ditagih = Finance::where('status_tagihan', 'Belum')
-            ->whereHas('invoice', function($q) use ($startDate, $endDate) {
+            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
             })->count();
 
         $sudah_ditagih = Finance::where('status_tagihan', 'Sudah ditagih')
-            ->whereHas('invoice', function($q) use ($startDate, $endDate) {
+            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
             })->count();
 
@@ -70,6 +75,7 @@ class DashboardController extends Controller
         return view('back.pages.dashboard.index', compact(
             'lunas',
             'belum_lunas',
+            'total_belum_lunas',
             'pkp',
             'non_pkp',
             'total_invoice',
