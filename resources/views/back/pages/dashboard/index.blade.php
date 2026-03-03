@@ -19,94 +19,91 @@
         </div>
     </form>
 
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-header bg-transparent border-bottom-0 pb-0 pt-4">
-            <h6 class="card-title mb-0">Ringkasan Invoice & Keuangan</h6>
-        </div>
-        <div class="card-body">
-            <div class="row gx-4 gy-3">
-                <!-- Kolom 1 (Statistik Invoice) -->
-                <div class="col-md-4">
-                    <div class="h-100 p-3 rounded bg-light border border-dashed">
-                        <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom border-dashed">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-file text-primary fs-5"></i>
-                                <span class="fw-semibold text-dark">Total Invoice</span>
-                            </div>
-                            <span class="fs-4 fw-bold text-primary">{{ $total_invoice }}</span>
-                        </div>
-                        
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-file-text text-muted fs-5"></i>
-                                <span class="text-muted">Status PKP</span>
-                            </div>
-                            <span class="fs-6 fw-bold text-dark">{{ $pkp }}</span>
-                        </div>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-borderless mb-0">
+                    <thead>
+                        <tr class="border-bottom" style="background-color: #f8f9fc;">
+                            <th class="text-muted fw-semibold py-3 px-4" style="width:33.33%; font-size:12px; letter-spacing:0.5px;">INVOICE</th>
+                            <th class="text-muted fw-semibold py-3 px-4 border-start" style="width:33.33%; font-size:12px; letter-spacing:0.5px;">PENAGIHAN</th>
+                            <th class="text-muted fw-semibold py-3 px-4 border-start" style="width:33.33%; font-size:12px; letter-spacing:0.5px;">PEMBAYARAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {{-- Kolom 1: Invoice --}}
+                            <td class="px-4 py-3 align-top border-end">
+                                <div class="d-flex align-items-center justify-content-between py-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-soft-primary text-primary" style="width:28px;height:28px;font-size:13px;">
+                                            <i class="feather-file"></i>
+                                        </span>
+                                        <span class="fw-medium text-dark">Total Invoice</span>
+                                    </div>
+                                    <span class="fs-5 fw-bold text-primary">{{ $total_invoice }}</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between py-2 border-top">
+                                    <span class="text-muted small">PKP</span>
+                                    <span class="fw-semibold">{{ $pkp }}</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between py-2 border-top">
+                                    <span class="text-muted small">Non PKP</span>
+                                    <span class="fw-semibold">{{ $non_pkp }}</span>
+                                </div>
+                            </td>
 
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-file-minus text-muted fs-5"></i>
-                                <span class="text-muted">Status Non PKP</span>
-                            </div>
-                            <span class="fs-6 fw-bold text-dark">{{ $non_pkp }}</span>
-                        </div>
-                    </div>
-                </div>
+                            {{-- Kolom 2: Penagihan --}}
+                            <td class="px-4 py-3 align-top border-end">
+                                <div class="d-flex align-items-center justify-content-between py-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-soft-info text-info" style="width:28px;height:28px;font-size:13px;">
+                                            <i class="feather-check-circle"></i>
+                                        </span>
+                                        <span class="fw-medium text-dark">Sudah Ditagih</span>
+                                    </div>
+                                    <span class="fs-5 fw-bold text-info">{{ $sudah_ditagih }}</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between py-2 border-top">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-danger small"><i class="feather-clock" style="font-size:12px;"></i></span>
+                                        <span class="text-muted small">Belum Ditagih</span>
+                                    </div>
+                                    <span class="fw-semibold text-danger">{{ $belum_ditagih }}</span>
+                                </div>
+                            </td>
 
-                <!-- Kolom 2 (Tagihan) -->
-                <div class="col-md-4">
-                    <div class="h-100 p-3 rounded bg-light border border-dashed">
-                        <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom border-dashed">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-check-circle text-info fs-5"></i>
-                                <span class="fw-semibold text-dark">Sudah Ditagih</span>
-                            </div>
-                            <span class="fs-4 fw-bold text-info">{{ $sudah_ditagih }}</span>
-                        </div>
-                        
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-clock text-danger fs-5"></i>
-                                <span class="text-muted">Belum Ditagih</span>
-                            </div>
-                            <span class="fs-6 fw-bold text-danger">{{ $belum_ditagih }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kolom 3 (Pembayaran) -->
-                <div class="col-md-4">
-                    <div class="h-100 p-3 rounded bg-light border border-dashed">
-                        <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom border-dashed">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-check-circle text-success fs-5"></i>
-                                <span class="fw-semibold text-dark">Lunas</span>
-                            </div>
-                            <span class="fs-4 fw-bold text-success">{{ $lunas }}</span>
-                        </div>
-                        
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-clock text-warning fs-5"></i>
-                                <span class="text-muted">Belum Lunas</span>
-                            </div>
-                            <span class="fs-6 fw-bold text-warning">{{ $belum_lunas }}</span>
-                        </div>
-
-                        @if(auth()->user()->hasRole('admin') || auth()->user()->can('view.finance') || auth()->user()->can('view.transaksi'))
-                        <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top border-dashed">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="feather-dollar-sign text-success fs-5"></i>
-                                <span class="fw-semibold text-dark">Pendapatan</span>
-                            </div>
-                            <span class="fs-5 fw-bold text-success text-truncate" title="Rp {{ number_format($total_pendapatan, 0, ',', '.') }}">
-                                Rp {{ number_format($total_pendapatan, 0, ',', '.') }}
-                            </span>
-                        </div>
-                        @endif
-                    </div>
-                </div>
+                            {{-- Kolom 3: Pembayaran --}}
+                            <td class="px-4 py-3 align-top">
+                                <div class="d-flex align-items-center justify-content-between py-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-soft-success text-success" style="width:28px;height:28px;font-size:13px;">
+                                            <i class="feather-check-circle"></i>
+                                        </span>
+                                        <span class="fw-medium text-dark">Lunas</span>
+                                    </div>
+                                    <span class="fs-5 fw-bold text-success">{{ $lunas }}</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between py-2 border-top">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-warning small"><i class="feather-clock" style="font-size:12px;"></i></span>
+                                        <span class="text-muted small">Belum Lunas</span>
+                                    </div>
+                                    <span class="fw-semibold text-warning">{{ $belum_lunas }}</span>
+                                </div>
+                                @if(auth()->user()->hasRole('admin') || auth()->user()->can('view.finance') || auth()->user()->can('view.transaksi'))
+                                <div class="d-flex align-items-center justify-content-between py-2 border-top">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-success small"><i class="feather-dollar-sign" style="font-size:12px;"></i></span>
+                                        <span class="text-muted small">Pendapatan</span>
+                                    </div>
+                                    <span class="fw-bold text-success" title="Rp {{ number_format($total_pendapatan, 0, ',', '.') }}">Rp {{ number_format($total_pendapatan, 0, ',', '.') }}</span>
+                                </div>
+                                @endif
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
