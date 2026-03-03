@@ -11,6 +11,7 @@
     'hint' => '',
     'selector' => 'tag',
     'createOptionForm' => null, // URL or Identifier for the modal/collapse form
+    'createOptionUrl' => null, // Direct URL for redirect
     'createOptionLabel' => 'Tambah Baru',
     'toggleType' => 'modal',
 ])
@@ -59,7 +60,11 @@
             {{ $slot }}
         </select>
 
-        @if ($createOptionForm)
+        @if ($createOptionUrl)
+            <a href="{{ $createOptionUrl }}" class="btn btn-outline-secondary" type="button" target="_blank">
+                <i class="feather-plus"></i>
+            </a>
+        @elseif ($createOptionForm)
             <button class="btn btn-outline-secondary" type="button" data-bs-toggle="{{ $toggleType }}"
                 data-bs-target="{{ $createOptionForm }}" aria-expanded="false" aria-controls="{{ ltrim($createOptionForm, '#') }}">
                 <i class="feather-plus"></i>

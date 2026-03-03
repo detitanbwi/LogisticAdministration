@@ -20,6 +20,15 @@ class FinanceController extends Controller
         if ($request->ajax()) {
             $query = Finance::with('invoice.pengirim', 'invoice.penerima')->select('finance.*');
 
+            $query->whereHas('invoice.container', function ($q) use ($request) {
+                if ($request->filled('asal_id')) {
+                    $q->where('asal_id', $request->asal_id);
+                }
+                if ($request->filled('tujuan_id')) {
+                    $q->where('tujuan_id', $request->tujuan_id);
+                }
+            });
+
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
@@ -37,6 +46,12 @@ class FinanceController extends Controller
                 ->addIndexColumn()
                 ->addColumn('no_invoice', function ($row) {
                     return $row->invoice ? $row->invoice->no_invoice : '-';
+                })
+                ->addColumn('pengirim', function ($row) {
+                    return $row->invoice && $row->invoice->pengirim ? $row->invoice->pengirim->nama : '-';
+                })
+                ->addColumn('penerima', function ($row) {
+                    return $row->invoice && $row->invoice->penerima ? $row->invoice->penerima->nama : '-';
                 })
                 ->addColumn('total_tagihan', function ($row) {
                     return 'Rp ' . number_format($row->total_tagihan, 0, ',', '.');
@@ -84,7 +99,8 @@ class FinanceController extends Controller
                 ->make(true);
         }
 
-        return view('back.pages.finance.index');
+        $tujuans = \App\Models\Tujuan::all();
+        return view('back.pages.finance.index', compact('tujuans'));
     }
 
     /**

@@ -16,9 +16,18 @@ class ContainerCostController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Container::withCount('invoices');
+            $query = Container::with(['asal', 'tujuan'])->withCount('invoices');
             return datatables()->of($query)
                 ->addIndexColumn()
+                ->addColumn('pelabuhan_asal', function ($row) {
+                    return $row->asal ? $row->asal->nama_tujuan : '-';
+                })
+                ->addColumn('pelabuhan_tujuan', function ($row) {
+                    return $row->tujuan ? $row->tujuan->nama_tujuan : '-';
+                })
+                ->addColumn('etd', function ($row) {
+                    return $row->etd ? \Carbon\Carbon::parse($row->etd)->format('d-m-Y') : '-';
+                })
                 ->addColumn('jumlah_invoice', function ($row) {
                     return '<span class="badge bg-soft-info text-info">' . $row->invoices_count . ' Invoice</span>';
                 })
