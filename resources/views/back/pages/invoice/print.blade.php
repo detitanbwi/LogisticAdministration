@@ -160,71 +160,72 @@
         <!-- Invoice Info -->
         <table class="w-100 collapse" style="margin-bottom: 5px;">
             <tr>
-                <td style="width: 50%; vertical-align: top;">
+                <td style="width: 52%; vertical-align: top;">
                     <table style="width: 100%; font-size: 10.5pt;">
                         <tr>
-                            <td style="width: 150px; padding: 2px;">No. Invoice</td>
-                            <td>: {{ $invoice->no_invoice }}</td>
+                            <td style="width: 130px; padding: 2px; white-space: nowrap;">No. Invoice</td>
+                            <td style="padding: 2px;">: {{ $invoice->no_invoice }}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 2px;">Tanggal Invoice</td>
-                            <td>: {{ Carbon\Carbon::parse($invoice->created_at)->translatedFormat('d F Y') }}</td>
+                            <td style="padding: 2px; white-space: nowrap;">Tanggal Invoice</td>
+                            <td style="padding: 2px;">:
+                                {{ Carbon\Carbon::parse($invoice->created_at)->translatedFormat('d F Y') }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Status PKP</td>
-                            <td>: {{ $invoice->pkp_status ?? '-' }}</td>
+                            <td style="padding: 2px;">: {{ $invoice->pkp_status ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Metode</td>
-                            <td>: {{ $invoice->metode ?? '-' }}</td>
+                            <td style="padding: 2px;">: {{ $invoice->metode ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 2px;">Pelabuhan Asal</td>
-                            <td>: {{ $invoice->container->asal->nama_tujuan ?? '-' }}</td>
+                            <td style="padding: 2px; white-space: nowrap;">Pelabuhan Asal</td>
+                            <td style="padding: 2px;">: {{ $invoice->container->asal->nama_tujuan ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 2px;">Pelabuhan Tujuan</td>
-                            <td>: {{ $invoice->container->tujuan->nama_tujuan ?? '-' }}</td>
+                            <td style="padding: 2px; white-space: nowrap;">Pelabuhan Tujuan</td>
+                            <td style="padding: 2px;">: {{ $invoice->container->tujuan->nama_tujuan ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 2px;">Daerah Tujuan</td>
-                            <td>: {{ $invoice->container->tujuanDaerah->nama ?? '-' }}</td>
+                            <td style="padding: 2px; white-space: nowrap;">Daerah Tujuan</td>
+                            <td style="padding: 2px;">: {{ $invoice->tujuanDaerah->nama ?? '-' }}</td>
                         </tr>
                     </table>
                 </td>
-                <td style="width: 50%; vertical-align: top;">
+                <td style="width: 48%; vertical-align: top;">
                     <table style="width: 100%; font-size: 10.5pt;">
                         <tr>
-                            <td style="width: 120px; padding: 2px;">Kapal</td>
-                            <td>: {{ $invoice->container->kapal->nama_kapal ?? '-' }}</td>
+                            <td style="width: 100px; padding: 2px;">Kapal</td>
+                            <td style="padding: 2px;">: {{ $invoice->container->kapal->nama_kapal ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">ETD</td>
-                            <td>:
+                            <td style="padding: 2px;">:
                                 {{ $invoice->container && $invoice->container->etd ? Carbon\Carbon::parse($invoice->container->etd)->translatedFormat('d F Y') : '-' }}
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">ETA</td>
-                            <td>:
+                            <td style="padding: 2px;">:
                                 {{ $invoice->container && $invoice->container->eta ? Carbon\Carbon::parse($invoice->container->eta)->translatedFormat('d F Y') : '-' }}
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Kontainer</td>
-                            <td>: {{ $invoice->container->tipe_kontainer ?? '-' }}</td>
+                            <td style="padding: 2px;">: {{ $invoice->container->tipe_kontainer ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Contr/Seal</td>
-                            <td>: {{ $invoice->container->nomor_container ?? '-' }}</td>
+                            <td style="padding: 2px;">: {{ $invoice->container->nomor_container ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Layanan</td>
-                            <td>: {{ strtoupper($invoice->layanan ?? '-') }}</td>
+                            <td style="padding: 2px;">: {{ strtoupper($invoice->layanan ?? '-') }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Up</td>
-                            <td>: {{ $invoice->upDetail->nama ?? '-' }}</td>
+                            <td style="padding: 2px;">: {{ $invoice->upDetail->nama ?? '-' }}</td>
                         </tr>
                     </table>
                 </td>

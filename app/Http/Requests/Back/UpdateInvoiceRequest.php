@@ -30,6 +30,7 @@ class UpdateInvoiceRequest extends FormRequest
             'container_id' => 'nullable|exists:container,id',
             'metode' => 'nullable|in:FCL,LCL,Break Bulk',
             'layanan' => 'required|in:Door to Door,CY to CY,CY to Door,Door to CY,Port to Port',
+            'tujuan_daerah_id' => 'nullable|exists:tujuan_daerah,id',
             'status_pembayaran' => 'nullable|in:Serahkan,Tahan',
             'pkp_status' => 'required|in:PKP,Non PKP',
             'catatan_muntahan' => 'nullable|string',

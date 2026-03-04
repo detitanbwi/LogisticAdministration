@@ -76,27 +76,28 @@
 <body onload="window.print()">
     <!-- Header Section -->
     @if(!isset($isExport))
-    <table class="w-100 collapse" style="border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 5px;">
-        <tr>
-            <td style="width: 25%; vertical-align: middle; padding: 5px;">
-                <img src="{{ asset('back/assets/images/logo-scj.png') }}" alt="SCJ Logo"
-                    style="max-height: 80px; max-width: 150px; object-fit: contain;">
-            </td>
-            <td style="width: 75%; vertical-align: top; text-align: right; padding: 5px;">
-                <h1 style="margin: 0 0 5px 0; font-family: 'Arial', sans-serif; font-size: 20pt; font-weight: bold;">
-                    PT. SINAR <span style="color: red;">CEMARA</span> JAYA</h1>
-                <div style="font-size: 10pt; font-weight: bold; line-height: 1.3;">
-                    JL. Swasembada Timur XIII No.32 C, Kel. Kebon Bawang, Kec. Tanjung Priok<br>
-                    Jakarta Utara 14320 | Email: sinarcemarajaya@gmail.com<br>
-                    <a href="http://www.sinarcemarajaya.com"
-                        style="color: blue; text-decoration: underline;">www.sinarcemarajaya.com</a>
-                </div>
-            </td>
-        </tr>
-    </table>
+        <table class="w-100 collapse" style="border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 5px;">
+            <tr>
+                <td style="width: 25%; vertical-align: middle; padding: 5px;">
+                    <img src="{{ asset('back/assets/images/logo-scj.png') }}" alt="SCJ Logo"
+                        style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                </td>
+                <td style="width: 75%; vertical-align: top; text-align: right; padding: 5px;">
+                    <h1 style="margin: 0 0 5px 0; font-family: 'Arial', sans-serif; font-size: 20pt; font-weight: bold;">
+                        PT. SINAR <span style="color: red;">CEMARA</span> JAYA</h1>
+                    <div style="font-size: 10pt; font-weight: bold; line-height: 1.3;">
+                        JL. Swasembada Timur XIII No.32 C, Kel. Kebon Bawang, Kec. Tanjung Priok<br>
+                        Jakarta Utara 14320 | Email: sinarcemarajaya@gmail.com<br>
+                        <a href="http://www.sinarcemarajaya.com"
+                            style="color: blue; text-decoration: underline;">www.sinarcemarajaya.com</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
     @endif
 
-    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">CONTAINER COST_LAPORAN PEMBAYARAN
+    <h2 class="text-center" style="font-size: 14pt; font-weight: bold; margin: 10px 0;">CONTAINER COST_LAPORAN
+        PEMBAYARAN
     </h2>
 
     <table class="w-100 collapse" style="margin-bottom: 15px; font-size: 10pt;">
@@ -109,9 +110,10 @@
         <tr>
             <td style="padding: 2px; font-weight:bold;">Tgl Keberangkatan (ETD)</td>
             <td style="padding: 2px;">:
-                {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}</td>
+                {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}
+            </td>
             <td style="padding: 2px; font-weight:bold;">Pelabuhan Tujuan</td>
-            <td style="padding: 2px;">: {{ $container->tujuan->nama_tujuan ?? '-' }}{{ $container->tujuanDaerah ? ' - ' . $container->tujuanDaerah->nama : '' }}</td>
+            <td style="padding: 2px;">: {{ $container->tujuan->nama_tujuan ?? '-' }}</td>
         </tr>
         <tr>
             <td style="padding: 2px; font-weight:bold;">Contr / Seal</td>
@@ -137,7 +139,9 @@
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Koli</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Jumlah</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Sat</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tanda Terima</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>BAP BALIK</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Daerah Tujuan</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Status</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Layanan</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>STTS PKP</th>
@@ -153,7 +157,8 @@
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $no++ }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->no_invoice }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">
-                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}</td>
+                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
+                    </td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->pengirim->no_hp ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
@@ -172,7 +177,9 @@
                         <td class="text-center">-</td>
                     @endif
 
+                    <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->terima_barang ? 'SUDAH' : 'BELUM' }}</td>
+                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->tujuanDaerah->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->status_pembayaran ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->layanan ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ mb_strtoupper($inv->pkp_status) }}</td>
@@ -183,14 +190,15 @@
                             <td>{{ $inv->items[$i]->jenis_barang }}</td>
                             <td class="text-center">{{ $inv->items[$i]->koli }}</td>
                             <td class="text-center">
-                                {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}</td>
+                                {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
+                            </td>
                             <td class="text-center">{{ $inv->items[$i]->satuan }}</td>
                         </tr>
                     @endfor
                 @endif
             @empty
                 <tr>
-                    <td colspan="15" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
+                    <td colspan="17" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
                     </td>
                 </tr>
             @endforelse

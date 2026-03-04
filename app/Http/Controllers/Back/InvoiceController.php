@@ -14,6 +14,7 @@ use App\Http\Requests\Back\StoreInvoiceRequest;
 use App\Http\Requests\Back\UpdateInvoiceRequest;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+use App\Models\TujuanDaerah;
 
 class InvoiceController extends Controller
 {
@@ -118,8 +119,9 @@ class InvoiceController extends Controller
 
         $customers = Customer::all();
         $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
+        $tujuanDaerahs = TujuanDaerah::all();
 
-        return view('back.pages.invoice.form', compact('customers', 'containers'));
+        return view('back.pages.invoice.form', compact('customers', 'containers', 'tujuanDaerahs'));
     }
 
     /**
@@ -186,8 +188,9 @@ class InvoiceController extends Controller
         $invoice->load('items', 'finance');
         $customers = Customer::all();
         $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
+        $tujuanDaerahs = TujuanDaerah::all();
 
-        return view('back.pages.invoice.form', compact('invoice', 'customers', 'containers'));
+        return view('back.pages.invoice.form', compact('invoice', 'customers', 'containers', 'tujuanDaerahs'));
     }
 
     /**
@@ -274,7 +277,7 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('print.invoice') || auth()->user()->can('view.invoice'), 403);
 
-        $invoice->load(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'items', 'upDetail']);
+        $invoice->load(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'items', 'upDetail', 'tujuanDaerah']);
 
         return view('back.pages.invoice.print', compact('invoice'));
     }
@@ -293,6 +296,7 @@ class InvoiceController extends Controller
 
         $container = Container::with(['kapal', 'asal', 'tujuan'])->find($request->container_id);
         $invoice->setRelation('container', $container);
+        $invoice->setRelation('tujuanDaerah', TujuanDaerah::find($request->tujuan_daerah_id));
 
         $items = collect();
         $totalTagihan = 0;

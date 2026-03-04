@@ -113,7 +113,7 @@
             </td>
             <td style="padding: 2px; font-weight:bold;">Pelabuhan Tujuan</td>
             <td style="padding: 2px;">:
-                {{ $container->tujuan->nama_tujuan ?? '-' }}{{ $container->tujuanDaerah ? ' - ' . $container->tujuanDaerah->nama : '' }}
+                {{ $container->tujuan->nama_tujuan ?? '-' }}
             </td>
         </tr>
         <tr>
@@ -140,7 +140,9 @@
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Koli</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Jumlah</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Sat</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tanda Terima</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>BAP BALIK</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Daerah Tujuan</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Status</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Layanan</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>STTS PKP</th>
@@ -176,7 +178,9 @@
                         <td class="text-center">-</td>
                     @endif
 
+                    <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->terima_barang ? 'SUDAH' : 'BELUM' }}</td>
+                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->tujuanDaerah->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->status_pembayaran ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->layanan ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ mb_strtoupper($inv->pkp_status) }}</td>
@@ -195,7 +199,7 @@
                 @endif
             @empty
                 <tr>
-                    <td colspan="15" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
+                    <td colspan="17" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
                     </td>
                 </tr>
             @endforelse

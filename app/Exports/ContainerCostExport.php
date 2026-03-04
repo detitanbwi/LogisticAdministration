@@ -28,6 +28,8 @@ class ContainerCostExport implements FromView, ShouldAutoSize, WithStyles
 
     public function styles(Worksheet $sheet)
     {
+        $sheet->setShowGridlines(false);
+
         return [];
     }
 }

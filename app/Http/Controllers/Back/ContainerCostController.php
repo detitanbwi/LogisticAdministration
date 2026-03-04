@@ -62,8 +62,7 @@ class ContainerCostController extends Controller
     {
         $kapals = Kapal::all();
         $tujuans = Tujuan::all();
-        $tujuanDaerahs = \App\Models\TujuanDaerah::all();
-        return view('back.pages.container-cost.form', compact('kapals', 'tujuans', 'tujuanDaerahs'));
+        return view('back.pages.container-cost.form', compact('kapals', 'tujuans'));
     }
 
     /**
@@ -76,7 +75,6 @@ class ContainerCostController extends Controller
             'kapal_id' => 'nullable|exists:kapal,id',
             'asal_id' => 'nullable|exists:tujuan,id',
             'tujuan_id' => 'nullable|exists:tujuan,id|different:asal_id',
-            'tujuan_daerah_id' => 'nullable|exists:tujuan_daerah,id',
             'etd' => 'nullable|date',
             'eta' => 'nullable|date|after_or_equal:etd',
             'metode' => 'nullable|in:FCL,LCL,Break Bulk',
@@ -100,8 +98,7 @@ class ContainerCostController extends Controller
     {
         $kapals = Kapal::all();
         $tujuans = Tujuan::all();
-        $tujuanDaerahs = \App\Models\TujuanDaerah::all();
-        return view('back.pages.container-cost.form', compact('container', 'kapals', 'tujuans', 'tujuanDaerahs'));
+        return view('back.pages.container-cost.form', compact('container', 'kapals', 'tujuans'));
     }
 
     /**
@@ -114,7 +111,6 @@ class ContainerCostController extends Controller
             'kapal_id' => 'nullable|exists:kapal,id',
             'asal_id' => 'nullable|exists:tujuan,id',
             'tujuan_id' => 'nullable|exists:tujuan,id|different:asal_id',
-            'tujuan_daerah_id' => 'nullable|exists:tujuan_daerah,id',
             'etd' => 'nullable|date',
             'eta' => 'nullable|date|after_or_equal:etd',
             'metode' => 'nullable|in:FCL,LCL,Break Bulk',
@@ -142,13 +138,13 @@ class ContainerCostController extends Controller
 
     public function print(Container $container)
     {
-        $container->load(['kapal', 'asal', 'tujuan', 'tujuanDaerah', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance']);
+        $container->load(['kapal', 'asal', 'tujuan', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance', 'invoices.tujuanDaerah']);
         return view('back.pages.container-cost.print', compact('container'));
     }
 
     public function export(Container $container)
     {
-        $container->load(['kapal', 'asal', 'tujuan', 'tujuanDaerah', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance']);
+        $container->load(['kapal', 'asal', 'tujuan', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance', 'invoices.tujuanDaerah']);
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ContainerCostExport($container), 'ContainerCost_' . str_replace(['/', '\\'], '-', $container->nomor_container) . '.xlsx');
     }
 }

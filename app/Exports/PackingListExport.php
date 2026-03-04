@@ -28,14 +28,8 @@ class PackingListExport implements FromView, ShouldAutoSize, WithStyles
 
     public function styles(Worksheet $sheet)
     {
-        // Simple styles as most design will be in blade, but we can enforce some basics
-        // Hide the print buttons
-        // Unfortunately laravel excel might output the button html as text if not hidden correctly.
-        // It's better to create a specific export blade view, but we can rely on the existing one adjusting it slightly or just returning the same view.
+        $sheet->setShowGridlines(false);
 
-        return [
-            // Style the first row as bold text.
-            // 1    => ['font' => ['bold' => true]],
-        ];
+        return [];
     }
 }

@@ -20,6 +20,7 @@ class Invoice extends Model
         'container_id',
         'metode',
         'layanan',
+        'tujuan_daerah_id',
         'status_pembayaran',
         'pkp_status',
         'terima_barang',
@@ -62,5 +63,10 @@ class Invoice extends Model
     public function finance(): HasOne
     {
         return $this->hasOne(Finance::class);
+    }
+
+    public function tujuanDaerah(): BelongsTo
+    {
+        return $this->belongsTo(TujuanDaerah::class, 'tujuan_daerah_id');
     }
 }

@@ -4,110 +4,317 @@
 
 @section('page_title', 'Dashboard')
 
+@push('styles')
+    <style>
+        /* ===== Dashboard Stats Cards ===== */
+        .dash-stat-card {
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 58px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dash-stat-card::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            pointer-events: none;
+        }
+
+        .dash-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .dash-stat-card .stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            opacity: 0.95;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dash-stat-card .stat-label i {
+            font-size: 16px;
+            opacity: 0.85;
+        }
+
+        .dash-stat-card .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Color Palette - Modern & Bold */
+        .bg-dash-navy {
+            background: linear-gradient(135deg, #2c3e6b, #3b4f80);
+        }
+
+        .bg-dash-teal {
+            background: linear-gradient(135deg, #1a9e8f, #20b2a0);
+        }
+
+        .bg-dash-rose {
+            background: linear-gradient(135deg, #c0392b, #d94040);
+        }
+
+        .bg-dash-amber {
+            background: linear-gradient(135deg, #e8a317, #f0b429);
+        }
+
+        .bg-dash-purple {
+            background: linear-gradient(135deg, #6c4fa0, #7e5bb5);
+        }
+
+        .bg-dash-slate {
+            background: linear-gradient(135deg, #34495e, #415b76);
+        }
+
+        .bg-dash-emerald {
+            background: linear-gradient(135deg, #169b6b, #1db980);
+        }
+
+        .bg-dash-crimson {
+            background: linear-gradient(135deg, #b03060, #c94070);
+        }
+
+        /* Total Pendapatan - Full Width Accent */
+        .dash-total-card {
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .dash-total-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            pointer-events: none;
+        }
+
+        .dash-total-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .dash-total-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .dash-total-card .total-label {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dash-total-card .total-label i {
+            font-size: 20px;
+        }
+
+        .dash-total-card .total-value {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        /* Date filter styling */
+        .dash-date-filter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .dash-date-filter .input-group {
+            max-width: 320px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .dash-date-filter .input-group-text {
+            background: #f0f3f8;
+            border: 1px solid #dde2ea;
+            border-right: none;
+            color: #5a6a85;
+        }
+
+        .dash-date-filter .form-control {
+            border: 1px solid #dde2ea;
+            border-left: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .dash-date-filter .btn-reset {
+            border: 1px solid #dde2ea;
+            border-left: none;
+            background: #f0f3f8;
+            color: #5a6a85;
+            transition: background 0.15s;
+        }
+
+        .dash-date-filter .btn-reset:hover {
+            background: #e2e6ee;
+            color: #2d3748;
+        }
+
+        /* Stats grid */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 576px) {
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dash-stat-card .stat-value {
+                font-size: 18px;
+            }
+
+            .dash-total-card .total-value {
+                font-size: 20px;
+            }
+        }
+
+        /* Recent Invoice Table improvements */
+        .recent-invoice-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .recent-invoice-card .card-header {
+            background: #f8f9fc;
+            border-bottom: 1px solid #edf0f5;
+            padding: 14px 20px;
+        }
+
+        .recent-invoice-card .card-header h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0;
+        }
+    </style>
+@endpush
+
 @section('content')
-    <form method="GET" action="{{ route('admin.dashboard') }}" class="mb-4" id="filterForm">
-        <div class="row align-items-center justify-content-end">
-            <div class="col-md-4 col-lg-3">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="feather-calendar"></i></span>
-                    <input type="text" class="form-control text-center" name="daterange" id="dashboardDaterange"
-                        value="{{ $daterange }}">
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-light btn-icon" title="Reset"><i
-                            class="feather-refresh-ccw"></i></a>
-                </div>
+    {{-- Date Filter --}}
+    <form method="GET" action="{{ route('admin.dashboard') }}" id="filterForm">
+        <div class="dash-date-filter">
+            <div class="input-group">
+                <span class="input-group-text"><i class="feather-calendar"></i></span>
+                <input type="text" class="form-control" name="daterange" id="dashboardDaterange" value="{{ $daterange }}"
+                    readonly>
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-reset" title="Reset">
+                    <i class="feather-refresh-ccw"></i>
+                </a>
             </div>
         </div>
     </form>
 
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-borderless mb-0" style="font-size: 13px;">
-                    <thead>
-                        <tr style="background-color: #f8f9fc;" class="border-bottom">
-                            <th class="text-muted fw-semibold py-2 px-4" style="width:50%; font-size:11px; letter-spacing:0.5px;">INVOICE & STATUS</th>
-                            <th class="text-muted fw-semibold py-2 px-4 border-start" style="width:50%; font-size:11px; letter-spacing:0.5px;">TAGIHAN & PEMBAYARAN</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-bottom">
-                            <td class="px-4 py-2 border-end">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-dark fw-medium">Total Invoice</span>
-                                    <span class="fw-bold text-primary">{{ $total_invoice }}</span>
-                                </div>
-                            </td>
-                            <td class="px-4 py-2">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-dark fw-medium">Sudah Ditagih</span>
-                                    <span class="fw-bold text-info">{{ $sudah_ditagih }}</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-bottom">
-                            <td class="px-4 py-2 border-end">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">PKP</span>
-                                    <span class="fw-semibold">{{ $pkp }}</span>
-                                </div>
-                            </td>
-                            <td class="px-4 py-2">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Belum Ditagih</span>
-                                    <span class="fw-semibold text-danger">{{ $belum_ditagih }}</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-bottom">
-                            <td class="px-4 py-2 border-end">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Non PKP</span>
-                                    <span class="fw-semibold">{{ $non_pkp }}</span>
-                                </div>
-                            </td>
-                            <td class="px-4 py-2">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-dark fw-medium">Lunas</span>
-                                    <span class="fw-bold text-success">{{ $lunas }}</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-bottom">
-                            <td class="px-4 py-2 border-end">
-                                @if(auth()->user()->hasRole('admin') || auth()->user()->can('view.finance') || auth()->user()->can('view.transaksi'))
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-dark fw-medium">Total Pendapatan</span>
-                                    <span class="fw-bold text-success">Rp {{ number_format($total_pendapatan, 0, ',', '.') }}</span>
-                                </div>
-                                @endif
-                            </td>
-                            <td class="px-4 py-2">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Belum Lunas</span>
-                                    <span class="fw-semibold text-warning">{{ $belum_lunas }}</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-2 border-end"></td>
-                            <td class="px-4 py-2">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-dark fw-medium">Total Belum Lunas</span>
-                                    <span class="fw-bold text-danger">Rp {{ number_format($total_belum_lunas, 0, ',', '.') }}</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    {{-- Stats Grid --}}
+    <div class="dash-grid mb-3">
+        {{-- Left Column --}}
+        <div class="dash-stat-card bg-dash-navy">
+            <span class="stat-label"><i class="feather-file-text"></i> Total Invoice</span>
+            <span class="stat-value">{{ $total_invoice }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-teal">
+            <span class="stat-label"><i class="feather-check-circle"></i> Sudah Ditagih</span>
+            <span class="stat-value">{{ $sudah_ditagih }}</span>
+        </div>
+
+        <div class="dash-stat-card bg-dash-emerald">
+            <span class="stat-label"><i class="feather-thumbs-up"></i> Lunas</span>
+            <span class="stat-value">{{ $lunas }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-amber">
+            <span class="stat-label"><i class="feather-alert-circle"></i> Belum Ditagih</span>
+            <span class="stat-value">{{ $belum_ditagih }}</span>
+        </div>
+
+        <div class="dash-stat-card bg-dash-rose">
+            <span class="stat-label"><i class="feather-x-circle"></i> Belum Lunas</span>
+            <span class="stat-value">{{ $belum_lunas }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-purple">
+            <span class="stat-label"><i class="feather-shield"></i> PKP</span>
+            <span class="stat-value">{{ $pkp }}</span>
+        </div>
+
+        <div class="dash-stat-card bg-dash-crimson">
+            <span class="stat-label"><i class="feather-credit-card"></i> Total Belum Lunas</span>
+            <span class="stat-value">Rp {{ number_format($total_belum_lunas, 0, ',', '.') }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-slate">
+            <span class="stat-label"><i class="feather-tag"></i> Non PKP</span>
+            <span class="stat-value">{{ $non_pkp }}</span>
         </div>
     </div>
 
+    {{-- Total Pendapatan --}}
+    @if(auth()->user()->hasRole('admin') || auth()->user()->can('view.finance') || auth()->user()->can('view.transaksi'))
+        <div class="dash-total-card mb-4">
+            <span class="total-label"><i class="feather-trending-up"></i> Total Pendapatan</span>
+            <span class="total-value">Rp {{ number_format($total_pendapatan, 0, ',', '.') }}</span>
+        </div>
+    @endif
+
+    {{-- Recent Invoices --}}
     <div class="row">
         <div class="col-12">
-            <div class="card stretch stretch-full">
-                <div class="card-header">
-                    <h5 class="card-title">Invoice Terbaru</h5>
+            <div class="card recent-invoice-card stretch stretch-full">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title mb-0"><i class="feather-layers me-2"></i>Invoice Terbaru</h5>
                     <a href="{{ route('admin.invoice.index') }}" class="btn btn-sm btn-light">Lihat Semua</a>
                 </div>
                 <div class="card-body custom-card-action p-0">
