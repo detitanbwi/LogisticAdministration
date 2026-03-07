@@ -146,6 +146,7 @@
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Status</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Layanan</th>
                 <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>STTS PKP</th>
+                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Catatan Invoice</th>
             </tr>
         </thead>
         <tbody>
@@ -184,6 +185,7 @@
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->status_pembayaran ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->layanan ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ mb_strtoupper($inv->pkp_status) }}</td>
+                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->catatan_muntahan ?? '-' }}</td>
                 </tr>
                 @if($inv->items->count() > 1)
                     @for($i = 1; $i < $rowCount; $i++)
@@ -199,7 +201,7 @@
                 @endif
             @empty
                 <tr>
-                    <td colspan="17" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
+                    <td colspan="18" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
                     </td>
                 </tr>
             @endforelse

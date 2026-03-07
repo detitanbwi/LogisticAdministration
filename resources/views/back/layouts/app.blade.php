@@ -80,11 +80,11 @@
         </div>
         <!-- [ Footer ] start -->
         <footer class="footer">
-            <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
-                <span>Copyright ©</span>
-                <script>
-                    document.write(new Date().getFullYear());
-                </script>
+            <p class="fs-11 text-muted fw-medium mb-0 copyright">
+                <span>&copy;
+                    <script>document.write(new Date().getFullYear());</script> PT. Sinar Cemara Jaya. All Rights
+                    Reserved.
+                </span>
             </p>
         </footer>
         <!-- [ Footer ] end -->

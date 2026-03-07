@@ -261,43 +261,38 @@
         </div>
     </form>
 
-    {{-- Stats Grid --}}
     <div class="dash-grid mb-3">
-        {{-- Left Column --}}
         <div class="dash-stat-card bg-dash-navy">
             <span class="stat-label"><i class="feather-file-text"></i> Total Invoice</span>
             <span class="stat-value">{{ $total_invoice }}</span>
-        </div>
-        <div class="dash-stat-card bg-dash-teal">
-            <span class="stat-label"><i class="feather-check-circle"></i> Sudah Ditagih</span>
-            <span class="stat-value">{{ $sudah_ditagih }}</span>
-        </div>
-
-        <div class="dash-stat-card bg-dash-emerald">
-            <span class="stat-label"><i class="feather-thumbs-up"></i> Lunas</span>
-            <span class="stat-value">{{ $lunas }}</span>
-        </div>
-        <div class="dash-stat-card bg-dash-amber">
-            <span class="stat-label"><i class="feather-alert-circle"></i> Belum Ditagih</span>
-            <span class="stat-value">{{ $belum_ditagih }}</span>
-        </div>
-
-        <div class="dash-stat-card bg-dash-rose">
-            <span class="stat-label"><i class="feather-x-circle"></i> Belum Lunas</span>
-            <span class="stat-value">{{ $belum_lunas }}</span>
         </div>
         <div class="dash-stat-card bg-dash-purple">
             <span class="stat-label"><i class="feather-shield"></i> PKP</span>
             <span class="stat-value">{{ $pkp }}</span>
         </div>
-
-        <div class="dash-stat-card bg-dash-crimson">
-            <span class="stat-label"><i class="feather-credit-card"></i> Total Belum Lunas</span>
-            <span class="stat-value">Rp {{ number_format($total_belum_lunas, 0, ',', '.') }}</span>
-        </div>
         <div class="dash-stat-card bg-dash-slate">
             <span class="stat-label"><i class="feather-tag"></i> Non PKP</span>
             <span class="stat-value">{{ $non_pkp }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-teal">
+            <span class="stat-label"><i class="feather-check-circle"></i> Sudah Ditagih</span>
+            <span class="stat-value">{{ $sudah_ditagih }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-amber">
+            <span class="stat-label"><i class="feather-alert-circle"></i> Belum Ditagih</span>
+            <span class="stat-value">{{ $belum_ditagih }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-emerald">
+            <span class="stat-label"><i class="feather-thumbs-up"></i> Lunas</span>
+            <span class="stat-value">{{ $lunas }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-rose">
+            <span class="stat-label"><i class="feather-x-circle"></i> Belum Lunas</span>
+            <span class="stat-value">{{ $belum_lunas }}</span>
+        </div>
+        <div class="dash-stat-card bg-dash-crimson">
+            <span class="stat-label"><i class="feather-credit-card"></i> Total Belum Lunas</span>
+            <span class="stat-value">Rp {{ number_format($total_belum_lunas, 0, ',', '.') }}</span>
         </div>
     </div>
 

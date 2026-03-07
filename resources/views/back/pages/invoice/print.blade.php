@@ -160,7 +160,7 @@
         <!-- Invoice Info -->
         <table class="w-100 collapse" style="margin-bottom: 5px;">
             <tr>
-                <td style="width: 52%; vertical-align: top;">
+                <td style="width: 50%; vertical-align: top;">
                     <table style="width: 100%; font-size: 10.5pt;">
                         <tr>
                             <td style="width: 130px; padding: 2px; white-space: nowrap;">No. Invoice</td>
@@ -169,7 +169,8 @@
                         <tr>
                             <td style="padding: 2px; white-space: nowrap;">Tanggal Invoice</td>
                             <td style="padding: 2px;">:
-                                {{ Carbon\Carbon::parse($invoice->created_at)->translatedFormat('d F Y') }}</td>
+                                {{ Carbon\Carbon::parse($invoice->created_at)->translatedFormat('d F Y') }}
+                            </td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Status PKP</td>
@@ -193,10 +194,10 @@
                         </tr>
                     </table>
                 </td>
-                <td style="width: 48%; vertical-align: top;">
+                <td style="width: 50%; vertical-align: top;">
                     <table style="width: 100%; font-size: 10.5pt;">
                         <tr>
-                            <td style="width: 100px; padding: 2px;">Kapal</td>
+                            <td style="width: 75px; padding: 2px;">Kapal</td>
                             <td style="padding: 2px;">: {{ $invoice->container->kapal->nama_kapal ?? '-' }}</td>
                         </tr>
                         <tr>
