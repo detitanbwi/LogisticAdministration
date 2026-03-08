@@ -2,33 +2,34 @@
 
 namespace App\Exports;
 
-use App\Models\Container;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class PackingListExport implements FromView, ShouldAutoSize, WithStyles
+class InvoiceRecapExport implements FromView, ShouldAutoSize, WithStyles
 {
-    protected $container;
+    protected $data;
+    protected $filters;
 
-    public function __construct(Container $container)
+    public function __construct(Collection $data, array $filters)
     {
-        $this->container = $container;
+        $this->data = $data;
+        $this->filters = $filters;
     }
 
     public function view(): View
     {
-        return view('back.pages.packing-list.excel', [
-            'container' => $this->container,
-            'isExport' => true
+        return view('back.pages.invoice.excel', [
+            'invoices' => $this->data,
+            'filters' => $this->filters
         ]);
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->setShowGridlines(false);
         $sheet->getStyle($sheet->calculateWorksheetDimension())->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
         return [];
     }

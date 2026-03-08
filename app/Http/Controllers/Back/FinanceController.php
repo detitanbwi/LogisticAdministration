@@ -29,6 +29,12 @@ class FinanceController extends Controller
                 }
             });
 
+            if ($request->filled('pengirim_id')) {
+                $query->whereHas('invoice', function ($q) use ($request) {
+                    $q->where('pengirim_id', $request->pengirim_id);
+                });
+            }
+
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
@@ -44,6 +50,21 @@ class FinanceController extends Controller
 
             return DataTables::of($query)
                 ->addIndexColumn()
+                ->filterColumn('no_invoice', function ($query, $keyword) {
+                    $query->whereHas('invoice', function ($q) use ($keyword) {
+                        $q->where('no_invoice', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('pengirim', function ($query, $keyword) {
+                    $query->whereHas('invoice.pengirim', function ($q) use ($keyword) {
+                        $q->where('nama', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('penerima', function ($query, $keyword) {
+                    $query->whereHas('invoice.penerima', function ($q) use ($keyword) {
+                        $q->where('nama', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('no_invoice', function ($row) {
                     return $row->invoice ? $row->invoice->no_invoice : '-';
                 })
@@ -100,7 +121,9 @@ class FinanceController extends Controller
         }
 
         $tujuans = \App\Models\Tujuan::all();
-        return view('back.pages.finance.index', compact('tujuans'));
+        $customers = \App\Models\Customer::all();
+        $judulPrints = \App\Models\JudulPrint::all();
+        return view('back.pages.finance.index', compact('tujuans', 'judulPrints', 'customers'));
     }
 
     /**
@@ -185,5 +208,67 @@ class FinanceController extends Controller
         }
 
         return redirect()->route('admin.finance.index')->with('success', 'Data finance berhasil diperbarui.');
+    }
+
+    public function export(Request $request)
+    {
+        abort_unless(auth()->user()->can('view.finance') || auth()->user()->can('print.finance'), 403);
+
+        $query = Finance::with('invoice.pengirim', 'invoice.penerima')->select('finance.*');
+
+        $query->whereHas('invoice.container', function ($q) use ($request) {
+            if ($request->filled('asal_id')) {
+                $q->where('asal_id', $request->asal_id);
+            }
+            if ($request->filled('tujuan_id')) {
+                $q->where('tujuan_id', $request->tujuan_id);
+            }
+        });
+
+        if ($request->filled('pengirim_id')) {
+            $query->whereHas('invoice', function ($q) use ($request) {
+                $q->where('pengirim_id', $request->pengirim_id);
+            });
+        }
+
+        if ($request->filled('daterange')) {
+            $dates = explode(' - ', $request->daterange);
+            if (count($dates) == 2) {
+                $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('finance.created_at', [$start_date, $end_date]);
+            }
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_tagihan', $request->status);
+        }
+
+        if ($request->filled('search')) { // from datatables search
+            $keyword = $request->search;
+            $query->where(function ($q) use ($keyword) {
+                $q->whereHas('invoice', function ($inv) use ($keyword) {
+                    $inv->where('no_invoice', 'like', "%{$keyword}%");
+                })
+                    ->orWhereHas('invoice.pengirim', function ($pg) use ($keyword) {
+                        $pg->where('nama', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('invoice.penerima', function ($pn) use ($keyword) {
+                        $pn->where('nama', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        $judulPrint = null;
+        if ($request->filled('judul_print_id')) {
+            $judulObj = \App\Models\JudulPrint::find($request->judul_print_id);
+            if ($judulObj) {
+                $judulPrint = $judulObj->nama;
+            }
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\FinanceRecapExport($query->get(), [
+            'judul_print' => $judulPrint
+        ]), 'FinanceRekap_' . date('YmdHis') . '.xlsx');
     }
 }

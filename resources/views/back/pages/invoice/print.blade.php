@@ -113,7 +113,8 @@
 
         $dpp = $invoice->items->sum('subtotal');
         $ppn = $invoice->pkp_status == 'PKP' ? $dpp * 0.011 : 0;
-        $grandTotal = $dpp + $ppn;
+        $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
+        $grandTotal = $dpp + $ppn + $feeTotal;
 
         // Parse layanan
         $layananParts = explode(' to ', strtolower($invoice->layanan ?? 'cy to door'));
@@ -300,6 +301,30 @@
                         </td>
                     </tr>
                 @endforeach
+                @if($invoice->additionalFees && $invoice->additionalFees->count() > 0)
+                    @foreach($invoice->additionalFees as $feeIndex => $fee)
+                        <tr>
+                            <td class="text-center" style="border: 1px solid #000;">{{ count($invoice->items) + $feeIndex + 1 }}
+                            </td>
+                            <td style="border: 1px solid #000;">Biaya Tambahan - {{ $fee->nama }}</td>
+                            <td class="text-center font-bold" style="border: 1px solid #000;"></td>
+                            <td class="text-center" style="border: 1px solid #000;"></td>
+                            <td class="text-center" style="border: 1px solid #000;"></td>
+                            <td style="border: 1px solid #000;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Rp</span>
+                                    <span>{{ number_format($fee->harga, 0, ',', '.') }}</span>
+                                </div>
+                            </td>
+                            <td style="border: 1px solid #000;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Rp</span>
+                                    <span>{{ number_format($fee->harga, 0, ',', '.') }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
 

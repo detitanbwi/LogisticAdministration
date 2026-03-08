@@ -1,20 +1,20 @@
 <table>
     {{-- Row 1: Empty row for top spacing --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
     </tr>
     {{-- Row 2: Title --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
         <th colspan="18" align="center" style="font-weight: bold;"><b>MANIFEST CONTAINER_PACKING LIST</b></th>
     </tr>
     {{-- Row 3: Empty separator --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="18"></td>
     </tr>
     {{-- Row 4: Kapal & Pelabuhan Asal --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="2"><b>Nama Kapal</b></td>
         <td colspan="4">: {{ $container->kapal->nama_kapal ?? '-' }}</td>
@@ -22,7 +22,7 @@
         <td colspan="10">: {{ $container->asal->nama_tujuan ?? '-' }}</td>
     </tr>
     {{-- Row 5: ETD & Pelabuhan Tujuan --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="2"><b>Tgl Keberangkatan (ETD)</b></td>
         <td colspan="4">: {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}
@@ -33,7 +33,7 @@
         </td>
     </tr>
     {{-- Row 6: Contr/Seal & Tipe --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="2"><b>Contr / Seal</b></td>
         <td colspan="4">: {{ $container->nomor_container }}</td>
@@ -41,12 +41,12 @@
         <td colspan="10">: {{ $container->tipe_kontainer ?? '-' }}</td>
     </tr>
     {{-- Row 7: Empty separator --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="18"></td>
     </tr>
     {{-- Row 8: Table Header --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No Invoice</th>
@@ -73,7 +73,7 @@
         @php
             $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
         @endphp
-        <tr>
+        <tr style="vertical-align: middle;">
             <td></td>{{-- Col A spacer --}}
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $no++ }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
@@ -107,7 +107,7 @@
         </tr>
         @if($inv->items->count() > 1)
             @for($i = 1; $i < $rowCount; $i++)
-                <tr>
+                <tr style="vertical-align: middle;">
                     <td></td>{{-- Col A spacer --}}
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
@@ -118,21 +118,21 @@
             @endfor
         @endif
     @empty
-        <tr>
+        <tr style="vertical-align: middle;">
             <td></td>
             <td colspan="18" style="border: 1px solid #000;">Belum ada invoice di dalam container ini.</td>
         </tr>
     @endforelse
     {{-- Empty separator before catatan --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
     </tr>
     {{-- Catatan Invoicing Box --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="4" style="border: 1px solid #000; font-weight: bold;">Catatan Invoicing:</td>
     </tr>
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="4" style="border: 1px solid #000; vertical-align: top;">{{ $container->catatan_invoicing ?? '-' }}</td>
     </tr>

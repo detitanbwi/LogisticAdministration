@@ -41,6 +41,10 @@ class InvoiceController extends Controller
                 $query->where('status_pembayaran', $request->status);
             }
 
+            if ($request->filled('pengirim_id')) {
+                $query->where('pengirim_id', $request->pengirim_id);
+            }
+
             if ($request->filled('asal_id')) {
                 $query->whereHas('container', function ($q) use ($request) {
                     $q->where('asal_id', $request->asal_id);
@@ -55,6 +59,29 @@ class InvoiceController extends Controller
 
             return DataTables::of($query)
                 ->addIndexColumn()
+                ->filterColumn('no_invoice', function ($query, $keyword) {
+                    $query->where('no_invoice', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('pengirim', function ($query, $keyword) {
+                    $query->whereHas('pengirim', function ($q) use ($keyword) {
+                        $q->where('nama', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('penerima', function ($query, $keyword) {
+                    $query->whereHas('penerima', function ($q) use ($keyword) {
+                        $q->where('nama', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('asal', function ($query, $keyword) {
+                    $query->whereHas('container.asal', function ($q) use ($keyword) {
+                        $q->where('nama_tujuan', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('tujuan', function ($query, $keyword) {
+                    $query->whereHas('container.tujuan', function ($q) use ($keyword) {
+                        $q->where('nama_tujuan', 'like', "%{$keyword}%");
+                    });
+                })
                 ->editColumn('no_invoice', function ($row) {
                     return $row->no_invoice;
                 })
@@ -107,7 +134,9 @@ class InvoiceController extends Controller
         }
 
         $tujuans = Tujuan::all();
-        return view('back.pages.invoice.index', compact('tujuans'));
+        $customers = Customer::all();
+        $judulPrints = \App\Models\JudulPrint::all();
+        return view('back.pages.invoice.index', compact('tujuans', 'judulPrints', 'customers'));
     }
 
     /**
@@ -157,6 +186,18 @@ class InvoiceController extends Controller
                 }
             }
 
+            if ($request->has('additional_fees')) {
+                foreach ($request->additional_fees as $fee) {
+                    if (!empty($fee['nama']) && !empty($fee['harga'])) {
+                        $invoice->additionalFees()->create([
+                            'nama' => $fee['nama'],
+                            'harga' => $fee['harga']
+                        ]);
+                        $totalTagihan += $fee['harga'];
+                    }
+                }
+            }
+
             // Calculate PPN if PKP
             if ($request->pkp_status == 'PKP') {
                 $totalTagihan += ($totalTagihan * 0.011);
@@ -185,7 +226,7 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('edit.invoice'), 403);
 
-        $invoice->load('items', 'finance');
+        $invoice->load('items', 'finance', 'additionalFees');
         $customers = Customer::all();
         $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
         $tujuanDaerahs = TujuanDaerah::all();
@@ -222,6 +263,19 @@ class InvoiceController extends Controller
                         'harga_satuan' => $item['harga_satuan'],
                         'subtotal' => $subtotal,
                     ]);
+                }
+            }
+
+            $invoice->additionalFees()->delete();
+            if ($request->has('additional_fees')) {
+                foreach ($request->additional_fees as $fee) {
+                    if (!empty($fee['nama']) && !empty($fee['harga'])) {
+                        $invoice->additionalFees()->create([
+                            'nama' => $fee['nama'],
+                            'harga' => $fee['harga']
+                        ]);
+                        $totalTagihan += $fee['harga'];
+                    }
                 }
             }
 
@@ -262,6 +316,7 @@ class InvoiceController extends Controller
             if ($invoice->finance) {
                 $invoice->finance()->delete();
             }
+            $invoice->additionalFees()->delete();
             $invoice->items()->delete();
             $invoice->delete();
 
@@ -277,7 +332,7 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('print.invoice') || auth()->user()->can('view.invoice'), 403);
 
-        $invoice->load(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'items', 'upDetail', 'tujuanDaerah']);
+        $invoice->load(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'items', 'additionalFees', 'upDetail', 'tujuanDaerah']);
 
         return view('back.pages.invoice.print', compact('invoice'));
     }
@@ -311,6 +366,17 @@ class InvoiceController extends Controller
         }
         $invoice->setRelation('items', $items);
 
+        $addFees = collect();
+        if ($request->additional_fees) {
+            foreach ($request->additional_fees as $fee) {
+                if (!empty($fee['nama']) && !empty($fee['harga'])) {
+                    $totalTagihan += $fee['harga'];
+                    $addFees->push(new \App\Models\InvoiceAdditionalFee($fee));
+                }
+            }
+        }
+        $invoice->setRelation('additionalFees', $addFees);
+
         if ($request->pkp_status == 'PKP') {
             $totalTagihan += ($totalTagihan * 0.011);
         }
@@ -322,5 +388,72 @@ class InvoiceController extends Controller
         $invoice->setRelation('finance', $finance);
 
         return view('back.pages.invoice.print', compact('invoice'));
+    }
+
+    public function export(Request $request)
+    {
+        abort_unless(auth()->user()->can('view.invoice') || auth()->user()->can('print.invoice'), 403);
+
+        $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'additionalFees', 'tujuanDaerah'])->select('invoice.*');
+
+        if ($request->filled('daterange')) {
+            $dates = explode(' - ', $request->daterange);
+            if (count($dates) == 2) {
+                $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('invoice.created_at', [$start_date, $end_date]);
+            }
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_pembayaran', $request->status);
+        }
+
+        if ($request->filled('pengirim_id')) {
+            $query->where('pengirim_id', $request->pengirim_id);
+        }
+
+        if ($request->filled('asal_id')) {
+            $query->whereHas('container', function ($q) use ($request) {
+                $q->where('asal_id', $request->asal_id);
+            });
+        }
+
+        if ($request->filled('tujuan_id')) {
+            $query->whereHas('container', function ($q) use ($request) {
+                $q->where('tujuan_id', $request->tujuan_id);
+            });
+        }
+
+        if ($request->filled('search')) { // from datatables search
+            $keyword = $request->search;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('no_invoice', 'like', "%{$keyword}%")
+                    ->orWhereHas('pengirim', function ($q2) use ($keyword) {
+                        $q2->where('nama', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('penerima', function ($q3) use ($keyword) {
+                        $q3->where('nama', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('container.asal', function ($q4) use ($keyword) {
+                        $q4->where('nama_tujuan', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('container.tujuan', function ($q5) use ($keyword) {
+                        $q5->where('nama_tujuan', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        $judulPrint = null;
+        if ($request->filled('judul_print_id')) {
+            $judulObj = \App\Models\JudulPrint::find($request->judul_print_id);
+            if ($judulObj) {
+                $judulPrint = $judulObj->nama;
+            }
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\InvoiceRecapExport($query->get(), [
+            'judul_print' => $judulPrint
+        ]), 'InvoiceRekap_' . date('YmdHis') . '.xlsx');
     }
 }

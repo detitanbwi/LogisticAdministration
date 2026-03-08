@@ -60,6 +60,11 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItem::class);
     }
 
+    public function additionalFees(): HasMany
+    {
+        return $this->hasMany(InvoiceAdditionalFee::class);
+    }
+
     public function finance(): HasOne
     {
         return $this->hasOne(Finance::class);

@@ -40,6 +40,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('kapal', KapalController::class);
         Route::resource('tujuan', TujuanController::class);
         Route::resource('tujuan-daerah', App\Http\Controllers\Back\TujuanDaerahController::class)->only(['store']);
+        Route::resource('judul-print', App\Http\Controllers\Back\JudulPrintController::class);
         Route::resource('customer', CustomerController::class);
         // Packing List (Invoicing) & Container Cost (Finance)
         Route::get('packing-list/{container}/print', [PackingListController::class, 'print'])->name('packing-list.print');
@@ -62,8 +63,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Invoicing & Finance
         Route::get('invoice/{invoice}/print', [App\Http\Controllers\Back\InvoiceController::class, 'print'])->name('invoice.print');
+        Route::get('invoice/export', [App\Http\Controllers\Back\InvoiceController::class, 'export'])->name('invoice.export');
         Route::any('invoice/preview', [App\Http\Controllers\Back\InvoiceController::class, 'preview'])->name('invoice.preview');
         Route::resource('invoice', App\Http\Controllers\Back\InvoiceController::class);
+
+        Route::get('finance/export', [App\Http\Controllers\Back\FinanceController::class, 'export'])->name('finance.export');
         Route::resource('finance', App\Http\Controllers\Back\FinanceController::class)->only(['index', 'edit', 'update']);
 
         // Laporan

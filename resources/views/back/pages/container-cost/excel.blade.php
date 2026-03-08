@@ -1,20 +1,20 @@
 <table>
     {{-- Row 1: Empty row for top spacing --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
     </tr>
     {{-- Row 2: Title --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
         <th colspan="27" align="center" style="font-weight: bold;"><b>CONTAINER COST_LAPORAN PEMBAYARAN</b></th>
     </tr>
     {{-- Row 3: Empty separator --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="27"></td>
     </tr>
     {{-- Row 4: Kapal & Pelabuhan Asal --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="2"><b>Nama Kapal</b></td>
         <td colspan="4">: {{ $container->kapal->nama_kapal ?? '-' }}</td>
@@ -22,7 +22,7 @@
         <td colspan="19">: {{ $container->asal->nama_tujuan ?? '-' }}</td>
     </tr>
     {{-- Row 5: ETD & Pelabuhan Tujuan --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="2"><b>Tgl Keberangkatan (ETD)</b></td>
         <td colspan="4">: {{ $container->etd ? Carbon\Carbon::parse($container->etd)->translatedFormat('d F Y') : '-' }}
@@ -33,7 +33,7 @@
         </td>
     </tr>
     {{-- Row 6: Contr/Seal & Tipe --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="2"><b>Contr / Seal</b></td>
         <td colspan="4">: {{ $container->nomor_container }}</td>
@@ -41,12 +41,12 @@
         <td colspan="19">: {{ $container->tipe_kontainer ?? '-' }}</td>
     </tr>
     {{-- Row 7: Empty separator --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="27"></td>
     </tr>
     {{-- Row 8: Table Header --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No Invoice</th>
@@ -60,6 +60,7 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Sat</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">DPP</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Biaya Tambahan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Total Tagihan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanda Terima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">BAP BALIK</th>
@@ -89,7 +90,7 @@
                 $masa_tunggakan = $tgl_tagih->diffInDays($tgl_transfer) . ' Hari';
             }
         @endphp
-        <tr>
+        <tr style="vertical-align: middle;">
             <td></td>{{-- Col A spacer --}}
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $no++ }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
@@ -118,6 +119,14 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ number_format($inv->dpp ?? 0, 0, ',', '.') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                @if($inv->additionalFees && $inv->additionalFees->count() > 0)
+                    {{ number_format($inv->additionalFees->sum('harga'), 0, ',', '.') }}
+                    ({{ $inv->additionalFees->pluck('nama')->implode(', ') }})
+                @else
+                    -
+                @endif
+            </td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ number_format($inv->grand_total ?? 0, 0, ',', '.') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
@@ -132,18 +141,20 @@
                 {{ $inv->finance && $inv->finance->tanggal_tagih ? $inv->finance->tanggal_tagih->format('d/m/Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->terima_barang ? $inv->terima_barang->format('d/m/Y') : '-' }}</td>
+                {{ $inv->terima_barang ? $inv->terima_barang->format('d/m/Y') : '-' }}
+            </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->status_pembayaran ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->finance && $inv->finance->tgl_transfer ? $inv->finance->tgl_transfer->format('d/m/Y') : '-' }}</td>
+                {{ $inv->finance && $inv->finance->tgl_transfer ? $inv->finance->tgl_transfer->format('d/m/Y') : '-' }}
+            </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $masa_tunggakan }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->catatan_muntahan ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->finance->catatan ?? '-' }}</td>
         </tr>
         @if($inv->items->count() > 1)
             @for($i = 1; $i < $rowCount; $i++)
-                <tr>
+                <tr style="vertical-align: middle;">
                     <td></td>{{-- Col A spacer --}}
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
@@ -155,21 +166,21 @@
             @endfor
         @endif
     @empty
-        <tr>
+        <tr style="vertical-align: middle;">
             <td></td>
             <td colspan="27" style="border: 1px solid #000;">Belum ada invoice di dalam container ini.</td>
         </tr>
     @endforelse
     {{-- Empty separator before catatan --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
     </tr>
     {{-- Catatan Finance Box --}}
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="4" style="border: 1px solid #000; font-weight: bold;">Catatan Finance:</td>
     </tr>
-    <tr>
+    <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="4" style="border: 1px solid #000; vertical-align: top;">{{ $container->catatan_finance ?? '-' }}
         </td>

@@ -123,6 +123,11 @@ return [
                 'url' => 'admin.customer.index',
                 'can' => 'view.customer',
             ],
+            [
+                'title' => 'Judul Cetak',
+                'url' => 'admin.judul-print.index',
+                'can' => 'view.customer', // we don't have separate permission for this yet, so bind to master data or user/admin
+            ],
         ]
     ],
     [

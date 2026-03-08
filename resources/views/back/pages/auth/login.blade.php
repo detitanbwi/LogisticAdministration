@@ -9,12 +9,11 @@
 
         <div class="mb-4">
             <x-back.text-input type="email" class="form-control" name="email" placeholder="Email or Username"
-                :value="old('email', 'admin@gmail.com')" required autofocus />
+                :value="old('email')" required autofocus />
         </div>
 
         <div class="mb-3">
-            <x-back.text-input type="password" class="form-control" name="password" placeholder="Password" value="password"
-                required />
+            <x-back.text-input type="password" class="form-control" name="password" placeholder="Password" required />
         </div>
 
         <div class="mb-4">

@@ -255,6 +255,26 @@
                                 {{-- Rows will be populated by JS --}}
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Fees -->
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Biaya Tambahan (Opsional)</h5>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="addFee()">
+                            <i class="feather-plus me-1"></i> Tambah Biaya
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="p-4 border-bottom">
+                            <div id="feeContainer">
+                                {{-- Fee rows will be populated by JS --}}
+                            </div>
+                        </div>
+
                         <div class="p-4 d-flex justify-content-end bg-light col-12 ms-0 mt-0">
                             <div style="min-width: 250px;">
                                 <div class="d-flex justify-content-between mb-2">
@@ -264,6 +284,10 @@
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="fw-medium text-muted">PKP (1.1%)</span>
                                     <span class="fw-bold" id="totalPPN">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-medium text-muted">Total Biaya Tambahan</span>
+                                    <span class="fw-bold" id="totalFee">0</span>
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between">
@@ -648,6 +672,72 @@
             calculateSubtotal(rowId);
         }
 
+        function handleFeeInput(element, feeId) {
+            formatCurrencyInput(element);
+            
+            const row = $(`#fee_${feeId}`);
+            const priceDisplay = row.find('.fee-price-input').val();
+            const price = parseCurrency(priceDisplay);
+            $(`#fee_harga_hidden_${feeId}`).val(price);
+
+            calculateTotal();
+        }
+
+        let feeIndex = 0;
+        const initialFees = @json(old('additional_fees', isset($invoice) && $invoice->additionalFees ? $invoice->additionalFees : []));
+
+        if (initialFees.length > 0) {
+            initialFees.forEach(fee => {
+                addFeeRow(fee);
+            });
+        }
+
+        function addFee() {
+            addFeeRow({});
+        }
+
+        function addFeeRow(data) {
+            const rowId = feeIndex++;
+            const nama = data.nama || '';
+            let harga = data.harga || 0;
+            
+            const formatVal = (n) => {
+                if (!n) return '';
+                let parts = n.toString().split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                return parts.join(',');
+            };
+            
+            const html = `
+                <div class="row align-items-end gx-2 gy-3 mb-3 pb-3 border-bottom fee-row" id="fee_${rowId}">
+                    <div class="col-md-6">
+                        <label class="form-label fs-12 mb-1 text-muted">Nama Biaya (Misal: Jasa Forklift)</label>
+                        <input type="text" class="form-control" name="additional_fees[${rowId}][nama]" value="${nama}" placeholder="Contoh: Forklift">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label fs-12 mb-1 text-muted">Harga</label>
+                        <div class="input-group">
+                            <span class="input-group-text px-2">Rp</span>
+                            <input type="text" class="form-control fee-price-input" value="${formatVal(harga)}" oninput="handleFeeInput(this, ${rowId})" placeholder="0">
+                        </div>
+                        <input type="hidden" name="additional_fees[${rowId}][harga]" id="fee_harga_hidden_${rowId}" value="${harga}" class="fee-hidden-price">
+                    </div>
+                    <div class="col-md-1 text-end">
+                        <label class="form-label fs-12 mb-1 text-muted d-none d-md-block">&nbsp;</label>
+                        <button type="button" class="btn btn-soft-danger btn-icon" onclick="removeFeeRow(${rowId})">
+                            <i class="feather-trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            $('#feeContainer').append(html);
+        }
+
+        function removeFeeRow(id) {
+            $(`#fee_${id}`).remove();
+            calculateTotal();
+        }
+
         function removeRow(id) {
             $(`#row_${id}`).remove();
             calculateTotal();
@@ -689,10 +779,17 @@
                 ppn = totalDPP * 0.011;
             }
 
-            const grandTotal = totalDPP + ppn;
+            let totalFees = 0;
+            $('#feeContainer .fee-row').each(function() {
+                const feePrice = parseFloat($(this).find('.fee-hidden-price').val()) || 0;
+                totalFees += feePrice;
+            });
+
+            const grandTotal = totalDPP + ppn + totalFees;
 
             $('#totalDPP').text(new Intl.NumberFormat('id-ID').format(totalDPP));
             $('#totalPPN').text(new Intl.NumberFormat('id-ID').format(ppn));
+            $('#totalFee').text(new Intl.NumberFormat('id-ID').format(totalFees));
             $('#grandTotal').text(new Intl.NumberFormat('id-ID').format(grandTotal));
         }
     </script>
