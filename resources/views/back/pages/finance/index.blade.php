@@ -17,67 +17,81 @@
             /* Ensure space for the arrow */
         }
     </style>
-    <div class="d-flex align-items-center mb-4 flex-wrap gap-2">
-        <div class="input-group" style="width: 200px;">
-            <span class="input-group-text"><i class="feather-calendar"></i></span>
-            <input type="text" class="form-control text-center dt-filter" name="daterange" id="filterDaterange"
-                placeholder="Pilih Tanggal">
+    <div class="row g-2 mb-4">
+        <div class="col-md-6">
+            <input type="text" class="form-select dt-filter" name="daterange" id="filterDaterange"
+                placeholder="Pilih Tanggal" style="cursor: pointer; background-color: #fff; height: 38px;" readonly>
         </div>
-        <select class="form-select dt-filter" id="filterStatus" name="status" style="width: 130px;">
-            <option value="">Semua Status</option>
-            <option value="Belum">Belum</option>
-            <option value="Sudah ditagih">Sudah ditagih</option>
-        </select>
-        <select class="form-select dt-filter" id="filterAsal" name="asal_id" style="width: 140px;">
-            <option value="">Semua Asal</option>
-            @foreach ($tujuans as $t)
-                <option value="{{ $t->id }}">{{ $t->nama_tujuan }}</option>
-            @endforeach
-        </select>
-        <select class="form-select dt-filter" id="filterTujuan" name="tujuan_id" style="width: 150px;">
-            <option value="">Semua Tujuan</option>
-            @foreach ($tujuans as $t)
-                <option value="{{ $t->id }}">{{ $t->nama_tujuan }}</option>
-            @endforeach
-        </select>
-        <div style="width: 250px;">
-            <select class="form-select dt-filter" id="filterPengirim" name="pengirim_id" data-placeholder="Semua Pengirim">
+        <div class="col-md-6">
+            <select class="form-select dt-filter" id="filterStatus" name="status" style="width: 100%;">
+                <option value="">Semua Status</option>
+                <option value="Belum">Belum</option>
+                <option value="Sudah ditagih">Sudah ditagih</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <select class="form-select dt-filter" id="filterAsal" name="asal_id" style="width: 100%;">
+                <option value="">Semua Asal</option>
+                @foreach ($tujuans as $t)
+                    <option value="{{ $t->id }}">{{ $t->nama_tujuan }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-6">
+            <select class="form-select dt-filter" id="filterTujuan" name="tujuan_id" style="width: 100%;">
+                <option value="">Semua Tujuan</option>
+                @foreach ($tujuans as $t)
+                    <option value="{{ $t->id }}">{{ $t->nama_tujuan }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-6">
+            <select class="form-select dt-filter" id="filterPengirim" name="pengirim_id" data-placeholder="Semua Pengirim"
+                style="width: 100%;">
                 <option value="">Semua Pengirim</option>
                 @foreach ($customers as $c)
                     <option value="{{ $c->id }}">{{ $c->nama }}</option>
                 @endforeach
             </select>
         </div>
-        <div style="width: 250px;">
-            <select class="form-select dt-filter" id="filterPenerima" name="penerima_id" data-placeholder="Semua Penerima">
+        <div class="col-md-6">
+            <select class="form-select dt-filter" id="filterPenerima" name="penerima_id" data-placeholder="Semua Penerima"
+                style="width: 100%;">
                 <option value="">Semua Penerima</option>
                 @foreach ($customers as $c)
                     <option value="{{ $c->id }}">{{ $c->nama }}</option>
                 @endforeach
             </select>
         </div>
-
-        <div class="d-flex gap-2 align-items-center">
-            <div class="d-flex gap-1" style="width: 260px;">
-                <select class="form-select dt-filter" id="filterJudulPrint" name="judul_print_id">
+        <div class="col-md-6">
+            <div class="d-flex gap-1">
+                <select class="form-select dt-filter" id="filterJudulPrint" name="judul_print_id" style="width: 100%;">
                     <option value="">Judul Print Default</option>
                     @foreach ($judulPrints as $jp)
                         <option value="{{ $jp->id }}">{{ $jp->nama }}</option>
                     @endforeach
                 </select>
-                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal"
+                <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center p-0"
+                    style="width: 38px; height: 38px;" type="button" data-bs-toggle="modal"
                     data-bs-target="#judulPrintModal">
                     <i class="feather-plus"></i>
                 </button>
             </div>
-            <button class="btn btn-light"
-                onclick="$('.dt-filter').val('').trigger('change'); $('#financeTable').DataTable().ajax.reload()">Reset</button>
-            <button class="btn btn-outline-primary" id="btnPrint" onclick="printTable()">
-                <i class="feather-printer me-1"></i> Print
-            </button>
-            <button class="btn btn-outline-success" id="btnExport" onclick="exportExcel()">
-                <i class="feather-download me-1"></i> Excel
-            </button>
+        </div>
+
+        <div class="col-12 mt-2">
+            <div class="d-flex gap-2">
+                <button class="btn btn-light"
+                    onclick="$('.dt-filter').val('').trigger('change'); $('#financeTable').DataTable().ajax.reload()">
+                    <i class="feather-refresh-ccw me-1"></i> RESET
+                </button>
+                <button class="btn btn-outline-primary" id="btnPrint" onclick="printTable()">
+                    <i class="feather-printer me-1"></i> PRINT
+                </button>
+                <button class="btn btn-outline-success" id="btnExport" onclick="exportExcel()">
+                    <i class="feather-download me-1"></i> EXCEL
+                </button>
+            </div>
         </div>
     </div>
 
@@ -130,20 +144,36 @@
         $(function () {
             $('#filterPengirim').select2({
                 theme: 'bootstrap-5',
-                width: '250px',
                 placeholder: 'Semua Pengirim'
             });
 
             $('#filterPenerima').select2({
                 theme: 'bootstrap-5',
-                width: '250px',
                 placeholder: 'Semua Penerima'
             });
 
             $('#filterJudulPrint').select2({
                 theme: 'bootstrap-5',
-                width: '200px',
-                placeholder: 'Judul Print Default'
+                placeholder: 'Judul Print Default',
+                minimumResultsForSearch: Infinity
+            });
+
+            $('#filterStatus').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Semua Status',
+                minimumResultsForSearch: Infinity
+            });
+
+            $('#filterAsal').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Semua Asal',
+                minimumResultsForSearch: Infinity
+            });
+
+            $('#filterTujuan').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Semua Tujuan',
+                minimumResultsForSearch: Infinity
             });
 
             // Native select change handler
@@ -213,42 +243,42 @@
 
             var title = $('#filterJudulPrint option:selected').val() ? $('#filterJudulPrint option:selected').text() : 'REKAPITULASI';
             printWindow.document.write(`
-                                                                    <html>
-                                                                    <head>
-                                                                        <title>Rekapitulasi Finance</title>
-                                                                        <style>
-                                                                            body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
-                                                                            h2 { text-align: center; margin-bottom: 5px; }
-                                                                            .filter-info { margin-bottom: 15px; }
-                                                                            .filter-info p { margin: 2px 0; font-size: 10pt; }
-                                                                            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                                                                            th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
-                                                                            th { background-color: #f0f0f0; font-weight: bold; }
-                                                                            @media print { body { margin: 0; } }
-                                                                        </style>
-                                                                    </head>
-                                                                    <body>
-                                                                        <h2>${title}</h2>
-                                                                        <div class="filter-info">${filterInfo}</div>
-                                                                        <table>
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>No</th>
-                                                                                    <th>No Invoice</th>
-                                                                                    <th>Pengirim</th>
-                                                                                    <th>Penerima</th>
-                                                                                    <th>Total Tagihan</th>
-                                                                                    <th>Status Tagihan</th>
-                                                                                    <th>Tanggal Tagih</th>
-                                                                                    <th>Masa Tunggakan</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>${rows}</tbody>
-                                                                        </table>
-                                                                        <script>window.print();<\/script>
-                                                                    </body>
-                                                                    </html>
-                                                                `);
+                                                                                <html>
+                                                                                <head>
+                                                                                    <title>Rekapitulasi Finance</title>
+                                                                                    <style>
+                                                                                        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
+                                                                                        h2 { text-align: center; margin-bottom: 5px; }
+                                                                                        .filter-info { margin-bottom: 15px; }
+                                                                                        .filter-info p { margin: 2px 0; font-size: 10pt; }
+                                                                                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                                                                                        th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
+                                                                                        th { background-color: #f0f0f0; font-weight: bold; }
+                                                                                        @media print { body { margin: 0; } }
+                                                                                    </style>
+                                                                                </head>
+                                                                                <body>
+                                                                                    <h2>${title}</h2>
+                                                                                    <div class="filter-info">${filterInfo}</div>
+                                                                                    <table>
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th>No</th>
+                                                                                                <th>No Invoice</th>
+                                                                                                <th>Pengirim</th>
+                                                                                                <th>Penerima</th>
+                                                                                                <th>Total Tagihan</th>
+                                                                                                <th>Status Tagihan</th>
+                                                                                                <th>Tanggal Tagih</th>
+                                                                                                <th>Masa Tunggakan</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>${rows}</tbody>
+                                                                                    </table>
+                                                                                    <script>window.print();<\/script>
+                                                                                </body>
+                                                                                </html>
+                                                                            `);
             printWindow.document.close();
         }
 
