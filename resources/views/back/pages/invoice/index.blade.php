@@ -66,7 +66,7 @@
                 </button>
             </div>
             <button class="btn btn-light"
-                onclick="$('.dt-filter').val(''); $('#invoiceTable').DataTable().ajax.reload()">Reset</button>
+                onclick="$('.dt-filter').val('').trigger('change'); $('#invoiceTable').DataTable().ajax.reload()">Reset</button>
             <button class="btn btn-outline-primary" id="btnPrint" onclick="printTable()">
                 <i class="feather-printer me-1"></i> Print
             </button>
@@ -96,9 +96,9 @@
         ]" :data="[
             'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
             'no_invoice',
-            'etd' => ['searchable' => false],
-            'asal' => ['searchable' => false, 'orderable' => false],
-            'tujuan' => ['searchable' => false, 'orderable' => false],
+            'etd' => ['searchable' => false, 'orderable' => false],
+            'asal' => ['orderable' => false],
+            'tujuan' => ['orderable' => false],
             'pengirim',
             'penerima',
             'total_tagihan' => ['searchable' => false, 'orderable' => false],
@@ -132,9 +132,27 @@
     @endpush
 @endsection
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('back/assets/vendors/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('back/assets/vendors/css/select2-theme.min.css') }}">
+@endpush
+
 @push('scripts')
+    <script src="{{ asset('back/assets/vendors/js/select2.min.js') }}"></script>
     <script>
         $(function () {
+            $('#filterPengirim').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Semua Pengirim'
+            });
+
+            $('#filterJudulPrint').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Judul Print Default'
+            });
+
             // Filter change handlers
             $('#filterStatus, #filterAsal, #filterTujuan, #filterPengirim').on('change', function () {
                 $('#invoiceTable').DataTable().ajax.reload();
@@ -191,42 +209,42 @@
                 '</p>';
 
             printWindow.document.write(`
-                                                                        <html>
-                                                                        <head>
-                                                                            <title>Rekapitulasi Invoice</title>
-                                                                            <style>
-                                                                                body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
-                                                                                h2 { text-align: center; margin-bottom: 5px; }
-                                                                                .filter-info { margin-bottom: 15px; }
-                                                                                .filter-info p { margin: 2px 0; font-size: 10pt; }
-                                                                                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                                                                                th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
-                                                                                th { background-color: #f0f0f0; font-weight: bold; }
-                                                                                @media print { body { margin: 0; } }
-                                                                            </style>
-                                                                        </head>
-                                                                        <body>
-                                                                            <h2>Rekapitulasi Invoice</h2>
-                                                                            <h4 style="text-align:center; margin-top:0;">PT. SINAR CEMARA JAYA</h4>
-                                                                            <div class="filter-info">${filterInfo}</div>
-                                                                            <table>
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th>No</th>
-                                                                                        <th>No Invoice</th>
-                                                                                        <th>ETD</th>
-                                                                                        <th>Pengirim</th>
-                                                                                        <th>Penerima</th>
-                                                                                        <th>Tagihan</th>
-                                                                                        <th>Tanda Terima</th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>${rows}</tbody>
-                                                                            </table>
-                                                                            <script>window.print();<\/script>
-                                                                        </body>
-                                                                        </html>
-                                                                    `);
+                                                                                <html>
+                                                                                <head>
+                                                                                    <title>Rekapitulasi Invoice</title>
+                                                                                    <style>
+                                                                                        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
+                                                                                        h2 { text-align: center; margin-bottom: 5px; }
+                                                                                        .filter-info { margin-bottom: 15px; }
+                                                                                        .filter-info p { margin: 2px 0; font-size: 10pt; }
+                                                                                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                                                                                        th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
+                                                                                        th { background-color: #f0f0f0; font-weight: bold; }
+                                                                                        @media print { body { margin: 0; } }
+                                                                                    </style>
+                                                                                </head>
+                                                                                <body>
+                                                                                    <h2>Rekapitulasi Invoice</h2>
+                                                                                    <h4 style="text-align:center; margin-top:0;">PT. SINAR CEMARA JAYA</h4>
+                                                                                    <div class="filter-info">${filterInfo}</div>
+                                                                                    <table>
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th>No</th>
+                                                                                                <th>No Invoice</th>
+                                                                                                <th>ETD</th>
+                                                                                                <th>Pengirim</th>
+                                                                                                <th>Penerima</th>
+                                                                                                <th>Tagihan</th>
+                                                                                                <th>Tanda Terima</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>${rows}</tbody>
+                                                                                    </table>
+                                                                                    <script>window.print();<\/script>
+                                                                                </body>
+                                                                                </html>
+                                                                            `);
             printWindow.document.close();
         }
 

@@ -126,25 +126,24 @@
     <!-- Table Data Invoice -->
     <table class="w-100 collapse table-data" {{ isset($isExport) ? 'border="1"' : '' }}>
         <thead>
-            <tr>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No Invoice</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tgl Masuk</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Pengirim</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>HP Pengirim</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Penerima</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>HP Penerima</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }} style="min-width: 80px;">Jenis
-                    Barang</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Koli</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Jumlah</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Sat</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tanda Terima</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>BAP BALIK</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Daerah Tujuan</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Status</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Layanan</th>
-                <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>STTS PKP</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>No Invoice</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tgl Masuk</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Pengirim</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Penerima</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Daerah Tujuan</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }} style="min-width: 80px;">Jenis
+                Barang</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Koli</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Jumlah</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Sat</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Harga Satuan</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Sub Total</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>DPP</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>TOTAL</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Tanda Terima</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>Status</th>
+            <th {{ isset($isExport) ? 'style="background-color: #fce4d6;"' : '' }}>STTS PKP</th>
             </tr>
         </thead>
         <tbody>
@@ -160,9 +159,8 @@
                         {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
                     </td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
-                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->pengirim->no_hp ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
-                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->penerima->no_hp ?? '-' }}</td>
+                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->tujuanDaerah->nama ?? '-' }}</td>
 
                     @if($inv->items->count() > 0)
                         <td>{{ $inv->items[0]->jenis_barang }}</td>
@@ -170,18 +168,22 @@
                         <td class="text-center">{{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
                         </td>
                         <td class="text-center">{{ $inv->items[0]->satuan }}</td>
+                        <td class="text-right">{{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
                     @else
                         <td>-</td>
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>
+                        <td class="text-center">-</td>
+                        <td class="text-center">-</td>
                     @endif
 
+                    <td rowspan="{{ $rowCount }}" class="text-right">{{ number_format($inv->dpp ?? 0, 0, ',', '.') }}</td>
+                    <td rowspan="{{ $rowCount }}" class="text-right">
+                        {{ number_format($inv->grand_total ?? 0, 0, ',', '.') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
-                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->terima_barang ? 'SUDAH' : 'BELUM' }}</td>
-                    <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->tujuanDaerah->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->status_pembayaran ?? '-' }}</td>
-                    <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->layanan ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ mb_strtoupper($inv->pkp_status) }}</td>
                 </tr>
                 @if($inv->items->count() > 1)
@@ -193,12 +195,14 @@
                                 {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
                             </td>
                             <td class="text-center">{{ $inv->items[$i]->satuan }}</td>
+                            <td class="text-right">{{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
+                            <td class="text-right">{{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
                         </tr>
                     @endfor
                 @endif
             @empty
                 <tr>
-                    <td colspan="17" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
+                    <td colspan="18" class="text-center" style="padding: 15px;">Belum ada invoice di dalam container ini.
                     </td>
                 </tr>
             @endforelse

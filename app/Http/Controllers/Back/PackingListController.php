@@ -16,6 +16,16 @@ class PackingListController extends Controller
             $query = Container::with(['asal', 'tujuan'])->withCount('invoices');
             return datatables()->of($query)
                 ->addIndexColumn()
+                ->filterColumn('pelabuhan_asal', function ($query, $keyword) {
+                    $query->whereHas('asal', function ($q) use ($keyword) {
+                        $q->where('nama_tujuan', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('pelabuhan_tujuan', function ($query, $keyword) {
+                    $query->whereHas('tujuan', function ($q) use ($keyword) {
+                        $q->where('nama_tujuan', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('pelabuhan_asal', function ($row) {
                     return $row->asal ? $row->asal->nama_tujuan : '-';
                 })

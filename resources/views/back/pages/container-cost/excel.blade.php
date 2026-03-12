@@ -6,12 +6,12 @@
     {{-- Row 2: Title --}}
     <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
-        <th colspan="27" align="center" style="font-weight: bold;"><b>CONTAINER COST_LAPORAN PEMBAYARAN</b></th>
+        <th colspan="29" align="center" style="font-weight: bold;"><b>CONTAINER COST_LAPORAN PEMBAYARAN</b></th>
     </tr>
     {{-- Row 3: Empty separator --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="27"></td>
+        <td colspan="29"></td>
     </tr>
     {{-- Row 4: Kapal & Pelabuhan Asal --}}
     <tr style="vertical-align: middle;">
@@ -59,6 +59,8 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Sat</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Harga Satuan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Subtotal</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">DPP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Biaya Tambahan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Total Tagihan</th>
@@ -69,11 +71,11 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Layanan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Di Tagih Ke</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Tagih</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Masa Tunggakan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Terima Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Status (Tahan/Serahkan)</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">STTS PKP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Transfer</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Masa Tunggakan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Pembayaran</th>
     </tr>
@@ -109,11 +111,15 @@
                     {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
                 </td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
+                <td style="border: 1px solid #000;">{{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
+                <td style="border: 1px solid #000;">{{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
             @else
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
+                <td style="border: 1px solid #000;">0</td>
+                <td style="border: 1px solid #000;">0</td>
             @endif
 
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ number_format($inv->dpp ?? 0, 0, ',', '.') }}
@@ -140,6 +146,7 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->finance && $inv->finance->tanggal_tagih ? $inv->finance->tanggal_tagih->format('d/m/Y') : '-' }}
             </td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $masa_tunggakan }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->terima_barang ? $inv->terima_barang->format('d/m/Y') : '-' }}
             </td>
@@ -148,7 +155,6 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->finance && $inv->finance->tgl_transfer ? $inv->finance->tgl_transfer->format('d/m/Y') : '-' }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $masa_tunggakan }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->catatan_muntahan ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->finance->catatan ?? '-' }}</td>
         </tr>
@@ -162,13 +168,15 @@
                         {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
+                    <td style="border: 1px solid #000;">{{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
+                    <td style="border: 1px solid #000;">{{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endfor
         @endif
     @empty
         <tr style="vertical-align: middle;">
             <td></td>
-            <td colspan="27" style="border: 1px solid #000;">Belum ada invoice di dalam container ini.</td>
+            <td colspan="29" style="border: 1px solid #000;">Belum ada invoice di dalam container ini.</td>
         </tr>
     @endforelse
     {{-- Empty separator before catatan --}}

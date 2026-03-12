@@ -241,17 +241,17 @@
                     <div class="font-bold"
                         style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 10.5pt;">
                         PENGIRIM</div>
-                    <div style="font-size: 10.5pt;">{{ $invoice->pengirim->nama }}<br>
-                        {{ $invoice->pengirim->alamat }}<br>
-                        HP : {{ $invoice->pengirim->no_hp }}</div>
+                    <div style="font-size: 10.5pt;">{{ optional($invoice->pengirim)->nama ?? '-' }}<br>
+                        {{ optional($invoice->pengirim)->alamat ?? '-' }}<br>
+                        HP : {{ optional($invoice->pengirim)->no_hp ?? '-' }}</div>
                 </td>
                 <td style="width: 50%; border: 1px solid #000; padding: 3px 5px;">
                     <div class="font-bold"
                         style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 10.5pt;">
                         PENERIMA</div>
-                    <div style="font-size: 10.5pt;">{{ $invoice->penerima->nama }}<br>
-                        {{ $invoice->penerima->alamat }}<br>
-                        HP : {{ $invoice->penerima->no_hp }}</div>
+                    <div style="font-size: 10.5pt;">{{ optional($invoice->penerima)->nama ?? '-' }}<br>
+                        {{ optional($invoice->penerima)->alamat ?? '-' }}<br>
+                        HP : {{ optional($invoice->penerima)->no_hp ?? '-' }}</div>
                 </td>
             </tr>
         </table>

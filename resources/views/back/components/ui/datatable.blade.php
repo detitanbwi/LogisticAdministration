@@ -36,6 +36,7 @@
     <script src="{{ asset('back/assets/vendors/js/dataTables.bs5.min.js') }}"></script>
     <script>
         $(document).ready(function() {
+            $.fn.dataTable.ext.errMode = 'none';
             $('#{{ $id }}').DataTable({
                 processing: true,
                 serverSide: true,
