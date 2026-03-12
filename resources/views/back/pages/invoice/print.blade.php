@@ -242,17 +242,17 @@
             <tr>
                 <td style="width: 50%; border: 1px solid #000; padding: 3px 5px;">
                     <div class="font-bold"
-                        style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 10.5pt;">
+                        style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 12pt;">
                         PENGIRIM</div>
-                    <div style="font-size: 10.5pt;">{{ optional($invoice->pengirim)->nama ?? '-' }}<br>
+                    <div style="font-size: 12pt;">{{ optional($invoice->pengirim)->nama ?? '-' }}<br>
                         {{ optional($invoice->pengirim)->alamat ?? '-' }}<br>
                         HP : {{ optional($invoice->pengirim)->no_hp ?? '-' }}</div>
                 </td>
                 <td style="width: 50%; border: 1px solid #000; padding: 3px 5px;">
                     <div class="font-bold"
-                        style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 10.5pt;">
+                        style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 12pt;">
                         PENERIMA</div>
-                    <div style="font-size: 10.5pt;">{{ optional($invoice->penerima)->nama ?? '-' }}<br>
+                    <div style="font-size: 12pt;">{{ optional($invoice->penerima)->nama ?? '-' }}<br>
                         {{ optional($invoice->penerima)->alamat ?? '-' }}<br>
                         HP : {{ optional($invoice->penerima)->no_hp ?? '-' }}</div>
                 </td>
@@ -309,10 +309,7 @@
                         <tr>
                             <td class="text-center" style="border: 1px solid #000;">{{ count($invoice->items) + $feeIndex + 1 }}
                             </td>
-                            <td style="border: 1px solid #000;">Biaya Tambahan - {{ $fee->nama }}</td>
-                            <td class="text-center font-bold" style="border: 1px solid #000;"></td>
-                            <td class="text-center" style="border: 1px solid #000;"></td>
-                            <td class="text-center" style="border: 1px solid #000;"></td>
+                            <td colspan="4" style="border: 1px solid #000; padding-left: 5px;">Biaya Tambahan - {{ $fee->nama }}</td>
                             <td style="border: 1px solid #000;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span>Rp</span>

@@ -53,6 +53,14 @@
                 @endforeach
             </select>
         </div>
+        <div style="width: 250px;">
+            <select class="form-select dt-filter" id="filterPenerima" name="penerima_id" data-placeholder="Semua Penerima">
+                <option value="">Semua Penerima</option>
+                @foreach ($customers as $c)
+                    <option value="{{ $c->id }}">{{ $c->nama }}</option>
+                @endforeach
+            </select>
+        </div>
 
         <div class="d-flex gap-2 align-items-center">
             <div class="d-flex gap-1" style="width: 260px;">
@@ -149,6 +157,12 @@
                 placeholder: 'Semua Pengirim'
             });
 
+            $('#filterPenerima').select2({
+                theme: 'bootstrap-5',
+                width: '250px',
+                placeholder: 'Semua Penerima'
+            });
+
             $('#filterJudulPrint').select2({
                 theme: 'bootstrap-5',
                 width: '200px',
@@ -156,7 +170,7 @@
             });
 
             // Filter change handlers
-            $('#filterStatus, #filterAsal, #filterTujuan, #filterPengirim').on('change', function () {
+            $('#filterStatus, #filterAsal, #filterTujuan, #filterPengirim, #filterPenerima').on('change', function () {
                 $('#invoiceTable').DataTable().ajax.reload();
             });
 
@@ -321,6 +335,7 @@
             var asal = $('#filterAsal').val() || '';
             var tujuan = $('#filterTujuan').val() || '';
             var pengirim = $('#filterPengirim').val() || '';
+            var penerima = $('#filterPenerima').val() || '';
             var judul = $('#filterJudulPrint').val() || '';
             var search = $('#invoiceTable').DataTable().search() || '';
 
@@ -329,6 +344,7 @@
                 '&asal_id=' + encodeURIComponent(asal) +
                 '&tujuan_id=' + encodeURIComponent(tujuan) +
                 '&pengirim_id=' + encodeURIComponent(pengirim) +
+                '&penerima_id=' + encodeURIComponent(penerima) +
                 '&judul_print_id=' + encodeURIComponent(judul) +
                 '&search=' + encodeURIComponent(search);
 

@@ -45,6 +45,10 @@ class InvoiceController extends Controller
                 $query->where('pengirim_id', $request->pengirim_id);
             }
 
+            if ($request->filled('penerima_id')) {
+                $query->where('penerima_id', $request->penerima_id);
+            }
+
             if ($request->filled('asal_id')) {
                 $query->whereHas('container', function ($q) use ($request) {
                     $q->where('asal_id', $request->asal_id);
@@ -411,6 +415,10 @@ class InvoiceController extends Controller
 
         if ($request->filled('pengirim_id')) {
             $query->where('pengirim_id', $request->pengirim_id);
+        }
+
+        if ($request->filled('penerima_id')) {
+            $query->where('penerima_id', $request->penerima_id);
         }
 
         if ($request->filled('asal_id')) {
