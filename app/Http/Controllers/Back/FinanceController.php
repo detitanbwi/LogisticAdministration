@@ -35,6 +35,12 @@ class FinanceController extends Controller
                 });
             }
 
+            if ($request->filled('penerima_id')) {
+                $query->whereHas('invoice', function ($q) use ($request) {
+                    $q->where('penerima_id', $request->penerima_id);
+                });
+            }
+
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
@@ -228,6 +234,12 @@ class FinanceController extends Controller
         if ($request->filled('pengirim_id')) {
             $query->whereHas('invoice', function ($q) use ($request) {
                 $q->where('pengirim_id', $request->pengirim_id);
+            });
+        }
+
+        if ($request->filled('penerima_id')) {
+            $query->whereHas('invoice', function ($q) use ($request) {
+                $q->where('penerima_id', $request->penerima_id);
             });
         }
 
