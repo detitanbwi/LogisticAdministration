@@ -115,7 +115,7 @@
         $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
         $dpp_and_fee = $dpp + $feeTotal;
         $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
-        $dpp_display = $is_pkp ? $dpp_and_fee : 0;
+        $dpp_display = $dpp_and_fee;
         $ppn = $is_pkp ? $dpp_and_fee * 0.011 : 0;
         $grandTotal = $dpp_and_fee + $ppn;
 

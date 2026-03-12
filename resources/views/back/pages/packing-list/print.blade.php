@@ -211,7 +211,7 @@
     <!-- Footer Note -->
     @if(!isset($isExport) && !empty($container->catatan_invoicing))
         <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
-            <strong>Catatan:</strong><br>
+            <strong>Catatan Packing List:</strong><br>
             {!! nl2br(e($container->catatan_invoicing)) !!}
         </div>
     @endif

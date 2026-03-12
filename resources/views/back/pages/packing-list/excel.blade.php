@@ -5,13 +5,12 @@
     </tr>
     {{-- Row 2: Title --}}
     <tr style="vertical-align: middle;">
-        <td></td>{{-- Col A spacer --}}
-        <th colspan="18" align="center" style="font-weight: bold;"><b>MANIFEST CONTAINER_PACKING LIST</b></th>
+        <th colspan="20" align="center" style="font-weight: bold;"><b>MANIFEST CONTAINER_PACKING LIST</b></th>
     </tr>
     {{-- Row 3: Empty separator --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="18"></td>
+        <td colspan="20"></td>
     </tr>
     {{-- Row 4: Kapal & Pelabuhan Asal --}}
     <tr style="vertical-align: middle;">
@@ -53,8 +52,10 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tgl Masuk</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Pengirim</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Penerima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jenis Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
@@ -78,17 +79,21 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $no++ }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}</td>
+                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
+            </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->no_hp ?? '-' }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->alamat ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->penerima->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->penerima->no_hp ?? '-' }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->penerima->alamat ?? '-' }}</td>
 
             @if($inv->items->count() > 0)
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                 <td style="border: 1px solid #000;">
-                    {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}</td>
+                    {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
+                </td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
             @else
                 <td style="border: 1px solid #000;">-</td>
@@ -112,7 +117,8 @@
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                     <td style="border: 1px solid #000;">
-                        {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}</td>
+                        {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
+                    </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
                 </tr>
             @endfor
@@ -130,10 +136,11 @@
     {{-- Catatan Invoicing Box --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="4" style="border: 1px solid #000; font-weight: bold;">Catatan Invoicing:</td>
+        <td colspan="4" style="border: 1px solid #000; font-weight: bold;">Catatan Packing List:</td>
     </tr>
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="4" style="border: 1px solid #000; vertical-align: top;">{{ $container->catatan_invoicing ?? '-' }}</td>
+        <td colspan="4" style="border: 1px solid #000; vertical-align: top;">{{ $container->catatan_invoicing ?? '-' }}
+        </td>
     </tr>
 </table>

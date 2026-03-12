@@ -156,8 +156,8 @@
                     $dpp_and_fee_val = $dpp_base + $fee_val;
                     $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
 
-                    $dpp_display = $is_pkp ? $dpp_and_fee_val : 0;
                     $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
+                    $dpp_display = $ppn_val;
                     $grand_total_val = $dpp_and_fee_val + $ppn_val;
                 @endphp
                 <tr>
