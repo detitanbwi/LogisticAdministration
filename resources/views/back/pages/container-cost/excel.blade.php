@@ -85,6 +85,15 @@
         @php
             $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
 
+            $dpp_base = $inv->items->sum('subtotal');
+            $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
+            $dpp_and_fee_val = $dpp_base + $fee_val;
+            $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
+
+            $dpp_display = $is_pkp ? $dpp_and_fee_val : 0;
+            $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
+            $grand_total_val = $dpp_and_fee_val + $ppn_val;
+
             $masa_tunggakan = '-';
             if ($inv->finance && $inv->finance->tanggal_tagih) {
                 $tgl_tagih = \Carbon\Carbon::parse($inv->finance->tanggal_tagih);
@@ -122,7 +131,7 @@
                 <td style="border: 1px solid #000;">0</td>
             @endif
 
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ number_format($inv->dpp ?? 0, 0, ',', '.') }}
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ number_format($dpp_display, 0, ',', '.') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 @if($inv->additionalFees && $inv->additionalFees->count() > 0)
@@ -133,7 +142,7 @@
                 @endif
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ number_format($inv->grand_total ?? 0, 0, ',', '.') }}
+                {{ number_format($grand_total_val, 0, ',', '.') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->terima_barang ? 'SUDAH' : 'BELUM' }}</td>

@@ -112,9 +112,12 @@
         }
 
         $dpp = $invoice->items->sum('subtotal');
-        $ppn = $invoice->pkp_status == 'PKP' ? $dpp * 0.011 : 0;
         $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
-        $grandTotal = $dpp + $ppn + $feeTotal;
+        $dpp_and_fee = $dpp + $feeTotal;
+        $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
+        $dpp_display = $is_pkp ? $dpp_and_fee : 0;
+        $ppn = $is_pkp ? $dpp_and_fee * 0.011 : 0;
+        $grandTotal = $dpp_and_fee + $ppn;
 
         // Parse layanan
         $layananParts = explode(' to ', strtolower($invoice->layanan ?? 'cy to door'));
@@ -342,7 +345,7 @@
                 <td style="width: 20%; padding: 5px 10px;">Total DPP</td>
                 <td style="width: 5%; padding: 5px 0 5px 5px; color: red;">Rp</td>
                 <td class="text-right" style="width: 15%; padding: 5px 10px 5px 0; color: red;">
-                    {{ number_format($dpp, 0, ',', '.') }}
+                    {{ number_format($dpp_display, 0, ',', '.') }}
                 </td>
             </tr>
             <tr>

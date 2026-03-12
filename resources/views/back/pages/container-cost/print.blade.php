@@ -151,6 +151,14 @@
             @forelse ($container->invoices as $inv)
                 @php
                     $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
+                    $dpp_base = $inv->items->sum('subtotal');
+                    $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
+                    $dpp_and_fee_val = $dpp_base + $fee_val;
+                    $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
+
+                    $dpp_display = $is_pkp ? $dpp_and_fee_val : 0;
+                    $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
+                    $grand_total_val = $dpp_and_fee_val + $ppn_val;
                 @endphp
                 <tr>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $no++ }}</td>
@@ -179,9 +187,10 @@
                         <td class="text-center">-</td>
                     @endif
 
-                    <td rowspan="{{ $rowCount }}" class="text-right">{{ number_format($inv->dpp ?? 0, 0, ',', '.') }}</td>
+                    <td rowspan="{{ $rowCount }}" class="text-right">{{ number_format($dpp_display, 0, ',', '.') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-right">
-                        {{ number_format($inv->grand_total ?? 0, 0, ',', '.') }}</td>
+                        {{ number_format($grand_total_val, 0, ',', '.') }}
+                    </td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->status_pembayaran ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ mb_strtoupper($inv->pkp_status) }}</td>
