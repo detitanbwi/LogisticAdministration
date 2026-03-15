@@ -12,7 +12,11 @@ class Customer extends Model
     protected $fillable = [
         'nama',
         'no_hp',
+        'npwp',
+        'pic',
+        'jabatan_pic',
         'alamat',
+        'catatan',
     ];
 
     public function invoicesAsPengirim(): HasMany

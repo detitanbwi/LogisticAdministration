@@ -18,11 +18,15 @@
         @endcan
     </div>
 
-    <x-back.datatable id="customerTable" :ajax="route('admin.customer.index')" :header="['No', 'Nama', 'No HP', 'Alamat', 'Aksi']" :data="[
+    <x-back.datatable id="customerTable" :ajax="route('admin.customer.index')" :header="['No', 'Nama', 'No HP', 'NPWP', 'PIC', 'Jabatan PIC', 'Alamat', 'Catatan', 'Aksi']" :data="[
         'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
         'nama',
         'no_hp',
+        'npwp',
+        'pic',
+        'jabatan_pic',
         'alamat',
+        'catatan',
         'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
     ]" />
 @endsection

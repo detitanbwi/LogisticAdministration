@@ -119,6 +119,8 @@ class FinanceController extends Controller
                         $btn .= '<a href="' . $editUrl . '" class="avatar-text avatar-md bg-soft-primary text-primary" title="Update Finance"><i class="feather feather-edit"></i></a>';
                     }
 
+                    $btn .= '<a href="' . route('admin.finance.print', $row->id) . '" class="avatar-text avatar-md bg-soft-info text-info" target="_blank" title="Print Summary"><i class="feather feather-printer"></i></a>';
+
                     $btn .= '</div>';
                     return $btn;
                 })
@@ -216,11 +218,30 @@ class FinanceController extends Controller
         return redirect()->route('admin.finance.index')->with('success', 'Data finance berhasil diperbarui.');
     }
 
+    public function print(Finance $finance)
+    {
+        abort_unless(auth()->user()->can('view.finance') || auth()->user()->can('print.finance'), 403);
+
+        $finance->load([
+            'invoice.pengirim',
+            'invoice.penerima',
+            'invoice.items',
+            'invoice.container.kapal',
+            'invoice.container.asal',
+            'invoice.container.tujuan',
+            'invoice.additionalFees',
+            'invoice.tujuanDaerah',
+            'invoice.upDetail'
+        ]);
+
+        return view('back.pages.finance.print', compact('finance'));
+    }
+
     public function export(Request $request)
     {
         abort_unless(auth()->user()->can('view.finance') || auth()->user()->can('print.finance'), 403);
 
-        $query = Finance::with('invoice.pengirim', 'invoice.penerima')->select('finance.*');
+        $query = Finance::with(['invoice.pengirim', 'invoice.penerima', 'invoice.items', 'invoice.container.kapal', 'invoice.container.asal', 'invoice.container.tujuan', 'invoice.additionalFees', 'invoice.tujuanDaerah'])->select('finance.*');
 
         $query->whereHas('invoice.container', function ($q) use ($request) {
             if ($request->filled('asal_id')) {
@@ -280,7 +301,8 @@ class FinanceController extends Controller
         }
 
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\FinanceRecapExport($query->get(), [
-            'judul_print' => $judulPrint
+            'judul_print' => $judulPrint,
+            'daterange' => $request->daterange
         ]), 'FinanceRekap_' . date('YmdHis') . '.xlsx');
     }
 }

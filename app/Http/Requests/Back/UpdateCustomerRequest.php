@@ -16,7 +16,11 @@ class UpdateCustomerRequest extends FormRequest
         return [
             'nama' => ['required', 'string', 'max:255'],
             'no_hp' => ['required', 'string', 'max:20'],
+            'npwp' => ['nullable', 'string', 'max:255'],
+            'pic' => ['nullable', 'string', 'max:255'],
+            'jabatan_pic' => ['nullable', 'string', 'max:255'],
             'alamat' => ['nullable', 'string'],
+            'catatan' => ['nullable', 'string'],
         ];
     }
 }

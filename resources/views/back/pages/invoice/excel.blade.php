@@ -6,64 +6,163 @@
     {{-- Row 2: Title --}}
     <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
-        <th colspan="8" align="center" style="font-weight: bold; font-size: 14pt;">
-            {{ $filters['judul_print'] ?? 'REKAPITULASI' }}
+        <th colspan="28" align="center" style="font-weight: bold; font-size: 14pt;">
+            {{ $filters['judul_print'] ?? 'REKAPITULASI INVOICE' }}
         </th>
     </tr>
-    {{-- Row 2: Empty separator --}}
+    {{-- Row 3: Empty separator --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="8"></td>
+        <td colspan="28"></td>
     </tr>
+    {{-- Row 4: Table Header --}}
     <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No Invoice</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">ETD</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tgl Masuk</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pengirim</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Penerima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Penerima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Up</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Kapal</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pelabuhan Asal</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pelabuhan Tujuan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Daerah Tujuan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">ETD</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">ETA</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tipe Kontainer</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Contr / Seal</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Layanan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jenis Barang</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Sat</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Harga Satuan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Subtotal</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">DPP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Biaya Tambahan</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tagihan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Total Tagihan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">STTS PKP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanda Terima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan</th>
     </tr>
     <tbody>
-        @foreach($invoices as $index => $data)
+        @foreach($invoices as $index => $inv)
             @php
-                $fees = $data->additionalFees ? $data->additionalFees : collect();
-                $rowspan = $fees->count() > 0 ? $fees->count() : 1;
+                $rowCount = $inv->items && $inv->items->count() > 0 ? $inv->items->count() : 1;
+                $dpp_base = $inv->items ? $inv->items->sum('subtotal') : 0;
+                $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
+                $dpp_and_fee_val = $dpp_base + $fee_val;
+                $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
+                $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
+                $dpp_display = $dpp_base;
+                $grand_total_val = $dpp_and_fee_val + $ppn_val;
             @endphp
             <tr style="vertical-align: middle;">
                 <td></td>{{-- Col A spacer --}}
-                <td rowspan="{{ $rowspan }}" style="border: 1px solid #000;">{{ $index + 1 }}</td>
-                <td rowspan="{{ $rowspan }}" style="border: 1px solid #000;">{{ $data->no_invoice }}</td>
-                <td rowspan="{{ $rowspan }}" style="border: 1px solid #000;">
-                    {{ $data->container && $data->container->etd ? $data->container->etd->format('d-m-Y') : '-' }}
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $index + 1 }}</td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-m-Y') : '-' }}
                 </td>
-                <td rowspan="{{ $rowspan }}" style="border: 1px solid #000;">
-                    {{ $data->pengirim ? $data->pengirim->nama : '-' }}
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->pengirim ? $inv->pengirim->nama : '-' }}
                 </td>
-                <td rowspan="{{ $rowspan }}" style="border: 1px solid #000;">
-                    {{ $data->penerima ? $data->penerima->nama : '-' }}
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->pengirim ? $inv->pengirim->no_hp : '-' }}
                 </td>
-                <td style="border: 1px solid #000;">
-                    @if($fees->count() > 0)
-                        {{ $fees[0]->nama }} - {{ number_format($fees[0]->harga, 0, ',', '.') }}
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->penerima ? $inv->penerima->nama : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->penerima ? $inv->penerima->no_hp : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->upDetail ? $inv->upDetail->nama : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->container && $inv->container->kapal ? $inv->container->kapal->nama_kapal : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->container && $inv->container->asal ? $inv->container->asal->nama_tujuan : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->container && $inv->container->tujuan ? $inv->container->tujuan->nama_tujuan : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->tujuanDaerah ? $inv->tujuanDaerah->nama : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->container && $inv->container->etd ? \Carbon\Carbon::parse($inv->container->etd)->format('d-m-Y') : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->container && $inv->container->eta ? \Carbon\Carbon::parse($inv->container->eta)->format('d-m-Y') : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->container ? $inv->container->tipe_kontainer : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->container ? $inv->container->nomor_container : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ strtoupper($inv->layanan ?? '-') }}
+                </td>
+
+                @if($inv->items && $inv->items->count() > 0)
+                    <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
+                    <td style="border: 1px solid #000;">
+                        {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
+                    </td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
+                    <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                        {{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
+                    <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                        {{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
+                @else
+                    <td style="border: 1px solid #000;">-</td>
+                    <td style="border: 1px solid #000;">-</td>
+                    <td style="border: 1px solid #000;">-</td>
+                    <td style="border: 1px solid #000;">-</td>
+                    <td style="border: 1px solid #000;">0</td>
+                    <td style="border: 1px solid #000;">0</td>
+                @endif
+
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                    {{ number_format($dpp_display, 0, ',', '.') }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                    @if($inv->additionalFees && $inv->additionalFees->count() > 0)
+                        {{ number_format($inv->additionalFees->sum('harga'), 0, ',', '.') }}
+                        ({{ $inv->additionalFees->pluck('nama')->implode(', ') }})
                     @else
                         -
                     @endif
                 </td>
-                <td rowspan="{{ $rowspan }}" style="border: 1px solid #000;">
-                    {{ $data->finance ? $data->finance->total_tagihan : 0 }}
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                    {{ $inv->finance ? number_format($inv->finance->total_tagihan, 0, ',', '.') : 0 }}
                 </td>
-                <td rowspan="{{ $rowspan }}" style="border: 1px solid #000;">{{ $data->tanda_terima ?? '-' }}</td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->tanda_terima ?? '-' }}</td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->catatan_muntahan ?? '-' }}</td>
             </tr>
-            @if($rowspan > 1)
-                @for($i = 1; $i < $rowspan; $i++)
+            @if($rowCount > 1)
+                @for($i = 1; $i < $rowCount; $i++)
                     <tr style="vertical-align: middle;">
                         <td></td>{{-- Col A spacer --}}
-                        <td style="border: 1px solid #000;">{{ $fees[$i]->nama }} -
-                            {{ number_format($fees[$i]->harga, 0, ',', '.') }}
+                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
+                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
+                        <td style="border: 1px solid #000;">
+                            {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
                         </td>
+                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
+                        <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                            {{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
+                        <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                            {{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
                     </tr>
                 @endfor
             @endif

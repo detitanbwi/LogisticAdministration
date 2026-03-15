@@ -398,7 +398,7 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('view.invoice') || auth()->user()->can('print.invoice'), 403);
 
-        $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'additionalFees', 'tujuanDaerah'])->select('invoice.*');
+        $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'additionalFees', 'tujuanDaerah', 'items', 'upDetail'])->select('invoice.*');
 
         if ($request->filled('daterange')) {
             $dates = explode(' - ', $request->daterange);

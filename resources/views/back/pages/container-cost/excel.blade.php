@@ -91,7 +91,7 @@
             $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
 
             $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
-            $dpp_display = $ppn_val;
+            $dpp_display = $dpp_base;
             $grand_total_val = $dpp_and_fee_val + $ppn_val;
 
             $masa_tunggakan = '-';
@@ -120,8 +120,10 @@
                     {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
                 </td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
-                <td style="border: 1px solid #000;">{{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
-                <td style="border: 1px solid #000;">{{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
+                <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                    {{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
+                <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                    {{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
             @else
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
@@ -131,9 +133,10 @@
                 <td style="border: 1px solid #000;">0</td>
             @endif
 
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ number_format($dpp_display, 0, ',', '.') }}
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                {{ number_format($dpp_display, 0, ',', '.') }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
                 @if($inv->additionalFees && $inv->additionalFees->count() > 0)
                     {{ number_format($inv->additionalFees->sum('harga'), 0, ',', '.') }}
                     ({{ $inv->additionalFees->pluck('nama')->implode(', ') }})
@@ -141,7 +144,7 @@
                     -
                 @endif
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
                 {{ number_format($grand_total_val, 0, ',', '.') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
@@ -177,8 +180,10 @@
                         {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
-                    <td style="border: 1px solid #000;">{{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
-                    <td style="border: 1px solid #000;">{{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
+                    <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                        {{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
+                    <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                        {{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endfor
         @endif
