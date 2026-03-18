@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Manifest Container - {{ $container->nomor_container }}</title>
+    <title>CONTAINER COST_LAPORAN PEMBAYARAN - {{ $container->nomor_container }}</title>
     <style>
         @page {
             size: landscape;

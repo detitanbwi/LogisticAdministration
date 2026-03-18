@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Informasi Transaksi - {{ $finance->invoice->no_invoice }}</title>
+    <title>LAPORAN PEMBAYARAN FINANCE - {{ $finance->invoice->no_invoice }}</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -158,7 +158,7 @@
         }
     @endphp
 
-    <div class="header-title">INFORMASI TRANSAKSI</div>
+    <div class="header-title">LAPORAN PEMBAYARAN FINANCE</div>
 
     <div class="main-container">
         <!-- Column 1: Detail Invoice -->

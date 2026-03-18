@@ -26,6 +26,7 @@
         <td></td>{{-- Col A spacer --}}
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">No Invoice</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tgl Masuk</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Contr / Seal</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tipe Kontainer</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Metode</th>
@@ -34,7 +35,6 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pelabuhan Asal</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pelabuhan Tujuan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">ETA</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tgl Masuk</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Penerima</th>
@@ -102,6 +102,9 @@
             <td></td>{{-- Col A spacer --}}
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $no++ }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
+            </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->container->nomor_container ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->container->tipe_kontainer ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->metode ?? '-') }}</td>
@@ -116,9 +119,6 @@
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->container && $inv->container->eta ? $inv->container->eta->format('d/m/Y') : '-' }}
-            </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->no_hp ?? '-' }}</td>

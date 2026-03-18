@@ -49,7 +49,9 @@
                                     <label class="form-label">Jabatan PIC</label>
                                     <select name="jabatan_pic" class="form-select">
                                         <option value="">Pilih Jabatan</option>
+                                        <option value="Direktur" {{ old('jabatan_pic', $customer->jabatan_pic ?? '') == 'Direktur' ? 'selected' : '' }}>Direktur</option>
                                         <option value="Manager" {{ old('jabatan_pic', $customer->jabatan_pic ?? '') == 'Manager' ? 'selected' : '' }}>Manager</option>
+                                        <option value="Finance" {{ old('jabatan_pic', $customer->jabatan_pic ?? '') == 'Finance' ? 'selected' : '' }}>Finance</option>
                                         <option value="Staff" {{ old('jabatan_pic', $customer->jabatan_pic ?? '') == 'Staff' ? 'selected' : '' }}>Staff</option>
                                         <option value="Owner" {{ old('jabatan_pic', $customer->jabatan_pic ?? '') == 'Owner' ? 'selected' : '' }}>Owner</option>
                                     </select>

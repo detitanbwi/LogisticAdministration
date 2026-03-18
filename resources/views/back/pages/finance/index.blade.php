@@ -241,11 +241,11 @@
             if ($('#filterTujuan').val()) filterInfo += '<p><strong>Tujuan:</strong> ' + tujuan + '</p>';
             if ($('#filterDaterange').val()) filterInfo += '<p><strong>Periode:</strong> ' + $('#filterDaterange').val() + '</p>';
 
-            var title = $('#filterJudulPrint option:selected').val() ? $('#filterJudulPrint option:selected').text() : 'REKAPITULASI';
+            var title = $('#filterJudulPrint option:selected').val() ? $('#filterJudulPrint option:selected').text() : 'LAPORAN PEMBAYARAN REKAPITULASI FINANCE';
             printWindow.document.write(`
                                                                                 <html>
                                                                                 <head>
-                                                                                    <title>Rekapitulasi Finance</title>
+                                                                                    <title>${title}</title>
                                                                                     <style>
                                                                                         body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
                                                                                         h2 { text-align: center; margin-bottom: 5px; }
