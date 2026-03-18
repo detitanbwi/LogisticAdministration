@@ -21,11 +21,13 @@ class Container extends Model
         'catatan',
         'catatan_invoicing',
         'catatan_finance',
+        'total_pembayaran_manual',
     ];
 
     protected $casts = [
         'etd' => 'date',
         'eta' => 'date',
+        'total_pembayaran_manual' => 'decimal:2',
     ];
 
     public function kapal(): BelongsTo
@@ -46,5 +48,10 @@ class Container extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function operationalCosts(): HasMany
+    {
+        return $this->hasMany(ContainerOperationalCost::class);
     }
 }

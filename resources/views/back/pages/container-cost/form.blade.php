@@ -64,7 +64,93 @@
                                 <x-back.textarea label="Catatan Finance" name="catatan_finance" rows="3"
                                     placeholder="Contoh: Invoice Finance..." :value="old('catatan_finance', $container->catatan_finance ?? null)" />
                             </div>
+
+                            <hr class="my-4">
+                            <div class="col-md-12 mb-4">
+                                <h5 class="card-title">Rincian Biaya Operasional</h5>
+                                <p class="text-muted small">Data Pengeluaran & Profit Container</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <x-back.text-input type="number" label="Total Pembayaran (Entry Manual)" name="total_pembayaran_manual" :value="old('total_pembayaran_manual', $container->total_pembayaran_manual ?? 0)" step="0.01" placeholder="0" />
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="operationalCostsTable">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>Komponen Biaya</th>
+                                                <th>Nominal (Rp)</th>
+                                                <th>Tanggal Transfer</th>
+                                                <th style="width: 50px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $costs = (isset($container) ? $container->operationalCosts : collect([])) ?? collect([]);
+                                            @endphp
+                                            @foreach($costs as $cost)
+                                            <tr>
+                                                <td>
+                                                    <input type="text" name="op_komponen[]" class="form-control" value="{{ $cost->komponen }}" placeholder="Contoh: Biaya BL CY-Port">
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="op_nominal[]" class="form-control" value="{{ $cost->nominal }}" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <input type="date" name="op_tgl[]" class="form-control" value="{{ $cost->tanggal_transfer ? $cost->tanggal_transfer->format('Y-m-d') : '' }}">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-sm remove-row"><i class="feather-trash-2"></i></button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                            <tr class="add-row-placeholder">
+                                                <td colspan="4" class="text-center py-3">
+                                                    <button type="button" class="btn btn-primary btn-sm px-3" id="addRow">
+                                                        <i class="feather-plus me-1"></i> Tambah Komponen Biaya
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const tableBody = document.querySelector('#operationalCostsTable tbody');
+                                const addRowBtn = document.getElementById('addRow');
+                                const placeholder = document.querySelector('.add-row-placeholder');
+
+                                addRowBtn.addEventListener('click', function() {
+                                    const newRow = document.createElement('tr');
+                                    newRow.innerHTML = `
+                                        <td>
+                                            <input type="text" name="op_komponen[]" class="form-control" placeholder="Contoh: Biaya BL CY-Port">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="op_nominal[]" class="form-control" value="0" step="0.01">
+                                        </td>
+                                        <td>
+                                            <input type="date" name="op_tgl[]" class="form-control">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm remove-row"><i class="feather-trash-2"></i></button>
+                                        </td>
+                                    `;
+                                    tableBody.insertBefore(newRow, placeholder);
+                                });
+
+                                tableBody.addEventListener('click', function(e) {
+                                    if (e.target.closest('.remove-row')) {
+                                        e.target.closest('tr').remove();
+                                    }
+                                });
+                            });
+                        </script>
 
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <x-back.button variant="light-brand" href="{{ route('admin.container-cost.index') }}">

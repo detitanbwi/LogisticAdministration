@@ -193,6 +193,47 @@
             <td colspan="29" style="border: 1px solid #000;">Belum ada invoice di dalam container ini.</td>
         </tr>
     @endforelse
+    {{-- Spacing --}}
+    <tr><td></td></tr>
+
+    {{-- Rincian Biaya Operasional --}}
+    <tr style="vertical-align: middle;">
+        <td></td>
+        <td colspan="5" style="border: 1px solid #000; background-color: #E2EFDA; font-weight: bold; text-align: center;">RINCIAN BIAYA OPERASIONAL</td>
+    </tr>
+    <tr style="vertical-align: middle;">
+        <td></td>
+        <td colspan="3" style="border: 1px solid #000; background-color: #FCE4D6; font-weight: bold;">Komponen Biaya</td>
+        <td style="border: 1px solid #000; background-color: #FCE4D6; font-weight: bold; text-align: center;">Nominal (Rp)</td>
+        <td style="border: 1px solid #000; background-color: #FCE4D6; font-weight: bold; text-align: center;">Tgl Transfer</td>
+    </tr>
+    @php $totalPengeluaran = 0; @endphp
+    @foreach($container->operationalCosts as $cost)
+    <tr style="vertical-align: middle;">
+        <td></td>
+        <td colspan="3" style="border: 1px solid #000;">{{ $cost->komponen }}</td>
+        <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">Rp {{ number_format($cost->nominal, 0, ',', '.') }}</td>
+        <td style="border: 1px solid #000; text-align: center;">{{ $cost->tanggal_transfer ? $cost->tanggal_transfer->format('d/m/Y') : '-' }}</td>
+    </tr>
+    @php $totalPengeluaran += $cost->nominal; @endphp
+    @endforeach
+    
+    <tr style="vertical-align: middle;">
+        <td></td>
+        <td colspan="3" style="border: 1px solid #000; font-weight: bold; background-color: #D6DCE4;">Total Pengeluaran</td>
+        <td colspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #D6DCE4; mso-number-format:'\@';" data-type="string">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</td>
+    </tr>
+    <tr style="vertical-align: middle;">
+        <td></td>
+        <td colspan="3" style="border: 1px solid #000; font-weight: bold; background-color: #E2EFDA;">Total Pembayaran</td>
+        <td colspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #E2EFDA; mso-number-format:'\@';" data-type="string">Rp {{ number_format($container->total_pembayaran_manual, 0, ',', '.') }}</td>
+    </tr>
+    <tr style="vertical-align: middle;">
+        <td></td>
+        <td colspan="3" style="border: 1px solid #000; font-weight: bold; background-color: #FFEB9C;">TOTAL PROFIT</td>
+        <td colspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #FFEB9C; mso-number-format:'\@';" data-type="string">Rp {{ number_format($container->total_pembayaran_manual - $totalPengeluaran, 0, ',', '.') }}</td>
+    </tr>
+
     {{-- Empty separator before catatan --}}
     <tr style="vertical-align: middle;">
         <td></td>

@@ -87,12 +87,27 @@ class ContainerCostController extends Controller
             'tujuan_id' => 'nullable|exists:tujuan,id|different:asal_id',
             'etd' => 'nullable|date',
             'eta' => 'nullable|date|after_or_equal:etd',
-            'metode' => 'nullable|in:FCL,LCL,Break Bulk',
             'tipe_kontainer' => 'nullable|in:20FT,40FT,40HC,45HC',
             'catatan_finance' => 'nullable|string',
+            'total_pembayaran_manual' => 'nullable|numeric',
+            'op_komponen' => 'nullable|array',
+            'op_nominal' => 'nullable|array',
+            'op_tgl' => 'nullable|array',
         ]);
 
         $container = Container::create($request->all());
+
+        if ($request->has('op_komponen')) {
+            foreach ($request->op_komponen as $index => $komponen) {
+                if (!empty($komponen)) {
+                    $container->operationalCosts()->create([
+                        'komponen' => $komponen,
+                        'nominal' => $request->op_nominal[$index] ?? 0,
+                        'tanggal_transfer' => $request->op_tgl[$index] ?? null,
+                    ]);
+                }
+            }
+        }
 
         if ($request->ajax()) {
             return response()->json($container);
@@ -123,12 +138,29 @@ class ContainerCostController extends Controller
             'tujuan_id' => 'nullable|exists:tujuan,id|different:asal_id',
             'etd' => 'nullable|date',
             'eta' => 'nullable|date|after_or_equal:etd',
-            'metode' => 'nullable|in:FCL,LCL,Break Bulk',
             'tipe_kontainer' => 'nullable|in:20FT,40FT,40HC,45HC',
             'catatan_finance' => 'nullable|string',
+            'total_pembayaran_manual' => 'nullable|numeric',
+            'op_komponen' => 'nullable|array',
+            'op_nominal' => 'nullable|array',
+            'op_tgl' => 'nullable|array',
         ]);
 
         $container->update($request->all());
+
+        // Sync Operational Costs
+        $container->operationalCosts()->delete();
+        if ($request->has('op_komponen')) {
+            foreach ($request->op_komponen as $index => $komponen) {
+                if (!empty($komponen)) {
+                    $container->operationalCosts()->create([
+                        'komponen' => $komponen,
+                        'nominal' => $request->op_nominal[$index] ?? 0,
+                        'tanggal_transfer' => $request->op_tgl[$index] ?? null,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.container-cost.index')->with('success', 'Data Container Cost berhasil diupdate.');
     }
