@@ -6,20 +6,20 @@
     {{-- Row 2: Title --}}
     <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
-        <th colspan="38" align="center" style="font-weight: bold; font-size: 14pt;">
+        <th colspan="42" align="center" style="font-weight: bold; font-size: 14pt;">
             {{ $filters['judul_print'] ? $filters['judul_print'] : 'REKAPITULASI FINANCE' }}
         </th>
     </tr>
     <tr style="vertical-align: middle;">
         <td></td>
-        <th colspan="38" align="center" style="font-weight: bold; font-size: 11pt;">
+        <th colspan="42" align="center" style="font-weight: bold; font-size: 11pt;">
             Periode: {{ !empty($filters['daterange']) ? $filters['daterange'] : 'Semua tanggal' }}
         </th>
     </tr>
     {{-- Row 3: Empty separator --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="38"></td>
+        <td colspan="42"></td>
     </tr>
     {{-- Row 4: Table Header --}}
     <tr style="vertical-align: middle;">
@@ -37,8 +37,12 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">ETA</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Pengirim</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Pengirim</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">NPWP Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Penerima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Penerima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">NPWP Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jenis Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
@@ -122,8 +126,12 @@
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->no_hp ?? '-' }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->alamat ?? '-' }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->npwp ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->penerima->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->penerima->no_hp ?? '-' }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->penerima->alamat ?? '-' }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->penerima->npwp ?? '-' }}</td>
 
             @if($inv->items && $inv->items->count() > 0)
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
@@ -207,7 +215,7 @@
     @empty
         <tr style="vertical-align: middle;">
             <td></td>
-            <td colspan="38" style="border: 1px solid #000;" align="center">Belum ada tagihan.</td>
+            <td colspan="42" style="border: 1px solid #000;" align="center">Belum ada tagihan.</td>
         </tr>
     @endforelse
 </table>

@@ -6,14 +6,14 @@
     {{-- Row 2: Title --}}
     <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
-        <th colspan="28" align="center" style="font-weight: bold; font-size: 14pt;">
+        <th colspan="32" align="center" style="font-weight: bold; font-size: 14pt;">
             {{ $filters['judul_print'] ?? 'REKAPITULASI INVOICE' }}
         </th>
     </tr>
     {{-- Row 3: Empty separator --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="28"></td>
+        <td colspan="32"></td>
     </tr>
     {{-- Row 4: Table Header --}}
     <tr style="vertical-align: middle;">
@@ -23,8 +23,12 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tgl Masuk</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Pengirim</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Pengirim</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">NPWP Pengirim</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Penerima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Penerima</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">NPWP Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Up</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Kapal</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Pelabuhan Asal</th>
@@ -74,10 +78,22 @@
                     {{ $inv->pengirim ? $inv->pengirim->no_hp : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->pengirim ? $inv->pengirim->alamat : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->pengirim ? $inv->pengirim->npwp : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     {{ $inv->penerima ? $inv->penerima->nama : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     {{ $inv->penerima ? $inv->penerima->no_hp : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->penerima ? $inv->penerima->alamat : '-' }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ $inv->penerima ? $inv->penerima->npwp : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     {{ $inv->upDetail ? $inv->upDetail->nama : '-' }}
