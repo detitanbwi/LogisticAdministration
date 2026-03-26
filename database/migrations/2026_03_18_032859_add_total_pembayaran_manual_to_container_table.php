@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('container', function (Blueprint $table) {
-            //
+            $table->decimal('total_pembayaran_manual', 15, 2)->default(0)->after('catatan_finance');
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('container', function (Blueprint $table) {
-            //
+            $table->dropColumn('total_pembayaran_manual');
         });
     }
 };
