@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>LAPORAN PEMBAYARAN FINANCE - {{ $finance->invoice->no_invoice }}</title>
+    <title>INFORMASI TRANSAKSI - {{ $finance->invoice->no_invoice }}</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 9pt;
             color: #333;
             margin: 0;
-            padding: 20px;
+            padding: 1.2cm;
             background-color: #fff;
         }
 
@@ -122,7 +122,7 @@
 
         @media print {
             body {
-                padding: 0;
+                padding: 1.2cm;
                 -webkit-print-color-adjust: exact;
             }
             .no-print {
@@ -158,7 +158,7 @@
         }
     @endphp
 
-    <div class="header-title">LAPORAN PEMBAYARAN FINANCE</div>
+    <div class="header-title">INFORMASI TRANSAKSI</div>
 
     <div class="main-container">
         <!-- Column 1: Detail Invoice -->
@@ -176,7 +176,7 @@
                     </tr>
                     <tr>
                         <td class="label-cell">Tanggal masuk</td>
-                        <td>: {{ $invoice->created_at->format('d-m-Y') }}</td>
+                        <td>: {{ ($invoice->tgl_masuk ?? $invoice->created_at)->format('d-m-Y') }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">Pengirim</td>

@@ -9,7 +9,11 @@
 @endsection
 
 @section('content')
-    <div class="d-flex justify-content-end mb-4">
+    <div class="d-flex justify-content-end mb-4 gap-2">
+        <a href="{{ route('admin.customer.export') }}" class="btn btn-success">
+            <i class="feather-download me-2"></i>
+            <span>Export Excel</span>
+        </a>
         @can('create.customer')
             <a href="{{ route('admin.customer.create') }}" class="btn btn-primary">
                 <i class="feather-plus me-2"></i>

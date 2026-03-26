@@ -41,6 +41,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('tujuan', TujuanController::class);
         Route::resource('tujuan-daerah', App\Http\Controllers\Back\TujuanDaerahController::class)->only(['store']);
         Route::resource('judul-print', App\Http\Controllers\Back\JudulPrintController::class);
+        Route::get('customer/export', [CustomerController::class, 'export'])->name('customer.export');
         Route::resource('customer', CustomerController::class);
         // Packing List (Invoicing) & Container Cost (Finance)
         Route::get('packing-list/{container}/print', [PackingListController::class, 'print'])->name('packing-list.print');

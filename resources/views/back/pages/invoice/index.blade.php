@@ -84,8 +84,8 @@
             </div>
         </div>
 
-        <div class="col-12 mt-2">
-            <div class="d-flex gap-2">
+        <div class="col-md-6 mt-lg-0 mt-2">
+            <div class="d-flex align-items-end h-100 gap-2">
                 <button class="btn btn-light"
                     onclick="$('.dt-filter').val('').trigger('change'); $('#invoiceTable').DataTable().ajax.reload()">
                     <i class="feather-refresh-ccw me-1"></i> RESET

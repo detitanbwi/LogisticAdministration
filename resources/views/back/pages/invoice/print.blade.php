@@ -173,7 +173,7 @@
                         <tr>
                             <td style="padding: 2px; white-space: nowrap;">Tanggal Invoice</td>
                             <td style="padding: 2px;">:
-                                {{ Carbon\Carbon::parse($invoice->created_at)->translatedFormat('d F Y') }}
+                                {{ Carbon\Carbon::parse($invoice->tgl_masuk ?? $invoice->created_at)->translatedFormat('d F Y') }}
                             </td>
                         </tr>
                         <tr>

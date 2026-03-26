@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Back\StoreCustomerRequest;
 use App\Http\Requests\Back\UpdateCustomerRequest;
+use App\Exports\CustomerExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class CustomerController extends Controller
 {
@@ -19,6 +22,20 @@ class CustomerController extends Controller
             $data = Customer::query();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('search') && !empty($request->search['value'])) {
+                        $searchValue = $request->search['value'];
+                        $query->where(function($q) use ($searchValue) {
+                            $q->where('nama', 'like', "%$searchValue%")
+                              ->orWhere('no_hp', 'like', "%$searchValue%")
+                              ->orWhere('npwp', 'like', "%$searchValue%")
+                              ->orWhere('pic', 'like', "%$searchValue%")
+                              ->orWhere('jabatan_pic', 'like', "%$searchValue%")
+                              ->orWhere('alamat', 'like', "%$searchValue%")
+                              ->orWhere('catatan', 'like', "%$searchValue%");
+                        });
+                    }
+                })
                 ->addColumn('action', function($row){
                     $editUrl = route('admin.customer.edit', $row->id);
                     $btn = '<div class="hstack gap-2 justify-content-end">';
@@ -38,6 +55,12 @@ class CustomerController extends Controller
                 ->make(true);
         }
         return view('back.pages.customer.index');
+    }
+
+    public function export()
+    {
+        abort_unless(auth()->user()->can('view.customer'), 403);
+        return Excel::download(new CustomerExport, 'customer_' . date('Y-m-d_H-i-s') . '.xlsx');
     }
 
     public function create()
