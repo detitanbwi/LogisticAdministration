@@ -461,7 +461,8 @@ class InvoiceController extends Controller
         }
 
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\InvoiceRecapExport($query->get(), [
-            'judul_print' => $judulPrint
+            'judul_print' => $judulPrint,
+            'daterange' => $request->daterange
         ]), 'InvoiceRekap_' . date('YmdHis') . '.xlsx');
     }
 }

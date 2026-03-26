@@ -3,11 +3,16 @@
     <tr style="vertical-align: middle;">
         <td></td>
     </tr>
-    {{-- Row 2: Title --}}
     <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
         <th colspan="32" align="center" style="font-weight: bold; font-size: 14pt;">
             {{ $filters['judul_print'] ?? 'REKAPITULASI INVOICE' }}
+        </th>
+    </tr>
+    <tr style="vertical-align: middle;">
+        <td></td>
+        <th colspan="32" align="center" style="font-weight: bold; font-size: 11pt;">
+            Periode: {{ !empty($filters['daterange']) ? $filters['daterange'] : 'Semua tanggal' }}
         </th>
     </tr>
     {{-- Row 3: Empty separator --}}
@@ -50,7 +55,7 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Total Tagihan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">STTS PKP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanda Terima</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice - Barang</th>
     </tr>
     <tbody>
         @foreach($invoices as $index => $inv)

@@ -55,16 +55,16 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanda Terima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">BAP BALIK</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Daerah Tujuan</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Terima Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Status Tagihan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Layanan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Di Tagih Ke</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Tagih</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Masa Tunggakan</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Terima Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Status (Tahan/Serahkan)</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">STTS PKP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Transfer</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice - Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Pembayaran</th>
     </tr>
     {{-- Data Rows --}}
@@ -173,6 +173,9 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $finance->bap_balik ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->tujuanDaerah->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                {{ $inv->terima_barang ? $inv->terima_barang->format('d/m/Y') : '-' }}
+            </td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ strtoupper($finance->status_tagihan ?? '-') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->layanan ?? '-') }}</td>
@@ -181,9 +184,6 @@
                 {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d/m/Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $masaText }}</td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->terima_barang ? $inv->terima_barang->format('d/m/Y') : '-' }}
-            </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->status_pembayaran ?? '-') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}</td>
