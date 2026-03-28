@@ -218,13 +218,86 @@
         </tbody>
     </table>
 
-    <!-- Footer Note -->
-    @if(!isset($isExport) && !empty($container->catatan_finance))
-        <div style="margin-top: 15px; padding: 10px; border: 1px dotted #000; display: inline-block; vertical-align: top;">
-            <strong>Catatan Finance:</strong><br>
-            {!! nl2br(e($container->catatan_finance)) !!}
+    @php
+        $totalPendapatan = 0;
+        foreach ($container->invoices as $inv) {
+            $dpp_base = $inv->items->sum('subtotal');
+            $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
+            $dpp_and_fee_val = $dpp_base + $fee_val;
+            $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
+            $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
+            $totalPendapatan += ($dpp_and_fee_val + $ppn_val);
+        }
+
+        if ($container->total_pembayaran_manual > 0) {
+            $totalPendapatan = $container->total_pembayaran_manual;
+        }
+
+        $totalPengeluaran = $container->operationalCosts->sum('nominal');
+        $totalProfit = $totalPendapatan - $totalPengeluaran;
+    @endphp
+
+    <div style="margin-top: 20px; display: flex; gap: 40px; align-items: flex-start;">
+        <!-- Left Column: Operational Costs -->
+        <div style="width: 45%;">
+            <table class="w-100 collapse table-data">
+                <thead>
+                    <tr>
+                        <th colspan="4" style="background-color: #e2efda; font-weight: bold;">RINCIAN BIAYA OPERASIONAL</th>
+                    </tr>
+                    <tr>
+                        <th style="background-color: #eeece1; width: 30px;">No</th>
+                        <th style="background-color: #eeece1;">Komponen Biaya</th>
+                        <th style="background-color: #eeece1;">Nominal (Rp)</th>
+                        <th style="background-color: #eeece1;">Tgl Transfer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($container->operationalCosts as $opIndex => $op)
+                        <tr>
+                            <td class="text-center">{{ $opIndex + 1 }}</td>
+                            <td>{{ $op->komponen }}</td>
+                            <td class="text-right">{{ number_format($op->nominal, 0, ',', '.') }}</td>
+                            <td class="text-center">
+                                {{ $op->tanggal_transfer ? \Carbon\Carbon::parse($op->tanggal_transfer)->format('d/m/Y') : '-' }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">Belum ada rincian biaya operasional.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+                <tfoot>
+                    <tr class="font-bold">
+                        <td colspan="2" class="text-right" style="background-color: #fce4d6;">Total Pengeluaran</td>
+                        <td class="text-right" style="background-color: #fce4d6;">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</td>
+                        <td style="background-color: #fce4d6;"></td>
+                    </tr>
+                    <tr class="font-bold">
+                        <td colspan="2" class="text-right" style="background-color: #d9e1f2;">Total Pendapatan</td>
+                        <td class="text-right" style="background-color: #d9e1f2;">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</td>
+                        <td style="background-color: #d9e1f2;"></td>
+                    </tr>
+                    <tr class="font-bold">
+                        <td colspan="2" class="text-right" style="background-color: #fff2cc;">TOTAL PROFIT</td>
+                        <td class="text-right" style="background-color: #fff2cc;">Rp {{ number_format($totalProfit, 0, ',', '.') }}</td>
+                        <td style="background-color: #fff2cc;"></td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
-    @endif
+
+        <!-- Right Column: Note -->
+        @if(!empty($container->catatan_finance))
+            <div style="width: 35%; padding: 10px; border: 1px solid #000; min-height: 80px;">
+                <strong>Catatan Finance:</strong><br>
+                <div style="margin-top: 5px;">
+                    {!! nl2br(e($container->catatan_finance)) !!}
+                </div>
+            </div>
+        @endif
+    </div>
 
     <div class="text-center no-print" style="margin-top: 30px;">
         <button onclick="window.print()"

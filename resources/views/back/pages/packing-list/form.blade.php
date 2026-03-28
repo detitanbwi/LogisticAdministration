@@ -61,7 +61,7 @@
 
 
                             <div class="col-md-12 mb-3">
-                                <x-back.textarea label="Catatan Invoicing" name="catatan_invoicing" rows="3"
+                                <x-back.textarea label="Catatan Container - Packing list" name="catatan_invoicing" rows="3"
                                     placeholder="Contoh: Disini ada muntahan kapal T.JAYA TGL 22-12-25" :value="old('catatan_invoicing', $container->catatan_invoicing ?? null)" />
                             </div>
                         </div>

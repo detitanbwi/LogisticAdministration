@@ -247,8 +247,8 @@
                                                                                 <head>
                                                                                     <title>${title}</title>
                                                                                     <style>
-                                                                                        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 20px; }
-                                                                                        h2 { text-align: center; margin-bottom: 5px; }
+                                                                                        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 1.25cm; }
+                                                                                        h2 { text-align: center; margin-bottom: 25px; }
                                                                                         .filter-info { margin-bottom: 15px; }
                                                                                         .filter-info p { margin: 2px 0; font-size: 10pt; }
                                                                                         table { width: 100%; border-collapse: collapse; margin-top: 10px; }

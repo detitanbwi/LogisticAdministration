@@ -52,9 +52,10 @@ class DashboardController extends Controller
 
         $total_invoice = (clone $invoiceBase)->count();
 
-        $total_pendapatan = Finance::whereHas('invoice', function ($q) use ($startDate, $endDate) {
-            $q->whereBetween('created_at', [$startDate, $endDate]);
-        })->sum('total_tagihan');
+        $total_pendapatan = Finance::where('status_tagihan', 'Sudah ditagih')
+            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('created_at', [$startDate, $endDate]);
+            })->sum('total_tagihan');
 
         $belum_ditagih = Finance::where('status_tagihan', 'Belum')
             ->whereHas('invoice', function ($q) use ($startDate, $endDate) {

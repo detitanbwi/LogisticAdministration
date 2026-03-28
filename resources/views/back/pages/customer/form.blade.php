@@ -60,6 +60,7 @@
                         </div>
 
                         <x-back.textarea name="alamat" label="Alamat" :value="old('alamat', $customer->alamat ?? '')" placeholder="Masukkan Alamat" />
+                        <small class="text-danger mt-1 d-block font-italic">*Harap mengisi alamat lengkap dan jelas</small>
 
                         <x-back.textarea name="catatan" label="Catatan" :value="old('catatan', $customer->catatan ?? '')" placeholder="Masukkan Catatan" />
 

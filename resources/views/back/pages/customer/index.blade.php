@@ -22,22 +22,22 @@
         @endcan
     </div>
 
-    <x-back.datatable id="customerTable" :ajax="route('admin.customer.index')" :header="['No', 'Nama', 'No HP', 'NPWP', 'PIC', 'Jabatan PIC', 'Alamat', 'Catatan', 'Aksi']" :data="[
-        'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
-        'nama',
-        'no_hp',
-        'npwp',
-        'pic',
-        'jabatan_pic',
-        'alamat',
-        'catatan',
-        'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
-    ]" />
+    <x-back.datatable id="customerTable" :ajax="route('admin.customer.index')" :header="['No', 'Nama Customer', 'No HP', 'NPWP', 'PIC', 'Jabatan PIC', 'Alamat', 'Catatan', 'Aksi']" :data="[
+            'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
+            'nama',
+            'no_hp',
+            'npwp',
+            'pic',
+            'jabatan_pic',
+            'alamat',
+            'catatan',
+            'action' => ['searchable' => false, 'orderable' => false, 'className' => 'text-end'],
+        ]" />
 @endsection
 
 @push('scripts')
     <script>
-        $(document).on('click', '.delete-btn', function() {
+        $(document).on('click', '.delete-btn', function () {
             var id = $(this).data('id');
             Swal.fire({
                 title: 'Apakah anda yakin?',
@@ -56,11 +56,11 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire('Terhapus!', response.success, 'success');
                             $('#customerTable').DataTable().ajax.reload();
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             var message = 'Terjadi kesalahan saat menghapus data.';
                             if (xhr.responseJSON && xhr.responseJSON.error) {
                                 message = xhr.responseJSON.error;

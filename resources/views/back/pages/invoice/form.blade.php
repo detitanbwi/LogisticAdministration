@@ -162,7 +162,7 @@
                                                 <x-back.select2 label="Tipe Kontainer" name="tipe_kontainer" :options="['20FT' => '20FT', '40FT' => '40FT', '40HC' => '40HC', '45HC' => '45HC']" />
                                             </div>
                                             <div class="col-12 mb-3">
-                                                <x-back.text-input name="catatan" label="Catatan Container" placeholder="Tulis catatan (opsional)" />
+                                                <x-back.text-input name="catatan" label="Catatan Container - Packing list" placeholder="Tulis catatan (opsional)" />
                                             </div>
                                             <div class="col-12 d-flex justify-content-end gap-2 mt-2">
                                                 <button type="button" class="btn btn-sm btn-secondary" onclick="$('#collapseContainer').collapse('hide')">Batal</button>
@@ -175,7 +175,7 @@
                             <!-- End Inline Container Form -->
 
                             <div class="col-md-12 mb-3">
-                                <x-back.textarea label="Catatan" name="catatan_muntahan" rows="3"
+                                <x-back.textarea label="Catatan Invoice - Barang" name="catatan_muntahan" rows="3"
                                     placeholder=""
                                     :value="$invoice->catatan_muntahan ?? null" />
                             </div>
@@ -235,6 +235,15 @@
 
                         <div class="mb-3">
                             <x-back.select2 label="Tanda Terima" name="tanda_terima" :options="['SCJ' => 'SCJ', 'Pengirim' => 'Pengirim']" :selected="$invoice->tanda_terima ?? 'SCJ'" />
+                        </div>
+
+                        <div class="mb-0">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="show_stamp" id="show_stamp" value="1" {{ isset($invoice) && $invoice->show_stamp ? 'checked' : '' }}>
+                                <label class="form-check-label fw-bold cursor-pointer" for="show_stamp">
+                                    Tampilkan Stampel & Tandatangan
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -575,6 +584,54 @@
             addItem(); // Add one empty row by default
         }
 
+        /* 
+        function togglePLT(rowId) {
+            const row = $(`#row_${rowId}`);
+            const satuan = row.find('select[name*="[satuan]"]').val();
+            const btnHitung = row.find('.btn-hitung');
+            const pltGroup = row.find('.plt-group');
+            const jenisGroup = row.find('.jenis-group');
+            
+            if (satuan === 'M3' || satuan === 'Kg') {
+                btnHitung.removeClass('d-none');
+                pltGroup.removeClass('d-none');
+                jenisGroup.removeClass('col-md-4').addClass('col-md-2');
+            } else {
+                btnHitung.addClass('d-none');
+                pltGroup.addClass('d-none');
+                jenisGroup.removeClass('col-md-2').addClass('col-md-4');
+            }
+        }
+
+        function calculateQty(rowId) {
+            const row = $(`#row_${rowId}`);
+            const P = parseFloat(row.find('.p-input').val()) || 0;
+            const L = parseFloat(row.find('.l-input').val()) || 0;
+            const T = parseFloat(row.find('.t-input').val()) || 0;
+            const koli = parseFloat(row.find('.koli-input').val()) || 0;
+            const satuan = row.find('select[name*="[satuan]"]').val();
+            
+            if (!P || !L || !T || !koli) {
+                Swal.fire('Info', 'Mohon isi P, L, T dan Koli untuk menghitung', 'info');
+                return;
+            }
+
+            let result = 0;
+            if (satuan === 'M3') {
+                result = (P * L * T * koli) / 1000000;
+            } else if (satuan === 'Kg') {
+                result = (P * L * T * koli) / 4000;
+            }
+            
+            // Update the qty input (format with comma)
+            const qtyInput = row.find('.qty-input');
+            qtyInput.val(result.toFixed(2).replace('.', ','));
+            
+            // Trigger input handling to update subtotal
+            handleInput(qtyInput[0], rowId);
+        }
+        */
+
         function addItem() {
             addItemRow({});
         }
@@ -615,20 +672,36 @@
 
             const html = `
                 <div class="row align-items-end gx-2 gy-3 mb-3 pb-3 border-bottom item-row" id="row_${rowId}">
-                    <div class="col-md-3">
+                    <div class="col-md-3 jenis-group">
                         <label class="form-label fs-12 mb-1 text-muted">Jenis Barang</label>
                         <input type="text" class="form-control" name="items[${rowId}][jenis_barang]" value="${jenisBarang}" required placeholder="Contoh: Kayu Jati">
                     </div>
-                    <div class="col-md-1 col-4">
+                    <div class="col-md-1 koli-group">
                         <label class="form-label fs-12 mb-1 text-muted">Koli</label>
-                        <input type="number" class="form-control" name="items[${rowId}][koli]" value="${koli}" required placeholder="1">
+                        <input type="number" class="form-control koli-input" name="items[${rowId}][koli]" value="${koli}" required placeholder="1" oninput="calculateSubtotal(${rowId})">
                     </div>
-                    <div class="col-md-1 col-4">
+                    
+                    <!-- 
+                    <div class="col-md-2 plt-group d-none">
+                        <label class="form-label fs-12 mb-1 text-muted text-center d-block">P x L x T (cm)</label>
+                        <div class="d-flex gap-1">
+                            <input type="number" step="0.1" class="form-control p-input px-1 text-center" placeholder="P">
+                            <input type="number" step="0.1" class="form-control l-input px-1 text-center" placeholder="L">
+                            <input type="number" step="0.1" class="form-control t-input px-1 text-center" placeholder="T">
+                        </div>
+                    </div>
+                    -->
+
+                    <div class="col-md-2 jumlah-group">
                         <label class="form-label fs-12 mb-1 text-muted">Jumlah</label>
-                        <input type="text" class="form-control qty-input" value="${jumlahDisplay}" required oninput="handleInput(this, ${rowId})" placeholder="0">
+                        <div class="input-group">
+                            <input type="text" class="form-control qty-input font-monospace" value="${jumlahDisplay}" required oninput="handleInput(this, ${rowId})" placeholder="0">
+                            <!-- <button class="btn btn-info btn-hitung d-none py-1 px-2 fs-11" type="button" onclick="calculateQty(${rowId})">Hitung</button> -->
+                        </div>
                         <input type="hidden" name="items[${rowId}][jumlah]" id="jumlah_hidden_${rowId}" value="${jumlah}">
                     </div>
-                    <div class="col-md-1 col-4">
+
+                    <div class="col-md-1 satuan-group">
                         <label class="form-label fs-12 mb-1 text-muted">Satuan</label>
                         <select class="form-select" name="items[${rowId}][satuan]" required>
                             <option value="M3" ${satuan === 'M3' ? 'selected' : ''}>M3</option>
@@ -636,7 +709,8 @@
                             <option value="Unit" ${satuan === 'Unit' ? 'selected' : ''}>Unit</option>
                         </select>
                     </div>
-                    <div class="col-md-3 col-10">
+
+                    <div class="col-md-2">
                         <label class="form-label fs-12 mb-1 text-muted">Harga Satuan</label>
                         <div class="input-group">
                             <span class="input-group-text px-2">Rp</span>
@@ -644,7 +718,7 @@
                         </div>
                         <input type="hidden" name="items[${rowId}][harga_satuan]" id="harga_satuan_hidden_${rowId}" value="${hargaSatuan}">
                     </div>
-                    <div class="col-md-2 col-12 mt-3 mt-md-0">
+                    <div class="col-md-2 mt-3 mt-md-0">
                         <label class="form-label fs-12 mb-1 text-muted d-block text-md-end">Subtotal</label>
                         <input type="hidden" name="items[${rowId}][subtotal]" id="subtotal_input_${rowId}" value="${subtotal}">
                         <div class="input-group">
@@ -662,6 +736,7 @@
             `;
 
             $('#itemContainer').append(html);
+            // togglePLT(rowId); // Set initial state (commented out)
         }
 
         function handleInput(element, rowId) {

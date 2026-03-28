@@ -180,7 +180,7 @@ class ContainerCostController extends Controller
 
     public function print(Container $container)
     {
-        $container->load(['kapal', 'asal', 'tujuan', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance', 'invoices.tujuanDaerah']);
+        $container->load(['kapal', 'asal', 'tujuan', 'invoices.pengirim', 'invoices.penerima', 'invoices.items', 'invoices.finance', 'invoices.tujuanDaerah', 'operationalCosts']);
         return view('back.pages.container-cost.print', compact('container'));
     }
 

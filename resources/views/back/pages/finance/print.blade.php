@@ -10,8 +10,13 @@
             font-size: 9pt;
             color: #333;
             margin: 0;
-            padding: 1.2cm;
+            padding: 0;
             background-color: #fff;
+        }
+
+        @page {
+            size: portrait;
+            margin: 1.25cm;
         }
 
         .header-title {
@@ -24,13 +29,14 @@
             text-transform: uppercase;
             background-color: #f8f9fa;
             color: #2c3e50;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .main-container {
             display: flex;
             gap: 20px;
-            align-items: stretch; /* This ensures columns have equal height */
+            align-items: stretch;
+            /* This ensures columns have equal height */
         }
 
         .column {
@@ -42,10 +48,12 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 0; /* Changed to 0 to manage spacing via containers if needed */
+            margin-bottom: 0;
+            /* Changed to 0 to manage spacing via containers if needed */
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #000;
             padding: 3px 6px;
             vertical-align: top;
@@ -53,7 +61,8 @@
         }
 
         th {
-            background-color: #eeece1; /* Professional beige/grey */
+            background-color: #eeece1;
+            /* Professional beige/grey */
             text-align: center;
             font-weight: bold;
             color: #000;
@@ -63,19 +72,22 @@
         }
 
         .section-header-orange {
-            background-color: #fcd5b4 !important; /* Light Orange */
+            background-color: #fcd5b4 !important;
+            /* Light Orange */
             font-weight: bold;
             text-align: center;
         }
 
         .section-header-blue {
-            background-color: #d9e1f2 !important; /* Light Blue */
+            background-color: #d9e1f2 !important;
+            /* Light Blue */
             font-weight: bold;
             text-align: center;
         }
 
         .section-header-green {
-            background-color: #e2efda !important; /* Light Green */
+            background-color: #e2efda !important;
+            /* Light Green */
             font-weight: bold;
             text-align: center;
         }
@@ -103,13 +115,16 @@
         }
 
         .notes-container {
-            flex-grow: 1; /* This fills the remaining space */
+            flex-grow: 1;
+            /* This fills the remaining space */
             border: 1px solid #000;
-            margin-top: -1px; /* Overlap with table bottom border */
+            margin-top: -1px;
+            /* Overlap with table bottom border */
             padding: 8px;
             background-color: #fff;
             display: block;
-            min-height: 60px; /* Minimum space for notes */
+            min-height: 60px;
+            /* Minimum space for notes */
         }
 
         .notes-label {
@@ -125,9 +140,11 @@
                 padding: 1.2cm;
                 -webkit-print-color-adjust: exact;
             }
+
             .no-print {
                 display: none;
             }
+
             .header-title {
                 box-shadow: none;
             }
@@ -215,29 +232,29 @@
                         <td>: {{ optional($invoice->upDetail)->nama }}</td>
                     </tr>
                     @foreach($invoice->items as $item)
-                    <tr>
-                        <td class="label-cell font-bold">Jenis barang</td>
-                        <td>: {{ $item->jenis_barang }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label-cell">Jumlah koli</td>
-                        <td>: {{ $item->koli }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label-cell">Jumlah barang</td>
-                        <td>: {{ rtrim(rtrim(number_format($item->jumlah, 3, ',', '.'), '0'), ',') }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label-cell">Satuan jumlah barang</td>
-                        <td>: {{ $item->satuan }}</td>
-                    </tr>
+                        <tr>
+                            <td class="label-cell font-bold">Jenis barang</td>
+                            <td>: {{ $item->jenis_barang }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Jumlah koli</td>
+                            <td>: {{ $item->koli }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Jumlah barang</td>
+                            <td>: {{ rtrim(rtrim(number_format($item->jumlah, 3, ',', '.'), '0'), ',') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Satuan jumlah barang</td>
+                            <td>: {{ $item->satuan }}</td>
+                        </tr>
                     @endforeach
 
                     @foreach($invoice->additionalFees as $fee)
-                    <tr>
-                        <td class="label-cell font-bold">Biaya Tambahan</td>
-                        <td>: {{ $fee->nama }}</td>
-                    </tr>
+                        <tr>
+                            <td class="label-cell font-bold">Biaya Tambahan</td>
+                            <td>: {{ $fee->nama }}</td>
+                        </tr>
                     @endforeach
 
                     <tr>
@@ -267,7 +284,7 @@
                 </tbody>
             </table>
             <div class="notes-container">
-                <span class="notes-label">Catatan Invoice</span>
+                <span class="notes-label">Catatan Invoice - Barang</span>
                 {{ $invoice->catatan_muntahan }}
             </div>
         </div>
@@ -295,11 +312,15 @@
                     </tr>
                     <tr>
                         <td class="label-cell">ETD</td>
-                        <td>: {{ $invoice->container && $invoice->container->etd ? $invoice->container->etd->format('d-m-Y') : '-' }}</td>
+                        <td>:
+                            {{ $invoice->container && $invoice->container->etd ? $invoice->container->etd->format('d-m-Y') : '-' }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="label-cell">ETA</td>
-                        <td>: {{ $invoice->container && $invoice->container->eta ? $invoice->container->eta->format('d-m-Y') : '-' }}</td>
+                        <td>:
+                            {{ $invoice->container && $invoice->container->eta ? $invoice->container->eta->format('d-m-Y') : '-' }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="label-cell">Container/seal</td>
@@ -324,29 +345,29 @@
                 </thead>
                 <tbody>
                     @foreach($invoice->items as $item)
-                    <tr>
-                        <td class="label-cell font-bold">Jenis barang</td>
-                        <td class="value-cell font-bold">: {{ $item->jenis_barang }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label-cell">Harga satuan</td>
-                        <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label-cell">Sub total harga</td>
-                        <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                    </tr>
+                        <tr>
+                            <td class="label-cell font-bold">Jenis barang</td>
+                            <td class="value-cell font-bold">: {{ $item->jenis_barang }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Harga satuan</td>
+                            <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Additional cost</td>
+                            <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                        </tr>
                     @endforeach
 
                     @foreach($invoice->additionalFees as $fee)
-                    <tr>
-                        <td class="label-cell font-bold">Biaya Tambahan</td>
-                        <td class="value-cell font-bold">: {{ $fee->nama }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label-cell">Sub total harga</td>
-                        <td class="text-right">Rp {{ number_format($fee->harga, 0, ',', '.') }}</td>
-                    </tr>
+                        <tr>
+                            <td class="label-cell font-bold">Biaya Tambahan</td>
+                            <td class="value-cell font-bold">: {{ $fee->nama }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Additional cost</td>
+                            <td class="text-right">Rp {{ number_format($fee->harga, 0, ',', '.') }}</td>
+                        </tr>
                     @endforeach
 
                     <tr>
@@ -363,7 +384,9 @@
                     </tr>
                     <tr>
                         <td class="label-cell">Terima barang</td>
-                        <td>: {{ $invoice->terima_barang ? \Carbon\Carbon::parse($invoice->terima_barang)->format('d-m-Y') : '-' }}</td>
+                        <td>:
+                            {{ $invoice->terima_barang ? \Carbon\Carbon::parse($invoice->terima_barang)->format('d-m-Y') : '-' }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="label-cell">Ditagih ke</td>
@@ -375,7 +398,9 @@
                     </tr>
                     <tr>
                         <td class="label-cell">Tanggal transfer</td>
-                        <td>: {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d-m-Y') : '-' }}</td>
+                        <td>:
+                            {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d-m-Y') : '-' }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="label-cell">Masa tunggakan</td>

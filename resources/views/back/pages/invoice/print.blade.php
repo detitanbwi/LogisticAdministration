@@ -8,8 +8,9 @@
         body {
             font-family: 'Arial', sans-serif;
             font-size: 11pt;
-            padding: 20px;
             color: #000;
+            margin: 0;
+            padding: 0;
         }
 
         .bordered {
@@ -43,6 +44,11 @@
 
         .w-100 {
             width: 100%;
+        }
+
+        @page {
+            size: portrait;
+            margin: 1.25cm;
         }
 
         @media print {
@@ -240,17 +246,17 @@
         <!-- Sender / Receiver Section -->
         <table class="w-100 collapse bordered" style="margin-bottom: 5px;">
             <tr>
-                <td style="width: 50%; border: 1px solid #000; padding: 3px 5px;">
+                <td style="width: 50%; border: 1px solid #000; padding: 8px 12px;">
                     <div class="font-bold"
-                        style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 12pt;">
+                        style="border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 4px; font-size: 12pt;">
                         PENGIRIM</div>
                     <div style="font-size: 12pt;">{{ optional($invoice->pengirim)->nama ?? '-' }}<br>
                         {{ optional($invoice->pengirim)->alamat ?? '-' }}<br>
                         HP : {{ optional($invoice->pengirim)->no_hp ?? '-' }}</div>
                 </td>
-                <td style="width: 50%; border: 1px solid #000; padding: 3px 5px;">
+                <td style="width: 50%; border: 1px solid #000; padding: 8px 12px;">
                     <div class="font-bold"
-                        style="border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 2px; font-size: 12pt;">
+                        style="border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 4px; font-size: 12pt;">
                         PENERIMA</div>
                     <div style="font-size: 12pt;">{{ optional($invoice->penerima)->nama ?? '-' }}<br>
                         {{ optional($invoice->penerima)->alamat ?? '-' }}<br>
@@ -381,12 +387,13 @@
         <table class="w-100 collapse">
             <tr>
                 <td style="width: 60%; vertical-align: top; padding: 0;">
-                    <div style="font-size: 11pt; font-weight: bold; line-height: 1.5;">
+                    <div style="font-size: 11pt; font-weight: bold; line-height: 1.4;">
                         1. Harga tersebut belum termasuk biaya ASURANSI.<br>
                         2. Pemilik barang bertanggung jawab untuk mengasuransikan BARANG yang dikirim.<br>
                         3. Apabila terjadi huru-hara, bencana alam, kapal tenggelam, atau kejadian lain di luar kendali,
                         maka hal tersebut bukan menjadi tanggung jawab PT Sinar Cemara Jaya.<br>
-                        4. NPWP 94.723.616.2-043.000
+                        <span style="color: red;">4. Saat melakukan pembayaran Harap mencantumkan nomor invoice pada kolom keterangan/berita transfer.</span><br>
+                        5. NPWP 94.723.616.2-043.000
                     </div>
                 </td>
                 <td style="width: 40%; vertical-align: bottom; text-align: center; padding: 0;">
