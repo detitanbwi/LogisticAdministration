@@ -60,22 +60,16 @@
                             </div>
 
 
-                            <div class="col-md-12 mb-3">
-                                <x-back.textarea label="Catatan Finance" name="catatan_finance" rows="3"
-                                    placeholder="Contoh: Invoice Finance..." :value="old('catatan_finance', $container->catatan_finance ?? null)" />
-                            </div>
-
                             <hr class="my-4">
                             <div class="col-md-12 mb-4">
                                 <h5 class="card-title">Rincian Biaya Operasional</h5>
                                 <p class="text-muted small">Data Pengeluaran & Profit Container</p>
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <x-back.text-input type="number" label="Total Pembayaran (Entry Manual)" name="total_pembayaran_manual" :value="old('total_pembayaran_manual', $container->total_pembayaran_manual ?? 0)" step="0.01" placeholder="0" />
-                            </div>
-
-                            <div class="col-md-12">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <x-back.text-input type="number" label="Total Pembayaran (Entry Manual)" name="total_pembayaran_manual" :value="old('total_pembayaran_manual', $container->total_pembayaran_manual ?? 0)" step="0.01" placeholder="0" />
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="operationalCostsTable">
                                         <thead class="bg-light">
@@ -116,6 +110,11 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <x-back.textarea label="Catatan Finance" name="catatan_finance" rows="10"
+                                    placeholder="Contoh: Invoice Finance..." :value="old('catatan_finance', $container->catatan_finance ?? null)" />
                             </div>
                         </div>
 

@@ -196,16 +196,22 @@
     {{-- Spacing --}}
     <tr><td></td></tr>
 
-    {{-- Rincian Biaya Operasional --}}
+    {{-- Rincian Biaya Operasional & Catatan Finance --}}
     <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="5" style="border: 1px solid #000; background-color: #E2EFDA; font-weight: bold; text-align: center;">RINCIAN BIAYA OPERASIONAL</td>
+        <td></td> {{-- Gap --}}
+        <td colspan="4" style="border: 1px solid #000; font-weight: bold; background-color: #E2EFDA;">Catatan Finance:</td>
     </tr>
     <tr style="vertical-align: middle;">
         <td></td>
         <td colspan="3" style="border: 1px solid #000; background-color: #FCE4D6; font-weight: bold;">Komponen Biaya</td>
         <td style="border: 1px solid #000; background-color: #FCE4D6; font-weight: bold; text-align: center;">Nominal (Rp)</td>
         <td style="border: 1px solid #000; background-color: #FCE4D6; font-weight: bold; text-align: center;">Tgl Transfer</td>
+        <td></td> {{-- Gap --}}
+        <td colspan="4" rowspan="{{ count($container->operationalCosts) + 4 }}" style="border: 1px solid #000; vertical-align: top;">
+            {{ $container->catatan_finance ?? '-' }}
+        </td>
     </tr>
     @php $totalPengeluaran = 0; @endphp
     @foreach($container->operationalCosts as $cost)
@@ -232,20 +238,5 @@
         <td></td>
         <td colspan="3" style="border: 1px solid #000; font-weight: bold; background-color: #FFEB9C;">TOTAL PROFIT</td>
         <td colspan="2" style="border: 1px solid #000; font-weight: bold; background-color: #FFEB9C; mso-number-format:'\@';" data-type="string">Rp {{ number_format($container->total_pembayaran_manual - $totalPengeluaran, 0, ',', '.') }}</td>
-    </tr>
-
-    {{-- Empty separator before catatan --}}
-    <tr style="vertical-align: middle;">
-        <td></td>
-    </tr>
-    {{-- Catatan Finance Box --}}
-    <tr style="vertical-align: middle;">
-        <td></td>
-        <td colspan="4" style="border: 1px solid #000; font-weight: bold;">Catatan Finance:</td>
-    </tr>
-    <tr style="vertical-align: middle;">
-        <td></td>
-        <td colspan="4" style="border: 1px solid #000; vertical-align: top;">{{ $container->catatan_finance ?? '-' }}
-        </td>
     </tr>
 </table>
