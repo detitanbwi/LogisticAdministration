@@ -30,26 +30,24 @@ class DashboardController extends Controller
             $daterange = $startDate->format('m/d/Y') . ' - ' . $endDate->format('m/d/Y');
         }
 
+        // Periodic but also used as base for some filters below if needed
         $invoiceBase = Invoice::whereBetween('created_at', [$startDate, $endDate]);
 
-        $pkp = (clone $invoiceBase)->where('pkp_status', 'PKP')->count();
-        $non_pkp = (clone $invoiceBase)->where('pkp_status', 'Non PKP')->count();
+        // Status counts - Made cumulative (all time) to better represent current state
+        $total_invoice = Invoice::count();
+        $pkp = Invoice::where('pkp_status', 'PKP')->count();
+        $non_pkp = Invoice::where('pkp_status', 'Non PKP')->count();
 
-        // Lunas = Paid (has tgl_transfer)
-        $lunas = Finance::whereNotNull('tgl_transfer')
-            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('created_at', [$startDate, $endDate]);
-            })->count();
+        // Lunas = Paid (has tgl_transfer) - Cumulative
+        $lunas = Finance::whereNotNull('tgl_transfer')->count();
 
-        // Belum Lunas = Unpaid (no tgl_transfer) - Make this cumulative (all time)
+        // Belum Lunas = Unpaid (no tgl_transfer) - Cumulative
         $belum_lunas = Finance::whereNull('tgl_transfer')->count();
 
-        // Total Belum Lunas = Total unpaid balance - Make this cumulative (all time)
+        // Total Belum Lunas = Total unpaid balance - Cumulative
         $total_belum_lunas = Finance::whereNull('tgl_transfer')->sum('total_tagihan');
 
-        $total_invoice = (clone $invoiceBase)->count();
-
-        // Total Pendapatan = Sum of total_tagihan where paid - Range filtered
+        // Total Pendapatan = Sum of total_tagihan where paid - Range filtered (Periodic performance)
         $total_pendapatan = Finance::whereNotNull('tgl_transfer')
             ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
