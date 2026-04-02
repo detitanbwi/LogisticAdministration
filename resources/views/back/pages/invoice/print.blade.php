@@ -387,14 +387,28 @@
         <table class="w-100 collapse">
             <tr>
                 <td style="width: 60%; vertical-align: top; padding: 0;">
-                    <div style="font-size: 11pt; font-weight: bold; line-height: 1.4;">
-                        1. Harga tersebut belum termasuk biaya ASURANSI.<br>
-                        2. Pemilik barang bertanggung jawab untuk mengasuransikan BARANG yang dikirim.<br>
-                        3. Apabila terjadi huru-hara, bencana alam, kapal tenggelam, atau kejadian lain di luar kendali,
-                        maka hal tersebut bukan menjadi tanggung jawab PT Sinar Cemara Jaya.<br>
-                        <span style="color: red;">4. Saat melakukan pembayaran Harap mencantumkan nomor invoice pada kolom keterangan/berita transfer.</span><br>
-                        5. NPWP 94.723.616.2-043.000
-                    </div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 11pt; font-weight: bold; line-height: 1.4;">
+                            <tr>
+                                <td style="width: 25px; vertical-align: top; padding: 0;">1.</td>
+                                <td style="vertical-align: top; padding: 0;">Harga tersebut belum termasuk biaya ASURANSI.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25px; vertical-align: top; padding: 0;">2.</td>
+                                <td style="vertical-align: top; padding: 0;">Pemilik barang bertanggung jawab untuk mengasuransikan BARANG yang dikirim.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25px; vertical-align: top; padding: 0;">3.</td>
+                                <td style="vertical-align: top; padding: 0;">Apabila terjadi huru-hara, bencana alam, kapal tenggelam, atau kejadian lain di luar kendali, maka hal tersebut bukan menjadi tanggung jawab PT Sinar Cemara Jaya.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25px; vertical-align: top; padding: 0;">4.</td>
+                                <td style="vertical-align: top; padding: 0; color: red;">Saat melakukan pembayaran Harap mencantumkan nomor invoice pada kolom keterangan/berita transfer.</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25px; vertical-align: top; padding: 0;">5.</td>
+                                <td style="vertical-align: top; padding: 0;">NPWP 94.723.616.2-043.000</td>
+                            </tr>
+                        </table>
                 </td>
                 <td style="width: 40%; vertical-align: bottom; text-align: center; padding: 0;">
                     <div style="position: relative; display: inline-block;">

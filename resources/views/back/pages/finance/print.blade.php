@@ -354,7 +354,7 @@
                             <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Additional cost</td>
+                            <td class="label-cell">Subtotal</td>
                             <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach

@@ -35,40 +35,33 @@ class DashboardController extends Controller
         $pkp = (clone $invoiceBase)->where('pkp_status', 'PKP')->count();
         $non_pkp = (clone $invoiceBase)->where('pkp_status', 'Non PKP')->count();
 
-        $lunas = Finance::where('status_tagihan', 'Sudah ditagih')
+        // Lunas = Paid (has tgl_transfer)
+        $lunas = Finance::whereNotNull('tgl_transfer')
             ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
             })->count();
 
-        $belum_lunas = Finance::where('status_tagihan', '!=', 'Sudah ditagih')
-            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('created_at', [$startDate, $endDate]);
-            })->count();
+        // Belum Lunas = Unpaid (no tgl_transfer) - Make this cumulative (all time)
+        $belum_lunas = Finance::whereNull('tgl_transfer')->count();
 
-        $total_belum_lunas = Finance::where('status_tagihan', '!=', 'Sudah ditagih')
-            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('created_at', [$startDate, $endDate]);
-            })->sum('total_tagihan');
+        // Total Belum Lunas = Total unpaid balance - Make this cumulative (all time)
+        $total_belum_lunas = Finance::whereNull('tgl_transfer')->sum('total_tagihan');
 
         $total_invoice = (clone $invoiceBase)->count();
 
-        $total_pendapatan = Finance::where('status_tagihan', 'Sudah ditagih')
+        // Total Pendapatan = Sum of total_tagihan where paid - Range filtered
+        $total_pendapatan = Finance::whereNotNull('tgl_transfer')
             ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
             })->sum('total_tagihan');
 
-        $belum_ditagih = Finance::where('status_tagihan', 'Belum')
-            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('created_at', [$startDate, $endDate]);
-            })->count();
+        // Belum Ditagih = status_tagihan is 'Belum' - Cumulative
+        $belum_ditagih = Finance::where('status_tagihan', 'Belum')->count();
 
-        $sudah_ditagih = Finance::where('status_tagihan', 'Sudah ditagih')
-            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('created_at', [$startDate, $endDate]);
-            })->count();
+        // Sudah Ditagih = status_tagihan is 'Sudah ditagih' - Cumulative
+        $sudah_ditagih = Finance::where('status_tagihan', 'Sudah ditagih')->count();
 
         $recent_invoices = Invoice::with(['pengirim', 'finance'])
-            ->whereBetween('created_at', [$startDate, $endDate])
             ->latest()
             ->take(5)
             ->get();
