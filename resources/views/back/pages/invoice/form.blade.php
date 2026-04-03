@@ -584,7 +584,6 @@
             addItem(); // Add one empty row by default
         }
 
-        /* 
         function togglePLT(rowId) {
             const row = $(`#row_${rowId}`);
             const satuan = row.find('select[name*="[satuan]"]').val();
@@ -595,11 +594,11 @@
             if (satuan === 'M3' || satuan === 'Kg') {
                 btnHitung.removeClass('d-none');
                 pltGroup.removeClass('d-none');
-                jenisGroup.removeClass('col-md-4').addClass('col-md-2');
+                jenisGroup.removeClass('col-md-3').addClass('col-md-2');
             } else {
                 btnHitung.addClass('d-none');
                 pltGroup.addClass('d-none');
-                jenisGroup.removeClass('col-md-2').addClass('col-md-4');
+                jenisGroup.removeClass('col-md-2').addClass('col-md-3');
             }
         }
 
@@ -620,17 +619,23 @@
             if (satuan === 'M3') {
                 result = (P * L * T * koli) / 1000000;
             } else if (satuan === 'Kg') {
-                result = (P * L * T * koli) / 4000;
+                result = (P * L * T * koli) / 1000;
             }
             
-            // Update the qty input (format with comma)
+            // Update the qty input (ensure 3 decimals for display)
             const qtyInput = row.find('.qty-input');
-            qtyInput.val(result.toFixed(2).replace('.', ','));
             
-            // Trigger input handling to update subtotal
-            handleInput(qtyInput[0], rowId);
+            // Format for display with 3 decimals
+            let displayVal = new Intl.NumberFormat('id-ID', {
+                minimumFractionDigits: 3,
+                maximumFractionDigits: 3
+            }).format(result);
+            
+            qtyInput.val(displayVal);
+            
+            // Update the calculation logic
+            calculateSubtotal(rowId);
         }
-        */
 
         function addItem() {
             addItemRow({});
@@ -640,6 +645,9 @@
             const rowId = itemIndex++;
             const jenisBarang = data.jenis_barang || '';
             const koli = data.koli || '';
+            const p = data.p || '';
+            const l = data.l || '';
+            const t = data.t || '';
 
             // Data might come from DB (float) or Old Input (string, possibly formatted or not?)
             // If from DB: 10000.00 (float/string)
@@ -653,14 +661,18 @@
             // If it's a number, format it: 10000 -> 10.000
             // If it has decimal: 10000.5 -> 10.000,5
 
-            const formatVal = (n) => {
-                if (!n) return '';
-                let parts = n.toString().split('.');
+            const formatVal = (n, precision = null) => {
+                if (n === null || n === undefined || n === '') return '';
+                let val = parseFloat(n);
+                if (isNaN(val)) return '';
+                
+                let str = precision !== null ? val.toFixed(precision) : val.toString();
+                let parts = str.split('.');
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 return parts.join(',');
             };
 
-            const jumlahDisplay = formatVal(jumlah);
+            const jumlahDisplay = formatVal(jumlah, 3);
             const hargaSatuanDisplay = formatVal(hargaSatuan);
 
             const satuan = data.satuan || 'Unit';
@@ -681,36 +693,34 @@
                         <input type="number" class="form-control koli-input" name="items[${rowId}][koli]" value="${koli}" required placeholder="1" oninput="calculateSubtotal(${rowId})">
                     </div>
                     
-                    <!-- 
                     <div class="col-md-2 plt-group d-none">
                         <label class="form-label fs-12 mb-1 text-muted text-center d-block">P x L x T (cm)</label>
                         <div class="d-flex gap-1">
-                            <input type="number" step="0.1" class="form-control p-input px-1 text-center" placeholder="P">
-                            <input type="number" step="0.1" class="form-control l-input px-1 text-center" placeholder="L">
-                            <input type="number" step="0.1" class="form-control t-input px-1 text-center" placeholder="T">
+                            <input type="number" step="0.1" class="form-control p-input px-1 text-center" name="items[${rowId}][p]" value="${p}" placeholder="P">
+                            <input type="number" step="0.1" class="form-control l-input px-1 text-center" name="items[${rowId}][l]" value="${l}" placeholder="L">
+                            <input type="number" step="0.1" class="form-control t-input px-1 text-center" name="items[${rowId}][t]" value="${t}" placeholder="T">
                         </div>
                     </div>
-                    -->
 
                     <div class="col-md-2 jumlah-group">
                         <label class="form-label fs-12 mb-1 text-muted">Jumlah</label>
                         <div class="input-group">
                             <input type="text" class="form-control qty-input font-monospace" value="${jumlahDisplay}" required oninput="handleInput(this, ${rowId})" placeholder="0">
-                            <!-- <button class="btn btn-info btn-hitung d-none py-1 px-2 fs-11" type="button" onclick="calculateQty(${rowId})">Hitung</button> -->
+                            <button class="btn btn-info btn-hitung d-none py-1 px-2 fs-11" type="button" onclick="calculateQty(${rowId})">Hitung</button>
                         </div>
                         <input type="hidden" name="items[${rowId}][jumlah]" id="jumlah_hidden_${rowId}" value="${jumlah}">
                     </div>
 
                     <div class="col-md-1 satuan-group">
                         <label class="form-label fs-12 mb-1 text-muted">Satuan</label>
-                        <select class="form-select" name="items[${rowId}][satuan]" required>
+                        <select class="form-select" name="items[${rowId}][satuan]" required onchange="togglePLT(${rowId})">
                             <option value="M3" ${satuan === 'M3' ? 'selected' : ''}>M3</option>
                             <option value="Kg" ${satuan === 'Kg' ? 'selected' : ''}>Kg</option>
                             <option value="Unit" ${satuan === 'Unit' ? 'selected' : ''}>Unit</option>
                         </select>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-2 price-group">
                         <label class="form-label fs-12 mb-1 text-muted">Harga Satuan</label>
                         <div class="input-group">
                             <span class="input-group-text px-2">Rp</span>
@@ -736,7 +746,7 @@
             `;
 
             $('#itemContainer').append(html);
-            // togglePLT(rowId); // Set initial state (commented out)
+            togglePLT(rowId); // Set initial state
         }
 
         function handleInput(element, rowId) {
@@ -836,7 +846,8 @@
             const subtotal = qty * price;
 
             $(`#subtotal_input_${id}`).val(subtotal);
-            $(`#subtotal_display_${id}`).val(new Intl.NumberFormat('id-ID').format(subtotal));
+            // Format subtotal display WITHOUT decimals for Rupiah consistency
+            $(`#subtotal_display_${id}`).val(new Intl.NumberFormat('id-ID').format(Math.round(subtotal)));
 
             calculateTotal();
         }
@@ -844,28 +855,29 @@
         function calculateTotal() {
             let totalDPP = 0;
             $('#itemContainer .item-row').each(function() {
-                const subtotal = parseFloat($(this).find('input[name*="[subtotal]"]').val()) || 0;
+                const subtotal = parseCurrency($(this).find('input[name*="[subtotal]"]').val());
                 totalDPP += subtotal;
+            });
+
+            let totalFees = 0;
+            $('#feeContainer .fee-row').each(function() {
+                const feePrice = parseCurrency($(this).find('.fee-hidden-price').val());
+                totalFees += feePrice;
             });
 
             const pkpStatus = $('#pkp_status').val();
             let ppn = 0;
             if (pkpStatus === 'PKP') {
-                ppn = totalDPP * 0.011;
+                // PKP dihitung dari (total Barang + total Tambahan)
+                ppn = (totalDPP + totalFees) * 0.011;
             }
-
-            let totalFees = 0;
-            $('#feeContainer .fee-row').each(function() {
-                const feePrice = parseFloat($(this).find('.fee-hidden-price').val()) || 0;
-                totalFees += feePrice;
-            });
 
             const grandTotal = totalDPP + ppn + totalFees;
 
-            $('#totalDPP').text(new Intl.NumberFormat('id-ID').format(totalDPP));
-            $('#totalPPN').text(new Intl.NumberFormat('id-ID').format(ppn));
-            $('#totalFee').text(new Intl.NumberFormat('id-ID').format(totalFees));
-            $('#grandTotal').text(new Intl.NumberFormat('id-ID').format(grandTotal));
+            $('#totalDPP').text(new Intl.NumberFormat('id-ID').format(Math.round(totalDPP)));
+            $('#totalPPN').text(new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(ppn));
+            $('#totalFee').text(new Intl.NumberFormat('id-ID').format(Math.round(totalFees)));
+            $('#grandTotal').text(new Intl.NumberFormat('id-ID').format(Math.round(grandTotal)));
         }
     </script>
 @endpush

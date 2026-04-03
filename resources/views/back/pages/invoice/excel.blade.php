@@ -45,11 +45,12 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Contr / Seal</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Layanan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jenis Barang</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">P</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">L</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">T</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Sat</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Harga Satuan</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Subtotal</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">DPP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Biaya Tambahan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Total Tagihan</th>
@@ -58,16 +59,31 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice - Barang</th>
     </tr>
     <tbody>
+        @php 
+            $grandTotalJumlah = 0;
+            $grandTotalTagihan = 0;
+        @endphp
         @foreach($invoices as $index => $inv)
             @php
                 $rowCount = $inv->items && $inv->items->count() > 0 ? $inv->items->count() : 1;
-                $dpp_base = $inv->items ? $inv->items->sum('subtotal') : 0;
+                $dpp_base = $inv->items ? $inv->items->sum(function($item) {
+                    return $item->jumlah * $item->harga_satuan;
+                }) : 0;
                 $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
                 $dpp_and_fee_val = $dpp_base + $fee_val;
                 $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
                 $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
                 $dpp_display = $dpp_base;
                 $grand_total_val = $dpp_and_fee_val + $ppn_val;
+                $grandTotalTagihan += $grand_total_val;
+
+                if ($inv->items) {
+                    foreach($inv->items as $item) {
+                        if (strtolower($item->satuan) != 'unit') {
+                            $grandTotalJumlah += $item->jumlah;
+                        }
+                    }
+                }
             @endphp
             <tr style="vertical-align: middle;">
                 <td></td>{{-- Col A spacer --}}
@@ -133,22 +149,22 @@
 
                 @if($inv->items && $inv->items->count() > 0)
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[0]->p ?? '-' }}</td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[0]->l ?? '-' }}</td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[0]->t ?? '-' }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                     <td style="border: 1px solid #000;">
-                        {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
+                        {{ number_format($inv->items[0]->jumlah, 3, ',', '.') }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
-                    <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                        {{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
-                    <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                        {{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
                 @else
                     <td style="border: 1px solid #000;">-</td>
                     <td style="border: 1px solid #000;">-</td>
                     <td style="border: 1px solid #000;">-</td>
                     <td style="border: 1px solid #000;">-</td>
-                    <td style="border: 1px solid #000;">0</td>
-                    <td style="border: 1px solid #000;">0</td>
+                    <td style="border: 1px solid #000;">-</td>
+                    <td style="border: 1px solid #000;">-</td>
+                    <td style="border: 1px solid #000;">-</td>
                 @endif
 
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
@@ -163,7 +179,7 @@
                     @endif
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                    {{ $inv->finance ? number_format($inv->finance->total_tagihan, 0, ',', '.') : 0 }}
+                    {{ number_format(round($grand_total_val), 0, ',', '.') }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}
                 </td>
@@ -175,18 +191,30 @@
                     <tr style="vertical-align: middle;">
                         <td></td>{{-- Col A spacer --}}
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
+                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->p ?? '-' }}</td>
+                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->l ?? '-' }}</td>
+                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->t ?? '-' }}</td>
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                         <td style="border: 1px solid #000;">
-                            {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
+                            {{ number_format($inv->items[$i]->jumlah, 3, ',', '.') }}
                         </td>
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
-                        <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                            {{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
-                        <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                            {{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
                     </tr>
                 @endfor
             @endif
         @endforeach
+        {{-- Total Accumulation Row --}}
+        <tr style="vertical-align: middle; font-weight: bold; background-color: #f2f2f2;">
+            <td></td>{{-- Col A spacer --}}
+            <td colspan="26" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
+            <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalJumlah, 3, ',', '.') }}</td>
+            <td colspan="7" style="border: 1px solid #000;"></td>
+        </tr>
+        <tr style="vertical-align: middle; font-weight: bold; background-color: #e2e2e2;">
+            <td></td>{{-- Col A spacer --}}
+            <td colspan="30" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
+            <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalTagihan, 0, ',', '.') }}</td>
+            <td colspan="3" style="border: 1px solid #000;"></td>
+        </tr>
     </tbody>
 </table>

@@ -312,6 +312,50 @@
         </div>
     @endif
 
+    {{-- Vessel Summary --}}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card recent-invoice-card stretch stretch-full">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title mb-0"><i class="feather-box me-2"></i>Ringkasan Keberangkatan Kapal</h5>
+                    <span class="badge bg-soft-primary text-primary">{{ $vessel_summary->count() }} Jadwal</span>
+                </div>
+                <div class="card-body custom-card-action p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr class="border-b">
+                                    <th>Nama Kapal</th>
+                                    <th>ETD (Keberangkatan)</th>
+                                    <th class="text-center">Jumlah Container</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($vessel_summary as $summary)
+                                    <tr>
+                                        <td>
+                                            <span class="fw-bold text-dark">{{ $summary->kapal->nama_kapal ?? 'Tanpa Kapal' }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted"><i class="feather-calendar me-1"></i> {{ $summary->etd ? $summary->etd->translatedFormat('d F Y') : '-' }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-soft-info text-info px-3">{{ $summary->total_container }} Container</span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center p-4">Tidak ada jadwal keberangkatan pada range tanggal ini.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Recent Invoices --}}
     <div class="row">
         <div class="col-12">

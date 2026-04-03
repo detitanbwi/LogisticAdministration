@@ -155,7 +155,9 @@
 <body onload="window.print()">
     @php
         $invoice = $finance->invoice;
-        $dpp = $invoice->items->sum('subtotal');
+        $dpp = $invoice->items->sum(function($item) {
+            return $item->jumlah * $item->harga_satuan;
+        });
         $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
         $totalDpp = $dpp + $feeTotal;
         $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
@@ -355,7 +357,7 @@
                         </tr>
                         <tr>
                             <td class="label-cell">Subtotal</td>
-                            <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            <td class="text-right">Rp {{ number_format($item->jumlah * $item->harga_satuan, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
 
@@ -380,7 +382,7 @@
                     </tr>
                     <tr class="bg-yellow">
                         <td class="label-cell font-bold">Total tagihan</td>
-                        <td class="text-right font-bold">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                        <td class="text-right font-bold">Rp {{ number_format(round($grandTotal), 0, ',', '.') }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">Terima barang</td>

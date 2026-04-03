@@ -57,6 +57,9 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">HP Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jenis Barang</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">P</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">L</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">T</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Sat</th>
@@ -69,7 +72,10 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice</th>
     </tr>
     {{-- Data Rows --}}
-    @php $no = 1; @endphp
+    @php 
+        $no = 1; 
+        $totalJumlah = 0;
+    @endphp
     @forelse ($container->invoices as $inv)
         @php
             $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
@@ -90,12 +96,23 @@
 
             @if($inv->items->count() > 0)
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
+                <td style="border: 1px solid #000;">{{ $inv->items[0]->p ?? '-' }}</td>
+                <td style="border: 1px solid #000;">{{ $inv->items[0]->l ?? '-' }}</td>
+                <td style="border: 1px solid #000;">{{ $inv->items[0]->t ?? '-' }}</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                 <td style="border: 1px solid #000;">
-                    {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
+                    {{ number_format($inv->items[0]->jumlah, 3, ',', '.') }}
                 </td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
+                @php 
+                    if (strtolower($inv->items[0]->satuan) != 'unit') {
+                        $totalJumlah += $inv->items[0]->jumlah;
+                    }
+                @endphp
             @else
+                <td style="border: 1px solid #000;">-</td>
+                <td style="border: 1px solid #000;">-</td>
+                <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
@@ -115,11 +132,19 @@
                 <tr style="vertical-align: middle;">
                     <td></td>{{-- Col A spacer --}}
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[$i]->p ?? '-' }}</td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[$i]->l ?? '-' }}</td>
+                    <td style="border: 1px solid #000;">{{ $inv->items[$i]->t ?? '-' }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                     <td style="border: 1px solid #000;">
-                        {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
+                        {{ number_format($inv->items[$i]->jumlah, 3, ',', '.') }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
+                    @php 
+                        if (strtolower($inv->items[$i]->satuan) != 'unit') {
+                            $totalJumlah += $inv->items[$i]->jumlah;
+                        }
+                    @endphp
                 </tr>
             @endfor
         @endif
@@ -129,6 +154,14 @@
             <td colspan="18" style="border: 1px solid #000;">Belum ada invoice di dalam container ini.</td>
         </tr>
     @endforelse
+
+    {{-- Total Row --}}
+    <tr style="vertical-align: middle; font-weight: bold;">
+        <td></td>
+        <td colspan="14" style="border: 1px solid #000; background-color: #f2f2f2;" align="right">TOTAL JUMLAH</td>
+        <td style="border: 1px solid #000; background-color: #f2f2f2;" align="center">{{ number_format($totalJumlah, 3, ',', '.') }}</td>
+        <td colspan="8" style="border: 1px solid #000; background-color: #f2f2f2;"></td>
+    </tr>
     {{-- Empty separator before catatan --}}
     <tr style="vertical-align: middle;">
         <td></td>

@@ -147,18 +147,33 @@
             </tr>
         </thead>
         <tbody>
-            @php $no = 1; @endphp
+            @php 
+                $no = 1; 
+                $totalJumlah = 0;
+                $grandTotalAll = 0;
+            @endphp
             @forelse ($container->invoices as $inv)
                 @php
                     $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
-                    $dpp_base = $inv->items->sum('subtotal');
+                    $dpp_base = $inv->items->sum(function($item) {
+                        return $item->jumlah * $item->harga_satuan;
+                    });
                     $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
                     $dpp_and_fee_val = $dpp_base + $fee_val;
                     $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
 
                     $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
                     $dpp_display = $dpp_and_fee_val;
-                    $grand_total_val = $dpp_and_fee_val + $ppn_val;
+                    $grand_total_val = round($dpp_and_fee_val + $ppn_val);
+
+                    if ($inv->items) {
+                        foreach($inv->items as $item) {
+                            if (strtolower($item->satuan) != 'unit') {
+                                $totalJumlah += $item->jumlah;
+                            }
+                        }
+                    }
+                    $grandTotalAll += $grand_total_val;
                 @endphp
                 <tr>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $no++ }}</td>
@@ -173,11 +188,11 @@
                     @if($inv->items->count() > 0)
                         <td>{{ $inv->items[0]->jenis_barang }}</td>
                         <td class="text-center">{{ $inv->items[0]->koli }}</td>
-                        <td class="text-center">{{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
+                        <td class="text-center">{{ number_format($inv->items[0]->jumlah, 3, ',', '.') }}
                         </td>
                         <td class="text-center">{{ $inv->items[0]->satuan }}</td>
                         <td class="text-right">{{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($inv->items[0]->jumlah * $inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
                     @else
                         <td>-</td>
                         <td class="text-center">-</td>
@@ -201,11 +216,11 @@
                             <td>{{ $inv->items[$i]->jenis_barang }}</td>
                             <td class="text-center">{{ $inv->items[$i]->koli }}</td>
                             <td class="text-center">
-                                {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
+                                {{ number_format($inv->items[$i]->jumlah, 3, ',', '.') }}
                             </td>
                             <td class="text-center">{{ $inv->items[$i]->satuan }}</td>
                             <td class="text-right">{{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
+                            <td class="text-right">{{ number_format($inv->items[$i]->jumlah * $inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
                         </tr>
                     @endfor
                 @endif
@@ -216,6 +231,19 @@
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr style="background-color: #f2f2f2; font-weight: bold;">
+                <td colspan="8" class="text-right">TOTAL JUMLAH</td>
+                <td class="text-center">{{ number_format($totalJumlah, 3, ',', '.') }}</td>
+                <td colspan="9"></td>
+            </tr>
+            <tr style="background-color: #e2e2e2; font-weight: bold;">
+                <td colspan="8" class="text-right">GRAND TOTAL</td>
+                <td colspan="5"></td>
+                <td class="text-right nowrap">Rp {{ number_format($grandTotalAll, 0, ',', '.') }}</td>
+                <td colspan="4"></td>
+            </tr>
+        </tfoot>
     </table>
 
     @php

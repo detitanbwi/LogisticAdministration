@@ -150,7 +150,10 @@
             </tr>
         </thead>
         <tbody>
-            @php $no = 1; @endphp
+            @php 
+                $no = 1; 
+                $totalJumlah = 0;
+            @endphp
             @forelse ($container->invoices as $inv)
                 @php
                     $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
@@ -172,6 +175,11 @@
                         <td class="text-center">{{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
                         </td>
                         <td class="text-center">{{ $inv->items[0]->satuan }}</td>
+                        @php 
+                            if (strtolower($inv->items[0]->satuan) != 'unit') {
+                                $totalJumlah += $inv->items[0]->jumlah;
+                            }
+                        @endphp
                     @else
                         <td>-</td>
                         <td class="text-center">-</td>
@@ -196,6 +204,11 @@
                                 {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
                             </td>
                             <td class="text-center">{{ $inv->items[$i]->satuan }}</td>
+                            @php 
+                                if (strtolower($inv->items[$i]->satuan) != 'unit') {
+                                    $totalJumlah += $inv->items[$i]->jumlah;
+                                }
+                            @endphp
                         </tr>
                     @endfor
                 @endif
@@ -206,6 +219,13 @@
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr style="background-color: #f2f2f2; font-weight: bold;">
+                <td colspan="9" class="text-right">TOTAL JUMLAH</td>
+                <td class="text-center">{{ number_format($totalJumlah, 3, ',', '.') }}</td>
+                <td colspan="8"></td>
+            </tr>
+        </tfoot>
     </table>
 
     <!-- Footer Note -->

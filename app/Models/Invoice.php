@@ -26,11 +26,13 @@ class Invoice extends Model
         'terima_barang',
         'catatan_muntahan',
         'tanda_terima',
+        'show_stamp',
     ];
 
     protected $casts = [
         'tgl_masuk' => 'date',
         'terima_barang' => 'date',
+        'show_stamp' => 'boolean',
     ];
 
 

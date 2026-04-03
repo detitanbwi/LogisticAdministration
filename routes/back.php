@@ -65,6 +65,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Invoicing & Finance
         Route::get('invoice/{invoice}/print', [App\Http\Controllers\Back\InvoiceController::class, 'print'])->name('invoice.print');
         Route::get('invoice/export', [App\Http\Controllers\Back\InvoiceController::class, 'export'])->name('invoice.export');
+        Route::get('invoice/rekap-print', [App\Http\Controllers\Back\InvoiceController::class, 'rekapPrint'])->name('invoice.rekap_print');
         Route::any('invoice/preview', [App\Http\Controllers\Back\InvoiceController::class, 'preview'])->name('invoice.preview');
         Route::resource('invoice', App\Http\Controllers\Back\InvoiceController::class);
 

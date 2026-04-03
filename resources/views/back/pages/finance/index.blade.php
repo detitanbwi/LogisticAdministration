@@ -206,12 +206,18 @@
         window.printTable = function () {
             var table = $('#financeTable').DataTable();
             var printWindow = window.open('', '_blank');
-            var rows = '';
-
+            var totalGrandTagihan = 0;
             table.rows({
                 search: 'applied'
             }).every(function () {
                 var data = this.data();
+                
+                // Accumulate total tagihan for Grand Total
+                if(data.total_tagihan) {
+                    var numericTotal = data.total_tagihan.replace(/[^0-9]/g, '');
+                    totalGrandTagihan += parseInt(numericTotal) || 0;
+                }
+
                 var statusMasa = data.masa_tunggakan;
                 // remove HTML from masa_tunggakan/status
                 var tempDiv = document.createElement('div');
@@ -233,6 +239,8 @@
                     '<td>' + masaText + '</td>' +
                     '</tr>';
             });
+
+            var formattedGrandTotal = 'Rp ' + totalGrandTagihan.toLocaleString('id-ID');
 
             var filterInfo = '';
             var asal = $('#filterAsal option:selected').text();
@@ -274,6 +282,13 @@
                                                                                             </tr>
                                                                                         </thead>
                                                                                         <tbody>${rows}</tbody>
+                                                                                        <tfoot>
+                                                                                            <tr style="font-weight: bold; background-color: #f0f0f0;">
+                                                                                                <td colspan="4" style="text-align: right;">GRAND TOTAL</td>
+                                                                                                <td>${formattedGrandTotal}</td>
+                                                                                                <td colspan="3"></td>
+                                                                                            </tr>
+                                                                                        </tfoot>
                                                                                     </table>
                                                                                     <script>window.print();<\/script>
                                                                                 </body>

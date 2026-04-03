@@ -26,14 +26,16 @@ class InvoiceController extends Controller
         abort_unless(auth()->user()->can('view.invoice'), 403);
 
         if ($request->ajax()) {
-            $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance'])->select('invoice.*');
+            $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'items', 'additionalFees'])->select('invoice.*');
 
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
                     $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
                     $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
-                    $query->whereBetween('invoice.created_at', [$start_date, $end_date]);
+                    $query->whereHas('container', function ($q) use ($start_date, $end_date) {
+                        $q->whereBetween('etd', [$start_date, $end_date]);
+                    });
                 }
             }
 
@@ -104,8 +106,34 @@ class InvoiceController extends Controller
                 ->addColumn('penerima', function ($row) {
                     return $row->penerima ? $row->penerima->nama : '-';
                 })
+                ->addColumn('p', function ($row) {
+                    return $row->items->pluck('p')->map(fn($v) => $v ? number_format($v, 2, ',', '.') : '-')->implode('<br>');
+                })
+                ->addColumn('l', function ($row) {
+                    return $row->items->pluck('l')->map(fn($v) => $v ? number_format($v, 2, ',', '.') : '-')->implode('<br>');
+                })
+                ->addColumn('t', function ($row) {
+                    return $row->items->pluck('t')->map(fn($v) => $v ? number_format($v, 2, ',', '.') : '-')->implode('<br>');
+                })
+                ->addColumn('koli', function ($row) {
+                    return $row->items->pluck('koli')->implode('<br>');
+                })
+                ->addColumn('jumlah', function ($row) {
+                    return $row->items->pluck('jumlah')->map(fn($v) => number_format($v, 3, ',', '.'))->implode('<br>');
+                })
+                ->addColumn('satuan', function ($row) {
+                    return $row->items->pluck('satuan')->implode('<br>');
+                })
                 ->addColumn('total_tagihan', function ($row) {
-                    return $row->finance ? number_format($row->finance->total_tagihan, 0, ',', '.') : '-';
+                    $dpp_base = $row->items->sum(function($item) {
+                        return $item->jumlah * $item->harga_satuan;
+                    });
+                    $fee_val = $row->additionalFees ? $row->additionalFees->sum('harga') : 0;
+                    $total = $dpp_base + $fee_val;
+                    if (strtoupper($row->pkp_status) == 'PKP') {
+                        $total = round($total * 1.011);
+                    }
+                    return number_format($total, 0, ',', '.');
                 })
                 ->addColumn('catatan_muntahan', function ($row) {
                     return $row->catatan_muntahan ? \Illuminate\Support\Str::limit($row->catatan_muntahan, 50) : '-';
@@ -133,7 +161,7 @@ class InvoiceController extends Controller
                     $btn .= '</div>';
                     return $btn;
                 })
-                ->rawColumns(['status_pembayaran', 'action'])
+                ->rawColumns(['status_pembayaran', 'action', 'p', 'l', 't', 'koli', 'satuan', 'jumlah'])
                 ->make(true);
         }
 
@@ -176,15 +204,21 @@ class InvoiceController extends Controller
 
             if ($request->has('items')) {
                 foreach ($request->items as $item) {
-                    $subtotal = $item['jumlah'] * $item['harga_satuan'];
+                    $jumlahVal = str_replace(',', '.', str_replace('.', '', $item['jumlah'] ?? 0));
+                    $hargaSatuanVal = str_replace(',', '.', str_replace('.', '', $item['harga_satuan'] ?? 0));
+                    
+                    $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
                     $totalTagihan += $subtotal;
 
                     $invoice->items()->create([
                         'jenis_barang' => $item['jenis_barang'],
                         'koli' => $item['koli'],
-                        'jumlah' => $item['jumlah'],
+                        'p' => $item['p'] ?? null,
+                        'l' => $item['l'] ?? null,
+                        't' => $item['t'] ?? null,
+                        'jumlah' => $jumlahVal,
                         'satuan' => $item['satuan'],
-                        'harga_satuan' => $item['harga_satuan'],
+                        'harga_satuan' => $hargaSatuanVal,
                         'subtotal' => $subtotal,
                     ]);
                 }
@@ -256,15 +290,22 @@ class InvoiceController extends Controller
 
             if ($request->has('items')) {
                 foreach ($request->items as $item) {
-                    $subtotal = $item['jumlah'] * $item['harga_satuan'];
+                    // Robust clean for Indonesian format
+                    $jumlahVal = str_replace(',', '.', str_replace('.', '', $item['jumlah'] ?? 0));
+                    $hargaSatuanVal = str_replace(',', '.', str_replace('.', '', $item['harga_satuan'] ?? 0));
+                    
+                    $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
                     $totalTagihan += $subtotal;
 
                     $invoice->items()->create([
                         'jenis_barang' => $item['jenis_barang'],
                         'koli' => $item['koli'],
-                        'jumlah' => $item['jumlah'],
+                        'p' => $item['p'] ?? null,
+                        'l' => $item['l'] ?? null,
+                        't' => $item['t'] ?? null,
+                        'jumlah' => $jumlahVal,
                         'satuan' => $item['satuan'],
-                        'harga_satuan' => $item['harga_satuan'],
+                        'harga_satuan' => $hargaSatuanVal,
                         'subtotal' => $subtotal,
                     ]);
                 }
@@ -361,9 +402,26 @@ class InvoiceController extends Controller
         $totalTagihan = 0;
         if ($request->items) {
             foreach ($request->items as $itemData) {
-                $subtotal = ($itemData['jumlah'] ?? 0) * ($itemData['harga_satuan'] ?? 0);
+                // If value from hidden input is clean (only dot/no comma), treat it as clean float
+                // If it has comma, it's Indonesian format, so clean dots then replace comma.
+                $rawJumlah = $itemData['jumlah'] ?? 0;
+                $rawHarga = $itemData['harga_satuan'] ?? 0;
+
+                $clean = function($val) {
+                    if (strpos($val, ',') !== false) {
+                        return str_replace(',', '.', str_replace('.', '', $val));
+                    }
+                    return $val;
+                };
+
+                $jumlahVal = $clean($rawJumlah);
+                $hargaSatuanVal = $clean($rawHarga);
+                
+                $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
                 $totalTagihan += $subtotal;
 
+                $itemData['jumlah'] = $jumlahVal;
+                $itemData['harga_satuan'] = $hargaSatuanVal;
                 $itemData['subtotal'] = $subtotal;
                 $items->push(new \App\Models\InvoiceItem($itemData));
             }
@@ -398,6 +456,46 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('view.invoice') || auth()->user()->can('print.invoice'), 403);
 
+        $query = $this->getFilteredInvoices($request);
+
+        $judulPrint = null;
+        if ($request->filled('judul_print_id')) {
+            $judulObj = \App\Models\JudulPrint::find($request->judul_print_id);
+            if ($judulObj) {
+                $judulPrint = $judulObj->nama;
+            }
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\InvoiceRecapExport($query->get(), [
+            'judul_print' => $judulPrint,
+            'daterange' => $request->daterange
+        ]), 'InvoiceRekap_' . date('YmdHis') . '.xlsx');
+    }
+
+    public function rekapPrint(Request $request)
+    {
+        abort_unless(auth()->user()->can('view.invoice') || auth()->user()->can('print.invoice'), 403);
+
+        $query = $this->getFilteredInvoices($request);
+        $invoices = $query->get();
+
+        $filters = [
+            'judul_print' => 'REKAPITULASI INVOICE',
+            'daterange' => $request->daterange
+        ];
+
+        if ($request->filled('judul_print_id')) {
+            $judulObj = \App\Models\JudulPrint::find($request->judul_print_id);
+            if ($judulObj) {
+                $filters['judul_print'] = $judulObj->nama;
+            }
+        }
+
+        return view('back.pages.invoice.rekap_print', compact('invoices', 'filters'));
+    }
+
+    protected function getFilteredInvoices(Request $request)
+    {
         $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'additionalFees', 'tujuanDaerah', 'items', 'upDetail'])->select('invoice.*');
 
         if ($request->filled('daterange')) {
@@ -405,7 +503,9 @@ class InvoiceController extends Controller
             if (count($dates) == 2) {
                 $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
                 $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
-                $query->whereBetween('invoice.created_at', [$start_date, $end_date]);
+                $query->whereHas('container', function ($q) use ($start_date, $end_date) {
+                    $q->whereBetween('etd', [$start_date, $end_date]);
+                });
             }
         }
 
@@ -452,17 +552,6 @@ class InvoiceController extends Controller
             });
         }
 
-        $judulPrint = null;
-        if ($request->filled('judul_print_id')) {
-            $judulObj = \App\Models\JudulPrint::find($request->judul_print_id);
-            if ($judulObj) {
-                $judulPrint = $judulObj->nama;
-            }
-        }
-
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\InvoiceRecapExport($query->get(), [
-            'judul_print' => $judulPrint,
-            'daterange' => $request->daterange
-        ]), 'InvoiceRekap_' . date('YmdHis') . '.xlsx');
+        return $query;
     }
 }

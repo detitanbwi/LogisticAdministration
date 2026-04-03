@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Invoice;
 use App\Models\Finance;
+use App\Models\Container;
 
 class DashboardController extends Controller
 {
@@ -64,6 +65,14 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Vessel Summary for Dashboard - Filtered by ETD
+        $vessel_summary = Container::with('kapal')
+            ->whereBetween('etd', [$startDate, $endDate])
+            ->select('kapal_id', 'etd', \DB::raw('count(*) as total_container'))
+            ->groupBy('kapal_id', 'etd')
+            ->orderBy('etd', 'asc')
+            ->get();
+
         return view('back.pages.dashboard.index', compact(
             'lunas',
             'belum_lunas',
@@ -75,6 +84,7 @@ class DashboardController extends Controller
             'belum_ditagih',
             'sudah_ditagih',
             'recent_invoices',
+            'vessel_summary',
             'daterange'
         ));
     }

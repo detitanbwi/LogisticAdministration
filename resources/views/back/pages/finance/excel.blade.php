@@ -68,7 +68,10 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Pembayaran</th>
     </tr>
     {{-- Data Rows --}}
-    @php $no = 1; @endphp
+    @php 
+        $no = 1; 
+        $grandTotalJumlah = 0;
+    @endphp
     @forelse ($finances as $finance)
         @php
             $inv = $finance->invoice;
@@ -79,7 +82,9 @@
 
             $rowCount = $inv->items && $inv->items->count() > 0 ? $inv->items->count() : 1;
 
-            $dpp_base = $inv->items ? $inv->items->sum('subtotal') : 0;
+            $dpp_base = $inv->items ? $inv->items->sum(function($item) {
+                return $item->jumlah * $item->harga_satuan;
+            }) : 0;
             $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
             $dpp_and_fee_val = $dpp_base + $fee_val;
             $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
@@ -98,6 +103,13 @@
                     $diffDays = $tagih->diffInDays($today, false);
                     if ($diffDays > 0) {
                         $masaText = intval($diffDays) . ' Hari';
+                    }
+                }
+            }
+            if ($inv->items) {
+                foreach($inv->items as $item) {
+                    if (strtolower($item->satuan) != 'unit') {
+                        $grandTotalJumlah += $item->jumlah;
                     }
                 }
             }
@@ -144,7 +156,7 @@
                     {{ number_format($inv->items[0]->harga_satuan, 0, '', '') }}
                 </td>
                 <td style="border: 1px solid #000;">
-                    {{ number_format($inv->items[0]->subtotal, 0, '', '') }}
+                    {{ number_format($inv->items[0]->jumlah * $inv->items[0]->harga_satuan, 0, '', '') }}
                 </td>
             @else
                 <td style="border: 1px solid #000;">-</td>
@@ -167,7 +179,7 @@
                 @endif
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ number_format($finance->total_tagihan, 0, '', '') }}
+                {{ number_format(round($grand_total_val), 0, '', '') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $finance->bap_balik ?? '-' }}</td>
@@ -218,4 +230,17 @@
             <td colspan="42" style="border: 1px solid #000;" align="center">Belum ada tagihan.</td>
         </tr>
     @endforelse
+    {{-- Total Accumulation Row --}}
+    <tr style="vertical-align: middle; font-weight: bold; background-color: #f2f2f2;">
+        <td></td>{{-- Col A spacer --}}
+        <td colspan="21" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
+        <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalJumlah, 3, ',', '.') }}</td>
+        <td colspan="20" style="border: 1px solid #000;"></td>
+    </tr>
+    <tr style="vertical-align: middle; font-weight: bold; background-color: #e2e2e2;">
+        <td></td>{{-- Col A spacer --}}
+        <td colspan="25" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
+        <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalTagihan, 0, ',', '.') }}</td>
+        <td colspan="16" style="border: 1px solid #000;"></td>
+    </tr>
 </table>

@@ -113,6 +113,12 @@
             'Tujuan',
             'Pengirim',
             'Penerima',
+            'P',
+            'L',
+            'T',
+            'Koli',
+            'Jumlah',
+            'Satuan',
             'Tagihan',
             'Tanda Terima',
             'Catatan Invoice - Barang',
@@ -125,6 +131,12 @@
             'tujuan' => ['orderable' => false],
             'pengirim',
             'penerima',
+            'p' => ['searchable' => false, 'orderable' => false],
+            'l' => ['searchable' => false, 'orderable' => false],
+            't' => ['searchable' => false, 'orderable' => false],
+            'koli' => ['searchable' => false, 'orderable' => false],
+            'jumlah' => ['searchable' => false, 'orderable' => false],
+            'satuan' => ['searchable' => false, 'orderable' => false],
             'total_tagihan' => ['searchable' => false, 'orderable' => false],
             'tanda_terima',
             'catatan_muntahan' => ['searchable' => false, 'orderable' => false],
@@ -227,72 +239,25 @@
         });
 
         window.printTable = function () {
-            var table = $('#invoiceTable').DataTable();
-            var printWindow = window.open('', '_blank');
-            var rows = '';
+            var daterange = $('#filterDaterange').val() || '';
+            var status = $('#filterStatus').val() || '';
+            var asal = $('#filterAsal').val() || '';
+            var tujuan = $('#filterTujuan').val() || '';
+            var pengirim = $('#filterPengirim').val() || '';
+            var penerima = $('#filterPenerima').val() || '';
+            var judul = $('#filterJudulPrint').val() || '';
+            var search = $('#invoiceTable').DataTable().search() || '';
 
-            table.rows({
-                search: 'applied'
-            }).every(function () {
-                var data = this.data();
-                rows += '<tr>' +
-                    '<td>' + data.DT_RowIndex + '</td>' +
-                    '<td>' + data.no_invoice + '</td>' +
-                    '<td>' + data.etd + '</td>' +
-                    '<td>' + data.pengirim + '</td>' +
-                    '<td>' + data.penerima + '</td>' +
-                    '<td>' + data.total_tagihan + '</td>' +
-                    '<td>' + (data.tanda_terima ? data.tanda_terima : '-') + '</td>' +
-                    '</tr>';
-            });
+            var url = '{{ route('admin.invoice.rekap_print') }}?daterange=' + encodeURIComponent(daterange) +
+                '&status=' + encodeURIComponent(status) +
+                '&asal_id=' + encodeURIComponent(asal) +
+                '&tujuan_id=' + encodeURIComponent(tujuan) +
+                '&pengirim_id=' + encodeURIComponent(pengirim) +
+                '&penerima_id=' + encodeURIComponent(penerima) +
+                '&judul_print_id=' + encodeURIComponent(judul) +
+                '&search=' + encodeURIComponent(search);
 
-            var filterInfo = '';
-            var asal = $('#filterAsal option:selected').text();
-            var tujuan = $('#filterTujuan option:selected').text();
-            if ($('#filterAsal').val()) filterInfo += '<p><strong>Asal:</strong> ' + asal + '</p>';
-            if ($('#filterTujuan').val()) filterInfo += '<p><strong>Tujuan:</strong> ' + tujuan + '</p>';
-            if ($('#filterDaterange').val()) filterInfo += '<p><strong>Periode:</strong> ' + $('#filterDaterange').val() +
-                '</p>';
-
-            var title = $('#filterJudulPrint option:selected').val() ? $('#filterJudulPrint option:selected').text() : 'REKAPITULASI';
-
-            printWindow.document.write(`
-                                                                                                                <html>
-                                                                                                                <head>
-                                                                                                                    <title>Rekapitulasi Invoice</title>
-                                                                                                                    <style>
-                                                                                                                        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 1.25cm; }
-                                                                                                                        h2 { text-align: center; margin-bottom: 25px; }
-                                                                                                                        .filter-info { margin-bottom: 15px; }
-                                                                                                                        .filter-info p { margin: 2px 0; font-size: 10pt; }
-                                                                                                                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                                                                                                                        th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
-                                                                                                                        th { background-color: #f0f0f0; font-weight: bold; }
-                                                                                                                        @media print { body { margin: 0; } }
-                                                                                                                    </style>
-                                                                                                                </head>
-                                                                                                                <body>
-                                                                                                                    <h2>${title}</h2>
-                                                                                                                    <div class="filter-info">${filterInfo}</div>
-                                                                                                                    <table>
-                                                                                                                        <thead>
-                                                                                                                            <tr>
-                                                                                                                                <th>No</th>
-                                                                                                                                <th>No Invoice</th>
-                                                                                                                                <th>ETD</th>
-                                                                                                                                <th>Pengirim</th>
-                                                                                                                                <th>Penerima</th>
-                                                                                                                                <th>Tagihan</th>
-                                                                                                                                <th>Tanda Terima</th>
-                                                                                                                            </tr>
-                                                                                                                        </thead>
-                                                                                                                        <tbody>${rows}</tbody>
-                                                                                                                    </table>
-                                                                                                                    <script>window.print();<\/script>
-                                                                                                                </body>
-                                                                                                                </html>
-                                                                                                            `);
-            printWindow.document.close();
+            window.open(url, '_blank');
         }
 
         $(document).on('click', '.delete-btn', function () {

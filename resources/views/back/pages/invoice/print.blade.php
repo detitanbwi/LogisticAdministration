@@ -280,7 +280,7 @@
                     <th style="width: 5%; border: 1px solid #000;" class="text-center font-bold">No</th>
                     <th style="width: 35%; border: 1px solid #000;" class="text-center font-bold">Jenis Barang</th>
                     <th style="width: 10%; border: 1px solid #000;" class="text-center font-bold">Koli</th>
-                    <th style="width: 10%; border: 1px solid #000;" class="text-center font-bold">Qty</th>
+                    <th style="width: 10%; border: 1px solid #000;" class="text-center font-bold">Jumlah</th>
                     <th style="width: 10%; border: 1px solid #000;" class="text-center font-bold">Satuan</th>
                     <th style="width: 15%; border: 1px solid #000;" class="text-center font-bold">Harga Satuan</th>
                     <th style="width: 15%; border: 1px solid #000;" class="text-center font-bold">Subtotal</th>
@@ -290,10 +290,17 @@
                 @foreach ($invoice->items as $index => $item)
                     <tr>
                         <td class="text-center" style="border: 1px solid #000;">{{ $index + 1 }}</td>
-                        <td style="border: 1px solid #000;">{{ $item->jenis_barang }}</td>
+                        <td style="border: 1px solid #000;">
+                            <div>{{ $item->jenis_barang }}</div>
+                            @if($item->satuan !== 'Unit')
+                                <div style="font-size: 8.5pt; color: #444; margin-top: 2px;">
+                                    Dimensi: {{ number_format($item->p ?? 0, 0) }} x {{ number_format($item->l ?? 0, 0) }} x {{ number_format($item->t ?? 0, 0) }} cm
+                                </div>
+                            @endif
+                        </td>
                         <td class="text-center font-bold" style="border: 1px solid #000;">{{ $item->koli }}</td>
                         <td class="text-center" style="border: 1px solid #000;">
-                            {{ rtrim(rtrim(number_format($item->jumlah, 3, ',', '.'), '0'), ',') }}
+                            {{ number_format($item->jumlah, 3, ',', '.') }}
                         </td>
                         <td class="text-center" style="border: 1px solid #000;">{{ $item->satuan }}</td>
                         <td style="border: 1px solid #000;">
@@ -412,8 +419,10 @@
                 </td>
                 <td style="width: 40%; vertical-align: bottom; text-align: center; padding: 0;">
                     <div style="position: relative; display: inline-block;">
-                        <img src="{{ asset('back/assets/images/stampel.png') }}"
-                            style="width: 140px; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); z-index: 1;">
+                        @if($invoice->show_stamp)
+                            <img src="{{ asset('back/assets/images/stampel.png') }}"
+                                style="width: 180px; position: absolute; top: -70px; left: 50%; transform: translateX(-50%); z-index: 1;">
+                        @endif
                         <div class="font-bold text-center"
                             style="position: relative; z-index: 2; color: #d32f2f; font-size: 11pt; margin-top: 60px; margin-bottom: 2px;">
                             PT. SINAR

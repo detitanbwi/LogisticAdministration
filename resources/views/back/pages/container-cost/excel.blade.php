@@ -80,12 +80,16 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Pembayaran</th>
     </tr>
     {{-- Data Rows --}}
-    @php $no = 1; @endphp
+    @php 
+        $no = 1; 
+        $totalJumlah = 0;
+    @endphp
     @forelse ($container->invoices as $inv)
         @php
             $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
-
-            $dpp_base = $inv->items->sum('subtotal');
+            $dpp_base = $inv->items->sum(function($item) {
+                return $item->jumlah * $item->harga_satuan;
+            });
             $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
             $dpp_and_fee_val = $dpp_base + $fee_val;
             $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
@@ -99,6 +103,13 @@
                 $tgl_tagih = \Carbon\Carbon::parse($inv->finance->tanggal_tagih);
                 $tgl_transfer = $inv->finance->tgl_transfer ? \Carbon\Carbon::parse($inv->finance->tgl_transfer) : now();
                 $masa_tunggakan = $tgl_tagih->diffInDays($tgl_transfer) . ' Hari';
+            }
+            if ($inv->items) {
+                foreach($inv->items as $item) {
+                    if (strtolower($item->satuan) != 'unit') {
+                        $totalJumlah += $item->jumlah;
+                    }
+                }
             }
         @endphp
         <tr style="vertical-align: middle;">
@@ -117,13 +128,13 @@
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                 <td style="border: 1px solid #000;">
-                    {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
+                    {{ number_format($inv->items[0]->jumlah, 3, ',', '.') }}
                 </td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
                 <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
                     {{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
                 <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                    {{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
+                    {{ number_format($inv->items[0]->jumlah * $inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
             @else
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
@@ -183,7 +194,7 @@
                     <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
                         {{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
                     <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                        {{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
+                        {{ number_format($inv->items[$i]->jumlah * $inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
                 </tr>
             @endfor
         @endif
@@ -193,6 +204,19 @@
             <td colspan="29" style="border: 1px solid #000;">Belum ada invoice di dalam container ini.</td>
         </tr>
     @endforelse
+    {{-- Total Accumulation Row --}}
+    <tr style="vertical-align: middle; font-weight: bold; background-color: #f2f2f2;">
+        <td></td>{{-- Col A spacer --}}
+        <td colspan="8" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
+        <td style="border: 1px solid #000;" align="center">{{ number_format($totalJumlah, 3, ',', '.') }}</td>
+        <td colspan="20" style="border: 1px solid #000;"></td>
+    </tr>
+    <tr style="vertical-align: middle; font-weight: bold; background-color: #e2e2e2;">
+        <td></td>{{-- Col A spacer --}}
+        <td colspan="13" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
+        <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalTagihan, 0, ',', '.') }}</td>
+        <td colspan="15" style="border: 1px solid #000;"></td>
+    </tr>
     {{-- Spacing --}}
     <tr><td></td></tr>
 

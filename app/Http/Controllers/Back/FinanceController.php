@@ -18,7 +18,7 @@ class FinanceController extends Controller
         abort_unless(auth()->user()->can('view.finance'), 403);
 
         if ($request->ajax()) {
-            $query = Finance::with('invoice.pengirim', 'invoice.penerima')->select('finance.*');
+            $query = Finance::with(['invoice.pengirim', 'invoice.penerima', 'invoice.items', 'invoice.additionalFees'])->select('finance.*');
 
             $query->whereHas('invoice.container', function ($q) use ($request) {
                 if ($request->filled('asal_id')) {
@@ -46,7 +46,9 @@ class FinanceController extends Controller
                 if (count($dates) == 2) {
                     $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
                     $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
-                    $query->whereBetween('finance.created_at', [$start_date, $end_date]);
+                    $query->whereHas('invoice.container', function ($q) use ($start_date, $end_date) {
+                        $q->whereBetween('etd', [$start_date, $end_date]);
+                    });
                 }
             }
 
@@ -81,7 +83,16 @@ class FinanceController extends Controller
                     return $row->invoice && $row->invoice->penerima ? $row->invoice->penerima->nama : '-';
                 })
                 ->addColumn('total_tagihan', function ($row) {
-                    return 'Rp ' . number_format($row->total_tagihan, 0, ',', '.');
+                    if (!$row->invoice) return '-';
+                    $dpp_base = $row->invoice->items->sum(function($item) {
+                        return $item->jumlah * $item->harga_satuan;
+                    });
+                    $fee_val = $row->invoice->additionalFees ? $row->invoice->additionalFees->sum('harga') : 0;
+                    $total = $dpp_base + $fee_val;
+                    if (strtoupper($row->invoice->pkp_status) == 'PKP') {
+                        $total = round($total * 1.011);
+                    }
+                    return 'Rp ' . number_format($total, 0, ',', '.');
                 })
                 ->editColumn('status_tagihan', function ($row) {
                     $color = $row->status_tagihan == 'Sudah ditagih' ? 'success' : 'danger';
@@ -269,7 +280,9 @@ class FinanceController extends Controller
             if (count($dates) == 2) {
                 $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
                 $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
-                $query->whereBetween('finance.created_at', [$start_date, $end_date]);
+                $query->whereHas('invoice.container', function ($q) use ($start_date, $end_date) {
+                    $q->whereBetween('etd', [$start_date, $end_date]);
+                });
             }
         }
 
