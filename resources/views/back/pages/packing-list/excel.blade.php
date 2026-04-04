@@ -5,12 +5,12 @@
     </tr>
     {{-- Row 2: Title --}}
     <tr style="vertical-align: middle;">
-        <th colspan="20" align="center" style="font-weight: bold;"><b>MANIFEST CONTAINER_PACKING LIST</b></th>
+        <th colspan="22" align="center" style="font-weight: bold;"><b>MANIFEST CONTAINER_PACKING LIST</b></th>
     </tr>
     {{-- Row 3: Empty separator --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="20"></td>
+        <td colspan="22"></td>
     </tr>
     {{-- Row 4: Kapal & Pelabuhan Asal --}}
     <tr style="vertical-align: middle;">
@@ -58,7 +58,9 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Alamat Penerima</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jenis Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">P</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">x</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">L</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">x</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">T</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
@@ -97,7 +99,9 @@
             @if($inv->items->count() > 0)
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->p ?? '-' }}</td>
+                <td style="border: 1px solid #000;">X</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->l ?? '-' }}</td>
+                <td style="border: 1px solid #000;">X</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->t ?? '-' }}</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                 <td style="border: 1px solid #000;">
@@ -110,6 +114,8 @@
                     }
                 @endphp
             @else
+                <td style="border: 1px solid #000;">-</td>
+                <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
@@ -133,7 +139,9 @@
                     <td></td>{{-- Col A spacer --}}
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->p ?? '-' }}</td>
+                    <td style="border: 1px solid #000;">X</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->l ?? '-' }}</td>
+                    <td style="border: 1px solid #000;">X</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->t ?? '-' }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                     <td style="border: 1px solid #000;">
@@ -158,7 +166,7 @@
     {{-- Total Row --}}
     <tr style="vertical-align: middle; font-weight: bold;">
         <td></td>
-        <td colspan="14" style="border: 1px solid #000; background-color: #f2f2f2;" align="right">TOTAL JUMLAH</td>
+        <td colspan="16" style="border: 1px solid #000; background-color: #f2f2f2;" align="right">TOTAL JUMLAH</td>
         <td style="border: 1px solid #000; background-color: #f2f2f2;" align="center">{{ number_format($totalJumlah, 3, ',', '.') }}</td>
         <td colspan="8" style="border: 1px solid #000; background-color: #f2f2f2;"></td>
     </tr>

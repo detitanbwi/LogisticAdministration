@@ -394,6 +394,7 @@
         <table class="w-100 collapse">
             <tr>
                 <td style="width: 60%; vertical-align: top; padding: 0;">
+                        <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 5px 0;">Catatan</h3>
                         <table style="width: 100%; border-collapse: collapse; font-size: 11pt; font-weight: bold; line-height: 1.4;">
                             <tr>
                                 <td style="width: 25px; vertical-align: top; padding: 0;">1.</td>

@@ -76,7 +76,7 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Status (Tahan/Serahkan)</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">STTS PKP</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanggal Transfer</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice</th>
+        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice - Barang</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Pembayaran</th>
     </tr>
     {{-- Data Rows --}}

@@ -59,8 +59,12 @@
                             </div>
                         </div>
 
-                        <x-back.textarea name="alamat" label="Alamat" :value="old('alamat', $customer->alamat ?? '')" placeholder="Masukkan Alamat" />
-                        <small class="text-danger mt-1 d-block font-italic">*Harap mengisi alamat lengkap dan jelas</small>
+                        <div class="mb-4">
+                            <label for="alamat" class="form-label">
+                                Alamat <small class="text-danger ms-2 font-italic">*Harap mengisi alamat lengkap dan jelas</small>
+                            </label>
+                            <textarea class="form-control" name="alamat" id="alamat" rows="3" placeholder="Masukkan Alamat">{{ old('alamat', $customer->alamat ?? '') }}</textarea>
+                        </div>
 
                         <x-back.textarea name="catatan" label="Catatan" :value="old('catatan', $customer->catatan ?? '')" placeholder="Masukkan Catatan" />
 
