@@ -292,11 +292,7 @@
                         <td class="text-center" style="border: 1px solid #000;">{{ $index + 1 }}</td>
                         <td style="border: 1px solid #000;">
                             <div>{{ $item->jenis_barang }}</div>
-                            @if($item->satuan !== 'Unit')
-                                <div style="font-size: 8.5pt; color: #444; margin-top: 2px;">
-                                    Dimensi: {{ number_format($item->p ?? 0, 0) }} x {{ number_format($item->l ?? 0, 0) }} x {{ number_format($item->t ?? 0, 0) }} cm
-                                </div>
-                            @endif
+
                         </td>
                         <td class="text-center font-bold" style="border: 1px solid #000;">{{ $item->koli }}</td>
                         <td class="text-center" style="border: 1px solid #000;">

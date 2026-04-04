@@ -27,8 +27,8 @@
         <div class="col-md-6">
             <select class="form-select dt-filter" id="filterStatus" name="status" style="width: 100%;">
                 <option value="">Semua Status</option>
-                <option value="Belum">Belum</option>
-                <option value="Bayar">Bayar</option>
+                <option value="Belum">Belum Bayar</option>
+                <option value="Bayar">Sudah Bayar</option>
                 <option value="Tahan">Tahan</option>
                 <option value="Cancel">Cancel</option>
                 <option value="Serahkan">Serahkan</option>
