@@ -339,6 +339,14 @@
                 calculateTotal();
             });
 
+            // Matikan tombol enter untuk submit form otomatis
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
             // Prevent double submission only if not previewing
             $('#invoiceForm').on('submit', function(e) {
                 var form = $(this);
@@ -540,36 +548,38 @@
 
         // We need a robust formatter that handles raw typing
         function formatCurrencyInput(input) {
-            // 1. Get raw value, remove non-numeric chars except comma
             let value = input.value;
-
-            // Allow only digits and comma
             let clean = value.replace(/[^\d,]/g, '');
-
-            // Split by comma to handle decimals
             let parts = clean.split(',');
-
-            // Format integer part (parts[0]) with dots
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-            // Reassemble
-            // Limit decimal parts to 1 comma
             if (parts.length > 2) {
                 clean = parts[0] + ',' + parts.slice(1).join('');
             } else {
                 clean = parts.join(',');
             }
-
             input.value = clean;
+            return clean;
+        }
 
+        function formatDecimalInput(input) {
+            let value = input.value;
+            // Allow digits, comma, and one dot for thousand separator (though usually qty doesn't need dots)
+            // But we follow the same style: comma for decimal
+            let clean = value.replace(/[^\d,]/g, '');
+            let parts = clean.split(',');
+            if (parts.length > 2) {
+                clean = parts[0] + ',' + parts.slice(1).join('');
+            } else {
+                clean = parts.join(',');
+            }
+            input.value = clean;
             return clean;
         }
 
         function parseCurrency(value) {
             if (!value) return 0;
-            // Remove dots, replace comma with dot
-            // 10.000,50 -> 10000.50
-            let clean = value.replace(/\./g, '').replace(/,/g, '.');
+            if (typeof value === 'number') return value;
+            let clean = value.toString().replace(/\./g, '').replace(/,/g, '.');
             return parseFloat(clean) || 0;
         }
 
@@ -619,7 +629,7 @@
             if (satuan === 'M3') {
                 result = (P * L * T * koli) / 1000000;
             } else if (satuan === 'Kg') {
-                result = (P * L * T * koli) / 1000;
+                result = (P * L * T * koli) / 4000;
             }
             
             // Update the qty input (ensure 3 decimals for display)
@@ -706,7 +716,7 @@
                         <label class="form-label fs-12 mb-1 text-muted">Jumlah</label>
                         <div class="input-group">
                             <input type="text" class="form-control qty-input font-monospace" value="${jumlahDisplay}" required oninput="handleInput(this, ${rowId})" placeholder="0">
-                            <button class="btn btn-info btn-hitung d-none py-1 px-2 fs-11" type="button" onclick="calculateQty(${rowId})">Hitung</button>
+                            <button class="btn btn-info btn-hitung d-none py-1 px-2 fs-11" type="button" onclick="event.preventDefault(); calculateQty(${rowId})">Hitung</button>
                         </div>
                         <input type="hidden" name="items[${rowId}][jumlah]" id="jumlah_hidden_${rowId}" value="${jumlah}">
                     </div>
@@ -750,10 +760,11 @@
         }
 
         function handleInput(element, rowId) {
-            // Format the visible input
-            formatCurrencyInput(element);
-
-            // Calculate and update hidden inputs
+            if ($(element).hasClass('qty-input')) {
+                formatDecimalInput(element);
+            } else {
+                formatCurrencyInput(element);
+            }
             calculateSubtotal(rowId);
         }
 
@@ -830,24 +841,22 @@
 
         function calculateSubtotal(id) {
             const row = $(`#row_${id}`);
-
-            // Get visible values
             const qtyDisplay = row.find('.qty-input').val();
             const priceDisplay = row.find('.price-input').val();
 
-            // Parse to Float for calculation
             const qty = parseCurrency(qtyDisplay);
             const price = parseCurrency(priceDisplay);
 
-            // Update Hidden Inputs (Clean Values)
             $(`#jumlah_hidden_${id}`).val(qty);
             $(`#harga_satuan_hidden_${id}`).val(price);
 
-            const subtotal = qty * price;
+            // Calculate with full precision first
+            const rawSubtotal = qty * price;
+            // Round only for storage and display as Rupiah
+            const subtotal = Math.round(rawSubtotal);
 
             $(`#subtotal_input_${id}`).val(subtotal);
-            // Format subtotal display WITHOUT decimals for Rupiah consistency
-            $(`#subtotal_display_${id}`).val(new Intl.NumberFormat('id-ID').format(Math.round(subtotal)));
+            $(`#subtotal_display_${id}`).val(new Intl.NumberFormat('id-ID').format(subtotal));
 
             calculateTotal();
         }
@@ -855,29 +864,30 @@
         function calculateTotal() {
             let totalDPP = 0;
             $('#itemContainer .item-row').each(function() {
-                const subtotal = parseCurrency($(this).find('input[name*="[subtotal]"]').val());
+                const subtotal = parseFloat($(this).find('input[name*="[subtotal]"]').val()) || 0;
                 totalDPP += subtotal;
             });
 
             let totalFees = 0;
             $('#feeContainer .fee-row').each(function() {
-                const feePrice = parseCurrency($(this).find('.fee-hidden-price').val());
+                const feePrice = parseFloat($(this).find('.fee-hidden-price').val()) || 0;
                 totalFees += feePrice;
             });
 
             const pkpStatus = $('#pkp_status').val();
             let ppn = 0;
+            const totalDasar = Math.round(totalDPP + totalFees);
             if (pkpStatus === 'PKP') {
                 // PKP dihitung dari (total Barang + total Tambahan)
-                ppn = (totalDPP + totalFees) * 0.011;
+                ppn = Math.round(totalDasar * 0.011);
             }
 
-            const grandTotal = totalDPP + ppn + totalFees;
+            const grandTotal = totalDasar + ppn;
 
             $('#totalDPP').text(new Intl.NumberFormat('id-ID').format(Math.round(totalDPP)));
-            $('#totalPPN').text(new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(ppn));
+            $('#totalPPN').text(new Intl.NumberFormat('id-ID').format(ppn));
             $('#totalFee').text(new Intl.NumberFormat('id-ID').format(Math.round(totalFees)));
-            $('#grandTotal').text(new Intl.NumberFormat('id-ID').format(Math.round(grandTotal)));
+            $('#grandTotal').text(new Intl.NumberFormat('id-ID').format(grandTotal));
         }
     </script>
 @endpush

@@ -117,12 +117,12 @@
             return '';
         }
 
-        $dpp = $invoice->items->sum('subtotal');
-        $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
+        $dpp = round($invoice->items->sum('subtotal'));
+        $feeTotal = $invoice->additionalFees ? round($invoice->additionalFees->sum('harga')) : 0;
         $dpp_and_fee = $dpp + $feeTotal;
         $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
         $dpp_display = $dpp_and_fee;
-        $ppn = $is_pkp ? $dpp_and_fee * 0.011 : 0;
+        $ppn = $is_pkp ? round($dpp_and_fee * 0.011) : 0;
         $grandTotal = $dpp_and_fee + $ppn;
 
         // Parse layanan
@@ -379,7 +379,7 @@
             <tr>
                 <td style="width: 20%; padding: 4px 10px; border-right: 1px solid #000;">Terbilang :</td>
                 <td class="text-center" style="padding: 4px 10px;">
-                    {{ terbilang($grandTotal) }} Rupiah
+                    {{ terbilang(round($grandTotal)) }} Rupiah
                 </td>
             </tr>
         </table>

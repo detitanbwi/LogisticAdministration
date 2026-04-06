@@ -78,16 +78,20 @@
                     $rowCount = count($items) > 0 ? count($items) : 1;
                     
                     // Recalculate on-the-fly
+                    // Recalculate on-the-fly with consistent rounding
                     $dpp_base = $items->sum(function($item) {
-                        return $item->jumlah * $item->harga_satuan;
+                        return round($item->jumlah * $item->harga_satuan);
                     });
-                    $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
+                    $fee_val = $inv->additionalFees ? round($inv->additionalFees->sum('harga')) : 0;
                     $totalTagihan = $dpp_base + $fee_val;
                     if (strtoupper($inv->pkp_status) == 'PKP') {
-                        $totalTagihan = round($totalTagihan * 1.011);
+                        $totalTagihan += round($totalTagihan * 0.011);
                     }
                 @endphp
                 @if(count($items) > 0)
+                    @php 
+                        $totalTagihanAll += $totalTagihan;
+                    @endphp
                     @foreach($items as $index => $item)
                         <tr>
                             @if($index === 0)
@@ -96,15 +100,10 @@
                                 <td rowspan="{{ $rowCount }}" class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-m-Y') : '-' }}</td>
                                 <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
                                 <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
-                                @php 
-                                    foreach($items as $item) {
-                                        if (strtolower($item->satuan) != 'unit') {
-                                            $totalJumlah += $item->jumlah;
-                                        }
-                                    }
-                                    $totalTagihanAll += $totalTagihan;
-                                @endphp
                             @endif
+                            @php 
+                                $totalJumlah += $item->jumlah;
+                            @endphp
                             <td class="text-center">{{ $item->p ?: '-' }}</td>
                             <td class="text-center">{{ $item->l ?: '-' }}</td>
                             <td class="text-center">{{ $item->t ?: '-' }}</td>

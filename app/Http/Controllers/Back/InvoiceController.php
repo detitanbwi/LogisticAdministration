@@ -202,12 +202,20 @@ class InvoiceController extends Controller
             // Create Items & Calculate Total
             $totalTagihan = 0;
 
+            $clean = function($val) {
+                if ($val === null || $val === '') return 0;
+                if (is_numeric($val)) return (float)$val;
+                $val = str_replace('.', '', $val);
+                $val = str_replace(',', '.', $val);
+                return (float)$val;
+            };
+
             if ($request->has('items')) {
                 foreach ($request->items as $item) {
-                    $jumlahVal = str_replace(',', '.', str_replace('.', '', $item['jumlah'] ?? 0));
-                    $hargaSatuanVal = str_replace(',', '.', str_replace('.', '', $item['harga_satuan'] ?? 0));
+                    $jumlahVal = $clean($item['jumlah'] ?? 0);
+                    $hargaSatuanVal = $clean($item['harga_satuan'] ?? 0);
                     
-                    $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
+                    $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
                     $totalTagihan += $subtotal;
 
                     $invoice->items()->create([
@@ -238,12 +246,12 @@ class InvoiceController extends Controller
 
             // Calculate PPN if PKP
             if ($request->pkp_status == 'PKP') {
-                $totalTagihan += ($totalTagihan * 0.011);
+                $totalTagihan += round($totalTagihan * 0.011);
             }
 
             // Create Finance
             $invoice->finance()->create([
-                'total_tagihan' => $totalTagihan,
+                'total_tagihan' => round($totalTagihan),
                 'ditagih_ke' => 'Penerima', // Default
                 'status_tagihan' => 'Belum',
             ]);
@@ -288,13 +296,20 @@ class InvoiceController extends Controller
 
             $totalTagihan = 0;
 
+            $clean = function($val) {
+                if ($val === null || $val === '') return 0;
+                if (is_numeric($val)) return (float)$val;
+                $val = str_replace('.', '', $val);
+                $val = str_replace(',', '.', $val);
+                return (float)$val;
+            };
+
             if ($request->has('items')) {
                 foreach ($request->items as $item) {
-                    // Robust clean for Indonesian format
-                    $jumlahVal = str_replace(',', '.', str_replace('.', '', $item['jumlah'] ?? 0));
-                    $hargaSatuanVal = str_replace(',', '.', str_replace('.', '', $item['harga_satuan'] ?? 0));
+                    $jumlahVal = $clean($item['jumlah'] ?? 0);
+                    $hargaSatuanVal = $clean($item['harga_satuan'] ?? 0);
                     
-                    $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
+                    $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
                     $totalTagihan += $subtotal;
 
                     $invoice->items()->create([
@@ -326,15 +341,15 @@ class InvoiceController extends Controller
 
             // Calculate PPN if PKP
             if ($request->pkp_status == 'PKP') {
-                $totalTagihan += ($totalTagihan * 0.011);
+                $totalTagihan += round($totalTagihan * 0.011);
             }
 
             // Update Finance Total Tagihan
             if ($invoice->finance) {
-                $invoice->finance->update(['total_tagihan' => $totalTagihan]);
+                $invoice->finance->update(['total_tagihan' => round($totalTagihan)]);
             } else {
                 $invoice->finance()->create([
-                    'total_tagihan' => $totalTagihan,
+                    'total_tagihan' => round($totalTagihan),
                     'ditagih_ke' => 'Penerima',
                     'status_tagihan' => 'Belum',
                 ]);
@@ -440,11 +455,11 @@ class InvoiceController extends Controller
         $invoice->setRelation('additionalFees', $addFees);
 
         if ($request->pkp_status == 'PKP') {
-            $totalTagihan += ($totalTagihan * 0.011);
+            $totalTagihan += round($totalTagihan * 0.011);
         }
 
         $finance = new Finance([
-            'total_tagihan' => $totalTagihan,
+            'total_tagihan' => round($totalTagihan),
             'status_tagihan' => $request->status_pembayaran ?? 'Belum'
         ]);
         $invoice->setRelation('finance', $finance);
