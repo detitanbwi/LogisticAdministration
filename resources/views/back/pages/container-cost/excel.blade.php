@@ -83,6 +83,7 @@
     @php 
         $no = 1; 
         $totalJumlah = 0;
+        $grandTotalTagihan = 0;
     @endphp
     @forelse ($container->invoices as $inv)
         @php
@@ -97,6 +98,7 @@
             $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
             $dpp_display = $dpp_base;
             $grand_total_val = $dpp_and_fee_val + $ppn_val;
+            $grandTotalTagihan += $grand_total_val;
 
             $masa_tunggakan = '-';
             if ($inv->finance && $inv->finance->tanggal_tagih) {
