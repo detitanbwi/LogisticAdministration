@@ -151,7 +151,8 @@ class InvoiceController extends Controller
                     }
 
                     if (auth()->user()->can('print_per_invoice.invoice')) {
-                        $btn .= '<a href="' . route('admin.invoice.print', $row->id) . '" class="avatar-text avatar-md bg-soft-info text-info" target="_blank"><i class="feather feather-printer"></i></a>';
+                        $btn .= '<a href="' . route('admin.invoice.print', $row->id) . '" class="avatar-text avatar-md bg-soft-info text-info" target="_blank" title="Cetak Invoice"><i class="feather feather-printer"></i></a>';
+                        $btn .= '<a href="' . route('admin.invoice.print_volume', $row->id) . '" class="avatar-text avatar-md bg-soft-primary text-primary" target="_blank" title="Rincian Volume"><i class="feather feather-layers"></i></a>';
                     }
 
                     if (auth()->user()->can('delete.invoice')) {
@@ -395,6 +396,72 @@ class InvoiceController extends Controller
         $invoice->load(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'items', 'additionalFees', 'upDetail', 'tujuanDaerah']);
 
         return view('back.pages.invoice.print', compact('invoice'));
+    }
+
+    public function printVolume(Invoice $invoice)
+    {
+        abort_unless(auth()->user()->can('print.invoice') || auth()->user()->can('view.invoice'), 403);
+
+        // Dummy data for mockup as requested
+        $mockData = [
+            'tgl_masuk' => '14/03/2026',
+            'pengirim' => 'BUDI AFRIANSYAH',
+            'penerima' => 'JOKOWI',
+            'items' => [
+                [
+                    'no' => 1,
+                    'p' => 22,
+                    'l' => 32,
+                    't' => 13,
+                    'koli' => 115,
+                    'satuan' => 'M3',
+                ],
+                [
+                    'no' => 2,
+                    'p' => 35,
+                    'l' => 44,
+                    't' => 21,
+                    'koli' => 570,
+                    'satuan' => 'M3',
+                ],
+                [
+                    'no' => 3,
+                    'p' => 24,
+                    'l' => 50,
+                    't' => 16,
+                    'koli' => 24,
+                    'satuan' => 'M3',
+                ],
+                [
+                    'no' => 4,
+                    'p' => 16,
+                    'l' => 23,
+                    't' => 16,
+                    'koli' => 26,
+                    'satuan' => 'M3',
+                ],
+                // Mix in some Kg for testing separation
+                [
+                    'no' => 5,
+                    'p' => 50,
+                    'l' => 50,
+                    't' => 50,
+                    'koli' => 10,
+                    'satuan' => 'Kg',
+                ],
+                // Mix in some Unit
+                [
+                    'no' => 6,
+                    'p' => null,
+                    'l' => null,
+                    't' => null,
+                    'koli' => 5,
+                    'satuan' => 'Unit',
+                ],
+            ]
+        ];
+
+        return view('back.pages.invoice.print_volume', compact('invoice', 'mockData'));
     }
 
     public function preview(Request $request)
