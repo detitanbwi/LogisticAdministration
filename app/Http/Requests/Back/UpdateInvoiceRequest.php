@@ -45,7 +45,13 @@ class UpdateInvoiceRequest extends FormRequest
             'items.*.t' => 'nullable|numeric|min:0',
             'items.*.jumlah' => 'required|numeric|min:0',
             'items.*.satuan' => 'required|in:M3,Kg,Unit',
-            'items.*.harga_satuan' => 'required|numeric|min:0',
+            'items.*.harga_satuan' => 'required',
+            'items.*.details' => 'nullable|array',
+            'items.*.details.*.p' => 'nullable|numeric|min:0',
+            'items.*.details.*.l' => 'nullable|numeric|min:0',
+            'items.*.details.*.t' => 'nullable|numeric|min:0',
+            'items.*.details.*.koli' => 'nullable|numeric|min:0',
+            'items.*.details.*.jumlah' => 'nullable',
         ];
     }
 }

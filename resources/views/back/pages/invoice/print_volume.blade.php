@@ -60,7 +60,8 @@
             }
 
             .no-print {
-                display: none;
+                display: none !important;
+                visibility: hidden !important;
             }
         }
 
@@ -215,34 +216,33 @@
                 <div style="color: #1a3a5f;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
                 <div>
                     <div class="info-label">Tgl Masuk</div>
-                    <div class="info-value">{{ $mockData['tgl_masuk'] }}</div>
+                    <div class="info-value">{{ $invoice->tgl_masuk ? $invoice->tgl_masuk->format('d/m/Y') : ($invoice->created_at ? $invoice->created_at->format('d/m/Y') : '-') }}</div>
                 </div>
             </div>
             <div class="info-card">
                 <div style="color: #1a3a5f;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
                 <div>
                     <div class="info-label">Pengirim</div>
-                    <div class="info-value">{{ $mockData['pengirim'] }}</div>
+                    <div class="info-value">{{ $invoice->pengirim ? $invoice->pengirim->nama : '-' }}</div>
                 </div>
             </div>
             <div class="info-card">
                 <div style="color: #1a3a5f;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
                 <div>
                     <div class="info-label">Penerima</div>
-                    <div class="info-value">{{ $mockData['penerima'] }}</div>
+                    <div class="info-value">{{ $invoice->penerima ? $invoice->penerima->nama : '-' }}</div>
                 </div>
             </div>
         </div>
 
-        @php
-            $units = collect($mockData['items'])->groupBy('satuan');
-        @endphp
-
-        @foreach($units as $unit => $items)
+        @foreach($invoice->items as $item)
+            @php 
+                $unit = $item->satuan;
+            @endphp
             <div style="margin-top: 30px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin: 0; color: #1a3a5f; border-left: 4px solid #1a3a5f; padding-left: 10px;">RINCIAN DATA {{ strtoupper($unit) }}</h3>
-                    <div class="badge-unit">{{ count($items) }} ITEM</div>
+                    <h3 style="margin: 0; color: #1a3a5f; border-left: 4px solid #1a3a5f; padding-left: 10px;">{{ strtoupper($item->jenis_barang) }}</h3>
+                    <div class="badge-unit">{{ strtoupper($unit) }}</div>
                 </div>
                 
                 <table class="table-custom">
@@ -257,40 +257,31 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php 
-                            $totalKoli = 0;
-                            $totalVolume = 0;
-                        @endphp
-                        @foreach($items as $index => $item)
-                            @php
-                                $koli = $item['koli'] ?? 0;
-                                $p = $item['p'] ?? 0;
-                                $l = $item['l'] ?? 0;
-                                $t = $item['t'] ?? 0;
-                                
-                                $volume = 0;
-                                if ($unit == 'M3') {
-                                    $volume = ($p * $l * $t * $koli) / 1000000;
-                                } elseif ($unit == 'Kg') {
-                                    $volume = ($p * $l * $t * $koli) / 4000;
-                                } else {
-                                    $volume = $koli; // For Unit
-                                }
-                                
-                                $totalKoli += $koli;
-                                $totalVolume += $volume;
-                            @endphp
+                        @if($item->details && $item->details->count() > 0)
+                            @foreach($item->details as $dIdx => $detail)
+                                <tr>
+                                    <td class="text-center">{{ $dIdx + 1 }}</td>
+                                    <td class="text-center">{{ (float)$detail->p ?: '-' }}</td>
+                                    <td class="text-center">{{ (float)$detail->l ?: '-' }}</td>
+                                    <td class="text-center">{{ (float)$detail->t ?: '-' }}</td>
+                                    <td class="text-center font-bold">{{ $detail->koli }}</td>
+                                    <td class="text-center font-bold" style="color: #0d6efd;">
+                                        {{ number_format($detail->jumlah, 3, ',', '.') }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
                             <tr>
-                                <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="text-center">{{ $p ?: '-' }}</td>
-                                <td class="text-center">{{ $l ?: '-' }}</td>
-                                <td class="text-center">{{ $t ?: '-' }}</td>
-                                <td class="text-center font-bold">{{ $koli }}</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center">{{ (float)$item->p ?: '-' }}</td>
+                                <td class="text-center">{{ (float)$item->l ?: '-' }}</td>
+                                <td class="text-center">{{ (float)$item->t ?: '-' }}</td>
+                                <td class="text-center font-bold">{{ $item->koli }}</td>
                                 <td class="text-center font-bold" style="color: #0d6efd;">
-                                    {{ number_format($volume, 3, ',', '.') }}
+                                    {{ number_format($item->jumlah, 3, ',', '.') }}
                                 </td>
                             </tr>
-                        @endforeach
+                        @endif
                     </tbody>
                 </table>
 
@@ -298,9 +289,9 @@
                 <table class="w-100 collapse">
                     <tr>
                         <td class="total-label" style="width: 25%;">TOTAL KOLI</td>
-                        <td class="total-value" style="width: 25%;">{{ number_format($totalKoli, 0, ',', '.') }} <span style="font-size: 10pt;">KOLI</span></td>
-                        <td class="total-label" style="width: 25%;">JUMLAH</td>
-                        <td class="total-value" style="width: 25%;">{{ number_format($totalVolume, 3, ',', '.') }} <span style="font-size: 10pt;">{{ $unit }}</span></td>
+                        <td class="total-value" style="width: 25%;">{{ number_format($item->koli, 0, ',', '.') }} <span style="font-size: 10pt;">KOLI</span></td>
+                        <td class="total-label" style="width: 25%;">TOTAL {{ strtoupper($unit) }}</td>
+                        <td class="total-value" style="width: 25%;">{{ number_format($item->jumlah, 3, ',', '.') }} <span style="font-size: 10pt;">{{ strtoupper($unit) }}</span></td>
                     </tr>
                 </table>
             </div>

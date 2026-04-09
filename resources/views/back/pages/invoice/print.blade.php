@@ -418,10 +418,10 @@
                     <div style="position: relative; display: inline-block;">
                         @if($invoice->show_stamp)
                             <img src="{{ asset('back/assets/images/stampel.png') }}"
-                                style="width: 180px; position: absolute; top: -70px; left: 50%; transform: translateX(-50%); z-index: 1;">
+                                style="width: 220px; position: absolute; top: -110px; left: 50%; transform: translateX(-50%); z-index: 1;">
                         @endif
                         <div class="font-bold text-center"
-                            style="position: relative; z-index: 2; color: #d32f2f; font-size: 11pt; margin-top: 60px; margin-bottom: 2px;">
+                            style="position: relative; z-index: 2; color: #d32f2f; font-size: 11pt; margin-top: 80px; margin-bottom: 2px;">
                             PT. SINAR
                             CEMARA JAYA</div>
                         <div class="font-bold text-center" style="position: relative; z-index: 2; font-size: 12pt;">

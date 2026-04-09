@@ -584,103 +584,204 @@
         }
 
         let itemIndex = 0;
+        let feeIndex = 0;
         const initialItems = @json(old('items', isset($invoice) && $invoice->items ? $invoice->items : []));
+        const initialFees = @json(old('additional_fees', isset($invoice) && $invoice->additionalFees ? $invoice->additionalFees : []));
 
         if (initialItems.length > 0) {
             initialItems.forEach(item => {
-                addItemRow(item);
+                const rowId = addItemRow(item);
+                calculateSubtotal(rowId);
             });
         } else {
-            addItem(); // Add one empty row by default
+            addItem();
         }
+
+        if (initialFees && initialFees.length > 0) {
+            initialFees.forEach(fee => {
+                addFeeRow(fee);
+            });
+        }
+        
+        calculateTotal();
 
         function togglePLT(rowId) {
             const row = $(`#row_${rowId}`);
             const satuan = row.find('select[name*="[satuan]"]').val();
-            const btnHitung = row.find('.btn-hitung');
-            const pltGroup = row.find('.plt-group');
-            const jenisGroup = row.find('.jenis-group');
+            const subTableWrapper = row.find('.sub-table-wrapper');
+            const koliInput = row.find('.koli-input');
+            const qtyInput = row.find('.qty-input');
             
             if (satuan === 'M3' || satuan === 'Kg') {
-                btnHitung.removeClass('d-none');
-                pltGroup.removeClass('d-none');
-                jenisGroup.removeClass('col-md-3').addClass('col-md-2');
+                subTableWrapper.removeClass('d-none');
+                row.find('.table-responsive').removeClass('d-none');
+                row.find(`.toggle-icon-${rowId}`).css('transform', 'rotate(0deg)');
+                // Ensure at least one detail row exists
+                if ($(`#detail_container_${rowId}`).children().length === 0) {
+                    // Try to migrate data from parent if exists
+                    const p = row.data('p-old') || 0;
+                    const l = row.data('l-old') || 0;
+                    const t = row.data('t-old') || 0;
+                    const k = row.find('.koli-input').val() || 0;
+                    addDetailRow(rowId, {p: p, l: l, t: t, koli: k});
+                }
+                // Parent Koli & Qty become calculated but still editable as fallback?
+                // User said "Koli dan Jumlah... itulah yang ditampilkan", usually we want to prevent manual edit if subtable exists, 
+                // but for now let's keep them editable as requested in brainstorming.
             } else {
-                btnHitung.addClass('d-none');
-                pltGroup.addClass('d-none');
-                jenisGroup.removeClass('col-md-2').addClass('col-md-3');
+                subTableWrapper.addClass('d-none');
+                // If Unit, usually Jumlah = Koli
+                if (satuan === 'Unit') {
+                    const koliVal = row.find('.koli-input').val() || 0;
+                    row.find('.qty-input').val(formatVal(koliVal, 0));
+                    calculateSubtotal(rowId);
+                }
+            }
+            calculateTotal();
+        }
+
+        function addDetailRow(rowId, data = {}) {
+            const container = $(`#detail_container_${rowId}`);
+            const detailIndex = container.children().length;
+            const p = data.p || 0;
+            const l = data.l || 0;
+            const t = data.t || 0;
+            const koli = data.koli || 0;
+            const jumlah = data.jumlah || 0;
+
+            const html = `
+                <tr class="detail-row">
+                    <td class="text-center align-middle detail-no">${detailIndex + 1}</td>
+                    <td><input type="number" step="0.1" class="form-control form-control-sm det-p" name="items[${rowId}][details][${detailIndex}][p]" value="${p}" placeholder="0" oninput="calculateSubTotalDetail(${rowId})"></td>
+                    <td><input type="number" step="0.1" class="form-control form-control-sm det-l" name="items[${rowId}][details][${detailIndex}][l]" value="${l}" placeholder="0" oninput="calculateSubTotalDetail(${rowId})"></td>
+                    <td><input type="number" step="0.1" class="form-control form-control-sm det-t" name="items[${rowId}][details][${detailIndex}][t]" value="${t}" placeholder="0" oninput="calculateSubTotalDetail(${rowId})"></td>
+                    <td><input type="number" class="form-control form-control-sm det-koli" name="items[${rowId}][details][${detailIndex}][koli]" value="${koli}" placeholder="0" oninput="calculateSubTotalDetail(${rowId})"></td>
+                    <td><input type="text" class="form-control form-control-sm font-monospace det-jumlah bg-light" name="items[${rowId}][details][${detailIndex}][jumlah]" value="${formatVal(jumlah, 3)}" readonly></td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-soft-success btn-icon" onclick="addDetailRow(${rowId})"><i class="feather-plus"></i></button>
+                            <button type="button" class="btn btn-soft-danger btn-icon" onclick="removeDetailRow(this, ${rowId})"><i class="feather-trash-2"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            container.append(html);
+            updateDetailNumbers(rowId);
+            calculateSubTotalDetail(rowId);
+        }
+
+        function removeDetailRow(btn, rowId) {
+            const container = $(`#detail_container_${rowId}`);
+            if (container.children().length > 1) {
+                $(btn).closest('tr').remove();
+                updateDetailNumbers(rowId);
+                // No auto calculate parent here as per feedback, only when Kalkulasi is clicked
+            } else {
+                Swal.fire('Info', 'Minimal harus ada 1 baris rincian', 'info');
             }
         }
 
-        function calculateQty(rowId) {
-            const row = $(`#row_${rowId}`);
-            const P = parseFloat(row.find('.p-input').val()) || 0;
-            const L = parseFloat(row.find('.l-input').val()) || 0;
-            const T = parseFloat(row.find('.t-input').val()) || 0;
-            const koli = parseFloat(row.find('.koli-input').val()) || 0;
-            const satuan = row.find('select[name*="[satuan]"]').val();
-            
-            if (!P || !L || !T || !koli) {
-                Swal.fire('Info', 'Mohon isi P, L, T dan Koli untuk menghitung', 'info');
-                return;
-            }
+        function updateDetailNumbers(rowId) {
+            $(`#detail_container_${rowId} .detail-row`).each(function(index) {
+                $(this).find('.detail-no').text(index + 1);
+                // Update input names index to keep them sequential for Laravel
+                $(this).find('.det-p').attr('name', `items[${rowId}][details][${index}][p]`);
+                $(this).find('.det-l').attr('name', `items[${rowId}][details][${index}][l]`);
+                $(this).find('.det-t').attr('name', `items[${rowId}][details][${index}][t]`);
+                $(this).find('.det-koli').attr('name', `items[${rowId}][details][${index}][koli]`);
+                $(this).find('.det-jumlah').attr('name', `items[${rowId}][details][${index}][jumlah]`);
+            });
+        }
 
-            let result = 0;
-            if (satuan === 'M3') {
-                result = (P * L * T * koli) / 1000000;
-            } else if (satuan === 'Kg') {
-                result = (P * L * T * koli) / 4000;
-            }
-            
-            // Update the qty input (ensure 3 decimals for display)
-            const qtyInput = row.find('.qty-input');
-            
-            // Format for display with 3 decimals
-            let displayVal = new Intl.NumberFormat('id-ID', {
-                minimumFractionDigits: 3,
-                maximumFractionDigits: 3
-            }).format(result);
-            
-            qtyInput.val(displayVal);
-            
-            // Update the calculation logic
+        function calculateSubTotalDetail(rowId) {
+            const satuan = $(`#row_${rowId}`).find('select[name*="[satuan]"]').val();
+            $(`#detail_container_${rowId} .detail-row`).each(function() {
+                const p = parseFloat($(this).find('.det-p').val()) || 0;
+                const l = parseFloat($(this).find('.det-l').val()) || 0;
+                const t = parseFloat($(this).find('.det-t').val()) || 0;
+                const koli = parseFloat($(this).find('.det-koli').val()) || 0;
+
+                let result = 0;
+                if (satuan === 'M3') {
+                    result = (p * l * t * koli) / 1000000;
+                } else if (satuan === 'Kg') {
+                    result = (p * l * t * koli) / 4000;
+                }
+                $(this).find('.det-jumlah').val(formatVal(result, 3));
+            });
+            updateSubTableSummary(rowId);
+        }
+
+        function updateSubTableSummary(rowId) {
+            const row = $(`#row_${rowId}`);
+            let totalKoli = 0;
+            let totalJumlah = 0;
+
+            $(`#detail_container_${rowId} .detail-row`).each(function() {
+                const koli = parseFloat($(this).find('.det-koli').val()) || 0;
+                const jumlah = parseCurrency($(this).find('.det-jumlah').val()) || 0;
+                totalKoli += koli;
+                totalJumlah += jumlah;
+            });
+
+            row.find('.total-koli-sub').text(totalKoli);
+            row.find('.total-jumlah-sub').text(formatVal(totalJumlah, 3));
+
+            return { totalKoli, totalJumlah };
+        }
+
+        function kalkulasiItem(rowId) {
+            const summary = updateSubTableSummary(rowId);
+            const row = $(`#row_${rowId}`);
+
+            // Sync to parent
+            row.find('.koli-input').val(summary.totalKoli);
+            row.find('.qty-input').val(formatVal(summary.totalJumlah, 3));
+
             calculateSubtotal(rowId);
+        }
+
+        function toggleMinimizeVolume(rowId) {
+            const row = $(`#row_${rowId}`);
+            const table = row.find('.table-responsive');
+            const icon = row.find(`.toggle-icon-${rowId}`);
+            
+            table.toggleClass('d-none');
+            if (table.hasClass('d-none')) {
+                icon.css('transform', 'rotate(-90deg)');
+            } else {
+                icon.css('transform', 'rotate(0deg)');
+            }
         }
 
         function addItem() {
             addItemRow({});
         }
 
+        function formatVal(n, precision = null) {
+            if (n === null || n === undefined || n === '') return '0';
+            let val = parseFloat(n);
+            if (isNaN(val)) return '0';
+            
+            let str = precision !== null ? val.toFixed(precision) : val.toString();
+            let parts = str.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return parts.join(',');
+        }
+
         function addItemRow(data) {
             const rowId = itemIndex++;
             const jenisBarang = data.jenis_barang || '';
             const koli = data.koli || '';
-            const p = data.p || '';
-            const l = data.l || '';
-            const t = data.t || '';
-
-            // Data might come from DB (float) or Old Input (string, possibly formatted or not?)
-            // If from DB: 10000.00 (float/string)
-            // If from Old: "10000" (clean because we submit clean)
+            
+            // Legacy data support
+            const p = data.p || 0;
+            const l = data.l || 0;
+            const t = data.t || 0;
 
             let jumlah = data.jumlah || 0;
             let hargaSatuan = data.harga_satuan || 0;
             let subtotal = data.subtotal || 0;
-
-            // Format for display
-            // If it's a number, format it: 10000 -> 10.000
-            // If it has decimal: 10000.5 -> 10.000,5
-
-            const formatVal = (n, precision = null) => {
-                if (n === null || n === undefined || n === '') return '';
-                let val = parseFloat(n);
-                if (isNaN(val)) return '';
-                
-                let str = precision !== null ? val.toFixed(precision) : val.toString();
-                let parts = str.split('.');
-                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                return parts.join(',');
-            };
 
             const jumlahDisplay = formatVal(jumlah, 3);
             const hargaSatuanDisplay = formatVal(hargaSatuan);
@@ -688,36 +789,25 @@
             const satuan = data.satuan || 'Unit';
 
             // We need to ensure subtotal is calculated correctly if data is present
-            if (jumlah && hargaSatuan) {
+            if (jumlah && hargaSatuan && !subtotal) {
                 subtotal = parseFloat(jumlah) * parseFloat(hargaSatuan);
             }
 
             const html = `
-                <div class="row align-items-end gx-2 gy-3 mb-3 pb-3 border-bottom item-row" id="row_${rowId}">
+                <div class="row align-items-end gx-2 gy-3 mb-3 pb-3 border-bottom item-row" id="row_${rowId}" 
+                    data-p-old="${data.p || 0}" data-l-old="${data.l || 0}" data-t-old="${data.t || 0}">
                     <div class="col-md-3 jenis-group">
                         <label class="form-label fs-12 mb-1 text-muted">Jenis Barang</label>
                         <input type="text" class="form-control" name="items[${rowId}][jenis_barang]" value="${jenisBarang}" required placeholder="Contoh: Kayu Jati">
                     </div>
                     <div class="col-md-1 koli-group">
                         <label class="form-label fs-12 mb-1 text-muted">Koli</label>
-                        <input type="number" class="form-control koli-input" name="items[${rowId}][koli]" value="${koli}" required placeholder="1" oninput="calculateSubtotal(${rowId})">
-                    </div>
-                    
-                    <div class="col-md-2 plt-group d-none">
-                        <label class="form-label fs-12 mb-1 text-muted text-center d-block">P x L x T (cm)</label>
-                        <div class="d-flex gap-1">
-                            <input type="number" step="0.1" class="form-control p-input px-1 text-center" name="items[${rowId}][p]" value="${p}" placeholder="P">
-                            <input type="number" step="0.1" class="form-control l-input px-1 text-center" name="items[${rowId}][l]" value="${l}" placeholder="L">
-                            <input type="number" step="0.1" class="form-control t-input px-1 text-center" name="items[${rowId}][t]" value="${t}" placeholder="T">
-                        </div>
+                        <input type="number" class="form-control koli-input" name="items[${rowId}][koli]" value="${koli}" required placeholder="1" oninput="handleInput(this, ${rowId})">
                     </div>
 
                     <div class="col-md-2 jumlah-group">
-                        <label class="form-label fs-12 mb-1 text-muted">Jumlah</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control qty-input font-monospace" value="${jumlahDisplay}" required oninput="handleInput(this, ${rowId})" placeholder="0">
-                            <button class="btn btn-info btn-hitung d-none py-1 px-2 fs-11" type="button" onclick="event.preventDefault(); calculateQty(${rowId})">Hitung</button>
-                        </div>
+                        <label class="form-label fs-12 mb-1 text-muted">Jumlah (M3/Kg)</label>
+                        <input type="text" class="form-control qty-input font-monospace" value="${jumlahDisplay}" required oninput="handleInput(this, ${rowId})" placeholder="0">
                         <input type="hidden" name="items[${rowId}][jumlah]" id="jumlah_hidden_${rowId}" value="${jumlah}">
                     </div>
 
@@ -752,19 +842,79 @@
                             <i class="feather-trash-2"></i>
                         </button>
                     </div>
+
+                    <!-- Sub Table Container -->
+                    <div class="col-12 sub-table-wrapper d-none mt-2">
+                        <div class="p-2 border border-dashed rounded bg-light cursor-pointer d-flex align-items-center mb-2" onclick="toggleMinimizeVolume(${rowId})">
+                            <i class="feather-chevron-down me-2 toggle-icon-${rowId}" style="transition: transform 0.2s;"></i>
+                            <div class="bg-soft-success text-success rounded-1 p-1 me-2 d-flex align-items-center justify-content-center">
+                                <i class="feather-grid" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <span class="fw-bold fs-11 text-dark text-uppercase tracking-wider">Rincian Volume</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered mb-0">
+                                <thead class="bg-light fs-11">
+                                    <tr>
+                                        <th class="text-center" style="width: 50px;">No</th>
+                                        <th class="text-center">P (cm)</th>
+                                        <th class="text-center">L (cm)</th>
+                                        <th class="text-center">T (cm)</th>
+                                        <th class="text-center">Koli</th>
+                                        <th class="text-center">Jumlah (m3/kg)</th>
+                                        <th class="text-center" style="width: 100px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail_container_${rowId}">
+                                    <!-- Detail rows -->
+                                </tbody>
+                                <tfoot class="bg-light fw-bold fs-11">
+                                    <tr>
+                                        <td colspan="4" class="text-end">Summary</td>
+                                        <td class="text-center"><span class="total-koli-sub">0</span></td>
+                                        <td class="text-center"><span class="total-jumlah-sub">0</span></td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-xs btn-primary py-0 px-2" onclick="kalkulasiItem(${rowId})">Kalkulasi</button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             `;
 
             $('#itemContainer').append(html);
             togglePLT(rowId); // Set initial state
+
+            // Populate details if they exist
+            if (data.details && data.details.length > 0) {
+                data.details.forEach(detail => {
+                    addDetailRow(rowId, detail);
+                });
+            } else {
+                // If no details, but it's M3/Kg, add one empty row
+                if (satuan !== 'Unit') {
+                    addDetailRow(rowId, {
+                        p: data.p || 0,
+                        l: data.l || 0,
+                        t: data.t || 0,
+                        koli: data.koli || 0,
+                        jumlah: data.jumlah || 0
+                    });
+                }
+            }
+
+            return rowId;
         }
 
         function handleInput(element, rowId) {
             if ($(element).hasClass('qty-input')) {
                 formatDecimalInput(element);
-            } else {
+            } else if ($(element).hasClass('price-input')) {
                 formatCurrencyInput(element);
             }
+            // For koli-input (number type), we don't need additional formatting
             calculateSubtotal(rowId);
         }
 
@@ -777,15 +927,6 @@
             $(`#fee_harga_hidden_${feeId}`).val(price);
 
             calculateTotal();
-        }
-
-        let feeIndex = 0;
-        const initialFees = @json(old('additional_fees', isset($invoice) && $invoice->additionalFees ? $invoice->additionalFees : []));
-
-        if (initialFees.length > 0) {
-            initialFees.forEach(fee => {
-                addFeeRow(fee);
-            });
         }
 
         function addFee() {
@@ -841,6 +982,16 @@
 
         function calculateSubtotal(id) {
             const row = $(`#row_${id}`);
+            if (row.length === 0) return;
+
+            const satuan = row.find('select[name*="[satuan]"]').val();
+            const koliVal = parseFloat(row.find('.koli-input').val()) || 0;
+            
+            // Sync Jumlah if Unit
+            if (satuan === 'Unit') {
+                row.find('.qty-input').val(formatVal(koliVal, 0));
+            }
+
             const qtyDisplay = row.find('.qty-input').val();
             const priceDisplay = row.find('.price-input').val();
 
@@ -850,9 +1001,7 @@
             $(`#jumlah_hidden_${id}`).val(qty);
             $(`#harga_satuan_hidden_${id}`).val(price);
 
-            // Calculate with full precision first
             const rawSubtotal = qty * price;
-            // Round only for storage and display as Rupiah
             const subtotal = Math.round(rawSubtotal);
 
             $(`#subtotal_input_${id}`).val(subtotal);

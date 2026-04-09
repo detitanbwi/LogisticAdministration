@@ -71,7 +71,6 @@
     @php 
         $no = 1; 
         $grandTotalJumlah = 0;
-        $grandTotalTagihan = 0;
     @endphp
     @forelse ($finances as $finance)
         @php
@@ -93,7 +92,6 @@
             $ppn_val = $is_pkp ? $dpp_and_fee_val * 0.011 : 0;
             $dpp_display = $dpp_base;
             $grand_total_val = $dpp_and_fee_val + $ppn_val;
-            $grandTotalTagihan += $grand_total_val;
 
             $masaText = '-';
             if ($finance->tgl_transfer) {

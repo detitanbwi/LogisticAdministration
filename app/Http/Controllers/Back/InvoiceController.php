@@ -106,15 +106,6 @@ class InvoiceController extends Controller
                 ->addColumn('penerima', function ($row) {
                     return $row->penerima ? $row->penerima->nama : '-';
                 })
-                ->addColumn('p', function ($row) {
-                    return $row->items->pluck('p')->map(fn($v) => $v ? number_format($v, 2, ',', '.') : '-')->implode('<br>');
-                })
-                ->addColumn('l', function ($row) {
-                    return $row->items->pluck('l')->map(fn($v) => $v ? number_format($v, 2, ',', '.') : '-')->implode('<br>');
-                })
-                ->addColumn('t', function ($row) {
-                    return $row->items->pluck('t')->map(fn($v) => $v ? number_format($v, 2, ',', '.') : '-')->implode('<br>');
-                })
                 ->addColumn('koli', function ($row) {
                     return $row->items->pluck('koli')->implode('<br>');
                 })
@@ -162,7 +153,7 @@ class InvoiceController extends Controller
                     $btn .= '</div>';
                     return $btn;
                 })
-                ->rawColumns(['status_pembayaran', 'action', 'p', 'l', 't', 'koli', 'satuan', 'jumlah'])
+                ->rawColumns(['status_pembayaran', 'action', 'koli', 'satuan', 'jumlah'])
                 ->make(true);
         }
 
@@ -198,7 +189,9 @@ class InvoiceController extends Controller
             $validated = $request->validated();
 
             // Create Invoice
-            $invoice = Invoice::create($request->except('items'));
+            $data = $request->except('items');
+            $data['show_stamp'] = $request->has('show_stamp');
+            $invoice = Invoice::create($data);
 
             // Create Items & Calculate Total
             $totalTagihan = 0;
@@ -219,7 +212,7 @@ class InvoiceController extends Controller
                     $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
                     $totalTagihan += $subtotal;
 
-                    $invoice->items()->create([
+                    $invoiceItem = $invoice->items()->create([
                         'jenis_barang' => $item['jenis_barang'],
                         'koli' => $item['koli'],
                         'p' => $item['p'] ?? null,
@@ -230,6 +223,19 @@ class InvoiceController extends Controller
                         'harga_satuan' => $hargaSatuanVal,
                         'subtotal' => $subtotal,
                     ]);
+
+                    // Save nested details if any
+                    if (isset($item['details']) && is_array($item['details'])) {
+                        foreach ($item['details'] as $detail) {
+                            $invoiceItem->details()->create([
+                                'p' => $detail['p'] ?? null,
+                                'l' => $detail['l'] ?? null,
+                                't' => $detail['t'] ?? null,
+                                'koli' => $detail['koli'] ?? null,
+                                'jumlah' => $clean($detail['jumlah'] ?? 0),
+                            ]);
+                        }
+                    }
                 }
             }
 
@@ -273,7 +279,7 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('edit.invoice'), 403);
 
-        $invoice->load('items', 'finance', 'additionalFees');
+        $invoice->load('items.details', 'finance', 'additionalFees');
         $customers = Customer::all();
         $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
         $tujuanDaerahs = TujuanDaerah::all();
@@ -290,7 +296,9 @@ class InvoiceController extends Controller
 
         DB::beginTransaction();
         try {
-            $invoice->update($request->except('items'));
+            $data = $request->except('items');
+            $data['show_stamp'] = $request->has('show_stamp');
+            $invoice->update($data);
 
             // Re-create items
             $invoice->items()->delete();
@@ -313,7 +321,7 @@ class InvoiceController extends Controller
                     $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
                     $totalTagihan += $subtotal;
 
-                    $invoice->items()->create([
+                    $invoiceItem = $invoice->items()->create([
                         'jenis_barang' => $item['jenis_barang'],
                         'koli' => $item['koli'],
                         'p' => $item['p'] ?? null,
@@ -324,6 +332,19 @@ class InvoiceController extends Controller
                         'harga_satuan' => $hargaSatuanVal,
                         'subtotal' => $subtotal,
                     ]);
+
+                    // Save nested details if any
+                    if (isset($item['details']) && is_array($item['details'])) {
+                        foreach ($item['details'] as $detail) {
+                            $invoiceItem->details()->create([
+                                'p' => $detail['p'] ?? null,
+                                'l' => $detail['l'] ?? null,
+                                't' => $detail['t'] ?? null,
+                                'koli' => $detail['koli'] ?? null,
+                                'jumlah' => $clean($detail['jumlah'] ?? 0),
+                            ]);
+                        }
+                    }
                 }
             }
 
@@ -402,66 +423,9 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('print.invoice') || auth()->user()->can('view.invoice'), 403);
 
-        // Dummy data for mockup as requested
-        $mockData = [
-            'tgl_masuk' => '14/03/2026',
-            'pengirim' => 'BUDI AFRIANSYAH',
-            'penerima' => 'JOKOWI',
-            'items' => [
-                [
-                    'no' => 1,
-                    'p' => 22,
-                    'l' => 32,
-                    't' => 13,
-                    'koli' => 115,
-                    'satuan' => 'M3',
-                ],
-                [
-                    'no' => 2,
-                    'p' => 35,
-                    'l' => 44,
-                    't' => 21,
-                    'koli' => 570,
-                    'satuan' => 'M3',
-                ],
-                [
-                    'no' => 3,
-                    'p' => 24,
-                    'l' => 50,
-                    't' => 16,
-                    'koli' => 24,
-                    'satuan' => 'M3',
-                ],
-                [
-                    'no' => 4,
-                    'p' => 16,
-                    'l' => 23,
-                    't' => 16,
-                    'koli' => 26,
-                    'satuan' => 'M3',
-                ],
-                // Mix in some Kg for testing separation
-                [
-                    'no' => 5,
-                    'p' => 50,
-                    'l' => 50,
-                    't' => 50,
-                    'koli' => 10,
-                    'satuan' => 'Kg',
-                ],
-                // Mix in some Unit
-                [
-                    'no' => 6,
-                    'p' => null,
-                    'l' => null,
-                    't' => null,
-                    'koli' => 5,
-                    'satuan' => 'Unit',
-                ],
-            ]
-        ];
+        $invoice->load(['items.details', 'pengirim', 'penerima']);
 
-        return view('back.pages.invoice.print_volume', compact('invoice', 'mockData'));
+        return view('back.pages.invoice.print_volume', compact('invoice'));
     }
 
     public function preview(Request $request)
@@ -505,7 +469,20 @@ class InvoiceController extends Controller
                 $itemData['jumlah'] = $jumlahVal;
                 $itemData['harga_satuan'] = $hargaSatuanVal;
                 $itemData['subtotal'] = $subtotal;
-                $items->push(new \App\Models\InvoiceItem($itemData));
+                
+                $invoiceItem = new \App\Models\InvoiceItem($itemData);
+                
+                // Handle nested details in preview
+                $details = collect();
+                if (isset($itemData['details']) && is_array($itemData['details'])) {
+                    foreach ($itemData['details'] as $detailData) {
+                        $detailData['jumlah'] = $clean($detailData['jumlah'] ?? 0);
+                        $details->push(new \App\Models\InvoiceItemDetail($detailData));
+                    }
+                }
+                $invoiceItem->setRelation('details', $details);
+                
+                $items->push($invoiceItem);
             }
         }
         $invoice->setRelation('items', $items);
