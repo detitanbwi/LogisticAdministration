@@ -885,25 +885,14 @@
             `;
 
             $('#itemContainer').append(html);
-            togglePLT(rowId); // Set initial state
-
             // Populate details if they exist
             if (data.details && data.details.length > 0) {
                 data.details.forEach(detail => {
                     addDetailRow(rowId, detail);
                 });
-            } else {
-                // If no details, but it's M3/Kg, add one empty row
-                if (satuan !== 'Unit') {
-                    addDetailRow(rowId, {
-                        p: data.p || 0,
-                        l: data.l || 0,
-                        t: data.t || 0,
-                        koli: data.koli || 0,
-                        jumlah: data.jumlah || 0
-                    });
-                }
             }
+            
+            togglePLT(rowId); // Set initial state (will add 1 empty row via togglePLT if no details)
 
             return rowId;
         }
