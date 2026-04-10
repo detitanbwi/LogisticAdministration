@@ -318,7 +318,7 @@
             <div class="card recent-invoice-card stretch stretch-full">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h5 class="card-title mb-0"><i class="feather-box me-2"></i>Ringkasan Keberangkatan Kapal</h5>
-                    <a href="{{ route('admin.vessel.index') }}" class="btn btn-sm btn-light">Lihat Semua</a>
+                    <a href="{{ route('admin.kapal.index') }}" class="btn btn-sm btn-light">Lihat Semua</a>
                 </div>
                 <div class="card-body custom-card-action p-0">
                     <div class="table-responsive">
