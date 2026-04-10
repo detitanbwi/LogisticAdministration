@@ -43,6 +43,16 @@ class InvoiceController extends Controller
                 $query->where('status_pembayaran', $request->status);
             }
 
+            if ($request->filled('is_pkp')) {
+                if ($request->is_pkp == '1') {
+                    $query->where('pkp_status', 'PKP');
+                } else {
+                    $query->where(function($q) {
+                        $q->where('pkp_status', '!=', 'PKP')->orWhereNull('pkp_status');
+                    });
+                }
+            }
+
             if ($request->filled('pengirim_id')) {
                 $query->where('pengirim_id', $request->pengirim_id);
             }
@@ -570,6 +580,16 @@ class InvoiceController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status_pembayaran', $request->status);
+        }
+
+        if ($request->filled('is_pkp')) {
+            if ($request->is_pkp == '1') {
+                $query->where('pkp_status', 'PKP');
+            } else {
+                $query->where(function($q) {
+                    $q->where('pkp_status', '!=', 'PKP')->orWhereNull('pkp_status');
+                });
+            }
         }
 
         if ($request->filled('pengirim_id')) {

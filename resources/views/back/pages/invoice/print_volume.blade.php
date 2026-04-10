@@ -111,13 +111,15 @@
             background-color: #1a3a5f; /* Deep blue from mockup */
             color: white;
             text-transform: uppercase;
-            font-size: 10pt;
+            font-size: 9pt;
             border: 1px solid #dee2e6;
+            padding: 4px 6px;
         }
 
         .table-custom td {
             border: 1px solid #dee2e6;
-            padding: 12px 10px;
+            padding: 4px 6px;
+            font-size: 9pt;
         }
 
         .total-row {
@@ -130,8 +132,8 @@
             background-color: #1a3a5f;
             color: white;
             text-align: center;
-            padding: 15px;
-            font-size: 11pt;
+            padding: 6px;
+            font-size: 10pt;
             text-transform: uppercase;
         }
 
@@ -139,9 +141,9 @@
             background-color: #e7f1ff;
             color: #1a3a5f;
             text-align: center;
-            font-size: 16pt;
+            font-size: 11pt;
             font-weight: bold;
-            padding: 15px;
+            padding: 6px;
             border: 1px solid #dee2e6;
         }
 

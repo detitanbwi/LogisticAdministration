@@ -318,7 +318,8 @@
                         <tr>
                             <td class="text-center" style="border: 1px solid #000;">{{ count($invoice->items) + $feeIndex + 1 }}
                             </td>
-                            <td colspan="4" style="border: 1px solid #000; padding-left: 5px;">Biaya Tambahan - {{ $fee->nama }}</td>
+                            <td colspan="4" style="border: 1px solid #000; padding-left: 5px;">Biaya Tambahan - {{ $fee->nama }}
+                            </td>
                             <td style="border: 1px solid #000;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span>Rp</span>
@@ -390,40 +391,45 @@
         <table class="w-100 collapse">
             <tr>
                 <td style="width: 60%; vertical-align: top; padding: 0;">
-                        <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 5px 0;">Catatan</h3>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 11pt; font-weight: bold; line-height: 1.4;">
-                            <tr>
-                                <td style="width: 25px; vertical-align: top; padding: 0;">1.</td>
-                                <td style="vertical-align: top; padding: 0;">Harga tersebut belum termasuk biaya ASURANSI.</td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25px; vertical-align: top; padding: 0;">2.</td>
-                                <td style="vertical-align: top; padding: 0;">Pemilik barang bertanggung jawab untuk mengasuransikan BARANG yang dikirim.</td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25px; vertical-align: top; padding: 0;">3.</td>
-                                <td style="vertical-align: top; padding: 0;">Apabila terjadi huru-hara, bencana alam, kapal tenggelam, atau kejadian lain di luar kendali, maka hal tersebut bukan menjadi tanggung jawab PT Sinar Cemara Jaya.</td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25px; vertical-align: top; padding: 0;">4.</td>
-                                <td style="vertical-align: top; padding: 0; color: red;">Saat melakukan pembayaran Harap mencantumkan nomor invoice pada kolom keterangan/berita transfer.</td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25px; vertical-align: top; padding: 0;">5.</td>
-                                <td style="vertical-align: top; padding: 0;">NPWP 94.723.616.2-043.000</td>
-                            </tr>
-                        </table>
+                    <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 5px 0;">Catatan</h3>
+                    <table
+                        style="width: 100%; border-collapse: collapse; font-size: 11pt; font-weight: bold; line-height: 1.4;">
+                        <tr>
+                            <td style="width: 25px; vertical-align: top; padding: 0;">1.</td>
+                            <td style="vertical-align: top; padding: 0;">Harga tersebut belum termasuk biaya ASURANSI.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 25px; vertical-align: top; padding: 0;">2.</td>
+                            <td style="vertical-align: top; padding: 0;">Pemilik barang bertanggung jawab untuk
+                                mengasuransikan BARANG yang dikirim.</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 25px; vertical-align: top; padding: 0;">3.</td>
+                            <td style="vertical-align: top; padding: 0;">Apabila terjadi huru-hara, bencana alam, kapal
+                                tenggelam, atau kejadian lain di luar kendali, maka hal tersebut bukan menjadi tanggung
+                                jawab PT Sinar Cemara Jaya.</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 25px; vertical-align: top; padding: 0;">4.</td>
+                            <td style="vertical-align: top; padding: 0; color: red;">Saat melakukan pembayaran Harap
+                                mencantumkan nomor invoice pada kolom keterangan/berita transfer.</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 25px; vertical-align: top; padding: 0;">5.</td>
+                            <td style="vertical-align: top; padding: 0;">NPWP 94.723.616.2-043.000</td>
+                        </tr>
+                    </table>
                 </td>
                 <td style="width: 40%; vertical-align: bottom; text-align: center; padding: 0;">
                     <div style="position: relative; display: inline-block;">
                         @if($invoice->show_stamp)
                             <img src="{{ asset('back/assets/images/stampel.png') }}"
-                                style="width: 220px; position: absolute; top: -110px; left: 50%; transform: translateX(-50%); z-index: 1;">
+                                style="width: 180px; position: absolute; top: -90px; left: 50%; transform: translateX(-50%); z-index: 1;">
                         @endif
                         <div class="font-bold text-center"
                             style="position: relative; z-index: 2; color: #d32f2f; font-size: 11pt; margin-top: 80px; margin-bottom: 2px;">
-                            PT. SINAR
-                            CEMARA JAYA</div>
+                        </div>
                         <div class="font-bold text-center" style="position: relative; z-index: 2; font-size: 12pt;">
                             Zulkifli</div>
                     </div>

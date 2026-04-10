@@ -35,6 +35,13 @@
             </select>
         </div>
         <div class="col-md-6">
+            <select class="form-select dt-filter" id="filterPkp" name="is_pkp" style="width: 100%;">
+                <option value="">Semua (PKP/Non PKP)</option>
+                <option value="1">PKP</option>
+                <option value="0">Non PKP</option>
+            </select>
+        </div>
+        <div class="col-md-6">
             <select class="form-select dt-filter" id="filterAsal" name="asal_id" style="width: 100%;">
                 <option value="">Semua Asal</option>
                 @foreach ($tujuans as $t)
@@ -84,7 +91,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 mt-lg-0 mt-2">
+        <div class="col-md-12 mt-3 pt-2">
             <div class="d-flex align-items-end h-100 gap-2">
                 <button class="btn btn-light"
                     onclick="$('.dt-filter').val('').trigger('change'); $('#invoiceTable').DataTable().ajax.reload()">
@@ -193,6 +200,12 @@
                 minimumResultsForSearch: Infinity
             });
 
+            $('#filterPkp').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Semua (PKP/Non PKP)',
+                minimumResultsForSearch: Infinity
+            });
+
             $('#filterAsal').select2({
                 theme: 'bootstrap-5',
                 placeholder: 'Semua Asal',
@@ -206,7 +219,7 @@
             });
 
             // Filter change handlers
-            $('#filterStatus, #filterAsal, #filterTujuan, #filterPengirim, #filterPenerima').on('change', function () {
+            $('#filterStatus, #filterPkp, #filterAsal, #filterTujuan, #filterPengirim, #filterPenerima').on('change', function () {
                 $('#invoiceTable').DataTable().ajax.reload();
             });
 
@@ -235,6 +248,7 @@
         window.printTable = function () {
             var daterange = $('#filterDaterange').val() || '';
             var status = $('#filterStatus').val() || '';
+            var isPkp = $('#filterPkp').val() || '';
             var asal = $('#filterAsal').val() || '';
             var tujuan = $('#filterTujuan').val() || '';
             var pengirim = $('#filterPengirim').val() || '';
@@ -244,6 +258,7 @@
 
             var url = '{{ route('admin.invoice.rekap_print') }}?daterange=' + encodeURIComponent(daterange) +
                 '&status=' + encodeURIComponent(status) +
+                '&is_pkp=' + encodeURIComponent(isPkp) +
                 '&asal_id=' + encodeURIComponent(asal) +
                 '&tujuan_id=' + encodeURIComponent(tujuan) +
                 '&pengirim_id=' + encodeURIComponent(pengirim) +
@@ -321,6 +336,7 @@
         window.exportExcel = function () {
             var daterange = $('#filterDaterange').val() || '';
             var status = $('#filterStatus').val() || '';
+            var isPkp = $('#filterPkp').val() || '';
             var asal = $('#filterAsal').val() || '';
             var tujuan = $('#filterTujuan').val() || '';
             var pengirim = $('#filterPengirim').val() || '';
@@ -330,6 +346,7 @@
 
             var url = '{{ route('admin.invoice.export') }}?daterange=' + encodeURIComponent(daterange) +
                 '&status=' + encodeURIComponent(status) +
+                '&is_pkp=' + encodeURIComponent(isPkp) +
                 '&asal_id=' + encodeURIComponent(asal) +
                 '&tujuan_id=' + encodeURIComponent(tujuan) +
                 '&pengirim_id=' + encodeURIComponent(pengirim) +
