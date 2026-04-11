@@ -18,9 +18,10 @@
         @endcan
     </div>
 
-    <x-back.datatable id="containerTable" :ajax="route('admin.packing-list.index')" :header="['No', 'Nomor Container/Seal', 'Pelabuhan Asal', 'Pelabuhan Tujuan', 'ETD', 'Jumlah Invoice', 'Aksi']" :data="[
+    <x-back.datatable id="containerTable" :ajax="route('admin.packing-list.index')" :header="['No', 'Nomor Container/Seal', 'Kapal', 'Pelabuhan Asal', 'Pelabuhan Tujuan', 'ETD', 'Jumlah Invoice', 'Aksi']" :data="[
             'DT_RowIndex' => ['searchable' => false, 'orderable' => false],
             'nomor_container',
+            'kapal' => ['name' => 'kapal.nama_kapal'],
             'pelabuhan_asal' => ['name' => 'asal.nama_tujuan'],
             'pelabuhan_tujuan' => ['name' => 'tujuan.nama_tujuan'],
             'etd' => ['name' => 'etd'],

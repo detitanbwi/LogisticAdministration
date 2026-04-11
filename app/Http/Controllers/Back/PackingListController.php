@@ -13,7 +13,7 @@ class PackingListController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Container::with(['asal', 'tujuan'])->withCount('invoices');
+            $query = Container::with(['kapal', 'asal', 'tujuan'])->withCount('invoices');
             return datatables()->of($query)
                 ->addIndexColumn()
                 ->filterColumn('pelabuhan_asal', function ($query, $keyword) {
@@ -31,6 +31,9 @@ class PackingListController extends Controller
                 })
                 ->addColumn('pelabuhan_tujuan', function ($row) {
                     return $row->tujuan ? $row->tujuan->nama_tujuan : '-';
+                })
+                ->addColumn('kapal', function ($row) {
+                    return $row->kapal ? $row->kapal->nama_kapal : '-';
                 })
                 ->addColumn('etd', function ($row) {
                     return $row->etd ? \Carbon\Carbon::parse($row->etd)->format('d-m-Y') : '-';

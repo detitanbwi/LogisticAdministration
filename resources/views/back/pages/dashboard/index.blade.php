@@ -328,6 +328,7 @@
                                     <th>Nama Kapal</th>
                                     <th>ETD (Keberangkatan)</th>
                                     <th class="text-center">Jumlah Container</th>
+                                    <th class="text-center">Total Invoice</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -342,10 +343,13 @@
                                         <td class="text-center">
                                             <span class="badge bg-soft-info text-info px-3">{{ $summary->total_container }} Container</span>
                                         </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-soft-primary text-primary px-3">{{ $summary->total_invoice }} Invoice</span>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="text-center p-4">Tidak ada jadwal keberangkatan pada range tanggal ini.</td>
+                                        <td colspan="4" class="text-center p-4">Tidak ada jadwal keberangkatan pada range tanggal ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

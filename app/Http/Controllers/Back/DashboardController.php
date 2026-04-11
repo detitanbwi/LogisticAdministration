@@ -67,10 +67,13 @@ class DashboardController extends Controller
 
         // Vessel Summary for Dashboard - Filtered by ETD
         $vessel_summary = Container::with('kapal')
-            ->whereBetween('etd', [$startDate, $endDate])
-            ->select('kapal_id', 'etd', \DB::raw('count(*) as total_container'))
-            ->groupBy('kapal_id', 'etd')
-            ->orderBy('etd', 'asc')
+            ->leftJoin('invoice', 'container.id', '=', 'invoice.container_id')
+            ->whereBetween('container.etd', [$startDate, $endDate])
+            ->select('container.kapal_id', 'container.etd')
+            ->selectRaw('count(DISTINCT container.id) as total_container')
+            ->selectRaw('count(invoice.id) as total_invoice')
+            ->groupBy('container.kapal_id', 'container.etd')
+            ->orderBy('container.etd', 'asc')
             ->get();
 
         return view('back.pages.dashboard.index', compact(
