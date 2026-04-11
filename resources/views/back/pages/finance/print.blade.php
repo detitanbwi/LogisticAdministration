@@ -399,6 +399,12 @@
                         <td>: {{ $finance->status_tagihan }}</td>
                     </tr>
                     <tr>
+                        <td class="label-cell">Tanggal Tagih</td>
+                        <td>:
+                            {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d-m-Y') : '-' }}
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="label-cell">Tanggal transfer</td>
                         <td>:
                             {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d-m-Y') : '-' }}
