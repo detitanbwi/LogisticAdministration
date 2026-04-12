@@ -120,13 +120,16 @@ class InvoiceController extends Controller
                     return $row->items->pluck('koli')->implode('<br>');
                 })
                 ->addColumn('jumlah', function ($row) {
-                    return $row->items->pluck('jumlah')->map(fn($v) => number_format($v, 3, ',', '.'))->implode('<br>');
+                    return $row->items->pluck('jumlah')->map(fn($v) => $v == 0 ? '0' : number_format($v, 3, ',', '.'))->implode('<br>');
                 })
                 ->addColumn('satuan', function ($row) {
                     return $row->items->pluck('satuan')->implode('<br>');
                 })
                 ->addColumn('total_tagihan', function ($row) {
                     $dpp_base = $row->items->sum(function($item) {
+                        if (strtoupper($item->satuan) == 'UNIT') {
+                            return $item->koli * $item->harga_satuan;
+                        }
                         return $item->jumlah * $item->harga_satuan;
                     });
                     $fee_val = $row->additionalFees ? $row->additionalFees->sum('harga') : 0;
@@ -219,7 +222,12 @@ class InvoiceController extends Controller
                     $jumlahVal = $clean($item['jumlah'] ?? 0);
                     $hargaSatuanVal = $clean($item['harga_satuan'] ?? 0);
                     
-                    $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                    if (strtoupper($item['satuan'] ?? '') == 'UNIT') {
+                        $subtotal = round((float)($item['koli'] ?? 0) * (float)$hargaSatuanVal);
+                        $jumlahVal = 0;
+                    } else {
+                        $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                    }
                     $totalTagihan += $subtotal;
 
                     $invoiceItem = $invoice->items()->create([
@@ -328,7 +336,12 @@ class InvoiceController extends Controller
                     $jumlahVal = $clean($item['jumlah'] ?? 0);
                     $hargaSatuanVal = $clean($item['harga_satuan'] ?? 0);
                     
-                    $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                    if (strtoupper($item['satuan'] ?? '') == 'UNIT') {
+                        $subtotal = round((float)($item['koli'] ?? 0) * (float)$hargaSatuanVal);
+                        $jumlahVal = 0;
+                    } else {
+                        $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                    }
                     $totalTagihan += $subtotal;
 
                     $invoiceItem = $invoice->items()->create([

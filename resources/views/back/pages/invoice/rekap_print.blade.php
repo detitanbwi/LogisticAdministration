@@ -79,6 +79,9 @@
                     // Recalculate on-the-fly
                     // Recalculate on-the-fly with consistent rounding
                     $dpp_base = $items->sum(function($item) {
+                        if (strtoupper($item->satuan) == 'UNIT') {
+                            return round($item->koli * $item->harga_satuan);
+                        }
                         return round($item->jumlah * $item->harga_satuan);
                     });
                     $fee_val = $inv->additionalFees ? round($inv->additionalFees->sum('harga')) : 0;
@@ -101,7 +104,9 @@
                                 <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
                             @endif
                             @php 
-                                $totalJumlah += $item->jumlah;
+                                if (strtoupper($item->satuan) != 'UNIT') {
+                                    $totalJumlah += $item->jumlah;
+                                }
                             @endphp
                             <td class="text-center">{{ $item->koli }}</td>
                             <td class="text-center">{{ number_format($item->jumlah, 3, ',', '.') }}</td>

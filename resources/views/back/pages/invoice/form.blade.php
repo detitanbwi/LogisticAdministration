@@ -630,10 +630,10 @@
                 // but for now let's keep them editable as requested in brainstorming.
             } else {
                 subTableWrapper.addClass('d-none');
-                // If Unit, usually Jumlah = Koli
+                // If Unit, usually Jumlah = 0 as requested
                 if (satuan === 'Unit') {
-                    const koliVal = row.find('.koli-input').val() || 0;
-                    row.find('.qty-input').val(formatVal(koliVal, 0));
+                    row.find('.qty-input').val('0');
+                    $(`#jumlah_hidden_${rowId}`).val(0);
                     calculateSubtotal(rowId);
                 }
             }
@@ -976,9 +976,9 @@
             const satuan = row.find('select[name*="[satuan]"]').val();
             const koliVal = parseFloat(row.find('.koli-input').val()) || 0;
             
-            // Sync Jumlah if Unit
+            // Sync Jumlah if Unit to 0
             if (satuan === 'Unit') {
-                row.find('.qty-input').val(formatVal(koliVal, 0));
+                row.find('.qty-input').val('0');
             }
 
             const qtyDisplay = row.find('.qty-input').val();
@@ -990,7 +990,12 @@
             $(`#jumlah_hidden_${id}`).val(qty);
             $(`#harga_satuan_hidden_${id}`).val(price);
 
-            const rawSubtotal = qty * price;
+            let rawSubtotal = 0;
+            if (satuan === 'Unit') {
+                rawSubtotal = koliVal * price;
+            } else {
+                rawSubtotal = qty * price;
+            }
             const subtotal = Math.round(rawSubtotal);
 
             $(`#subtotal_input_${id}`).val(subtotal);

@@ -85,6 +85,9 @@ class FinanceController extends Controller
                 ->addColumn('total_tagihan', function ($row) {
                     if (!$row->invoice) return '-';
                     $dpp_base = $row->invoice->items->sum(function($item) {
+                        if (strtoupper($item->satuan) == 'UNIT') {
+                            return $item->koli * $item->harga_satuan;
+                        }
                         return $item->jumlah * $item->harga_satuan;
                     });
                     $fee_val = $row->invoice->additionalFees ? $row->invoice->additionalFees->sum('harga') : 0;

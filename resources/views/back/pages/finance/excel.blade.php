@@ -83,6 +83,9 @@
             $rowCount = $inv->items && $inv->items->count() > 0 ? $inv->items->count() : 1;
 
             $dpp_base = $inv->items ? $inv->items->sum(function($item) {
+                if (strtoupper($item->satuan) == 'UNIT') {
+                    return $item->koli * $item->harga_satuan;
+                }
                 return $item->jumlah * $item->harga_satuan;
             }) : 0;
             $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
@@ -156,7 +159,12 @@
                     {{ number_format($inv->items[0]->harga_satuan, 0, '', '') }}
                 </td>
                 <td style="border: 1px solid #000;">
-                    {{ number_format($inv->items[0]->jumlah * $inv->items[0]->harga_satuan, 0, '', '') }}
+                    @php
+                        $sub = (strtoupper($inv->items[0]->satuan) == 'UNIT') 
+                            ? $inv->items[0]->koli * $inv->items[0]->harga_satuan 
+                            : $inv->items[0]->jumlah * $inv->items[0]->harga_satuan;
+                    @endphp
+                    {{ number_format($sub, 0, '', '') }}
                 </td>
             @else
                 <td style="border: 1px solid #000;">-</td>
@@ -219,7 +227,12 @@
                         {{ number_format($inv->items[$i]->harga_satuan, 0, '', '') }}
                     </td>
                     <td style="border: 1px solid #000;">
-                        {{ number_format($inv->items[$i]->subtotal, 0, '', '') }}
+                        @php
+                            $subItem = (strtoupper($inv->items[$i]->satuan) == 'UNIT') 
+                                ? $inv->items[$i]->koli * $inv->items[$i]->harga_satuan 
+                                : $inv->items[$i]->subtotal;
+                        @endphp
+                        {{ number_format($subItem, 0, '', '') }}
                     </td>
                 </tr>
             @endfor

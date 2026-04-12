@@ -155,14 +155,18 @@
 <body onload="window.print()">
     @php
         $invoice = $finance->invoice;
-        $dpp = $invoice->items->sum(function ($item) {
-            return $item->jumlah * $item->harga_satuan;
+        $dpp_base = $invoice->items->sum(function ($it) {
+            if (strtoupper($it->satuan) == 'UNIT') {
+                return $it->koli * $it->harga_satuan;
+            }
+            return $it->jumlah * $it->harga_satuan;
         });
-        $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
-        $totalDpp = $dpp + $feeTotal;
+        $fee_val = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
         $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
-        $ppn = $is_pkp ? $totalDpp * 0.011 : 0;
-        $grandTotal = $totalDpp + $ppn;
+        $total_all = $dpp_base + $fee_val;
+        if ($is_pkp) {
+            $total_all = round($total_all * 1.011);
+        }
 
         $today = \Carbon\Carbon::now()->startOfDay();
         $tagih = $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->startOfDay() : null;
@@ -347,6 +351,13 @@
                 </thead>
                 <tbody>
                     @foreach($invoice->items as $item)
+                        @php
+                            if (strtoupper($item->satuan) == 'UNIT') {
+                                $subtotal = $item->koli * $item->harga_satuan;
+                            } else {
+                                $subtotal = $item->jumlah * $item->harga_satuan;
+                            }
+                        @endphp
                         <tr>
                             <td class="label-cell font-bold">Jenis barang</td>
                             <td class="value-cell font-bold">: {{ $item->jenis_barang }}</td>
@@ -357,7 +368,7 @@
                         </tr>
                         <tr>
                             <td class="label-cell">Subtotal</td>
-                            <td class="text-right">Rp {{ number_format($item->jumlah * $item->harga_satuan, 0, ',', '.') }}
+                            <td class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }}
                             </td>
                         </tr>
                     @endforeach
