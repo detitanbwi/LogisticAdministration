@@ -16,7 +16,32 @@ class KapalController extends Controller
         abort_unless(auth()->user()->can('view.kapal'), 403);
 
         if ($request->ajax()) {
-            $data = Kapal::query();
+            $startDate = \Carbon\Carbon::now()->startOfMonth();
+            $endDate = \Carbon\Carbon::now()->endOfMonth();
+
+            $daterange = $request->input('daterange');
+            if ($daterange) {
+                $dates = explode(' - ', $daterange);
+                if (count($dates) == 2) {
+                    try {
+                        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                    } catch (\Exception $e) {
+                        // Fallback to default
+                    }
+                }
+            }
+
+            $data = Kapal::query()
+                ->withCount(['containers as total_container' => function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('etd', [$startDate, $endDate]);
+                }])
+                ->withCount(['invoices as total_invoice' => function($q) use ($startDate, $endDate) {
+                    $q->whereHas('container', function($qc) use ($startDate, $endDate) {
+                        $qc->whereBetween('etd', [$startDate, $endDate]);
+                    });
+                }]);
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
@@ -37,7 +62,11 @@ class KapalController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('back.pages.kapal.index');
+        $startDate = \Carbon\Carbon::now()->startOfMonth();
+        $endDate = \Carbon\Carbon::now()->endOfMonth();
+        $daterange = $startDate->format('m/d/Y') . ' - ' . $endDate->format('m/d/Y');
+
+        return view('back.pages.kapal.index', compact('daterange'));
     }
 
     public function create()

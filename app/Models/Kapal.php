@@ -13,8 +13,13 @@ class Kapal extends Model
         'nama_kapal',
     ];
 
-    public function invoices(): HasMany
+    public function invoices(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
-        return $this->hasMany(Invoice::class);
+        return $this->hasManyThrough(Invoice::class, Container::class);
+    }
+
+    public function containers(): HasMany
+    {
+        return $this->hasMany(Container::class);
     }
 }
