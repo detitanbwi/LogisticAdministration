@@ -13,7 +13,7 @@
         
         table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
         th, td { border: 1px solid #000; padding: 5px 3px; text-align: left; word-wrap: break-word; font-size: 8pt; vertical-align: middle; }
-        th { background-color: #f2f2f2; font-weight: bold; text-align: center; text-transform: uppercase; }
+        th { background-color: #8B4513; color: white; font-weight: bold; text-align: center; text-transform: uppercase; }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }
@@ -21,7 +21,9 @@
         
         @media print {
             .no-print { display: none; }
-            body { padding: 0; }
+            body { padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            th { background-color: #8B4513 !important; color: white !important; }
+            tfoot tr { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
         .btn-print {
@@ -56,14 +58,11 @@
                 <th style="width: 70px;">ETD</th>
                 <th style="width: 120px;">Pengirim</th>
                 <th style="width: 120px;">Penerima</th>
-                <th style="width: 25px;">P</th>
-                <th style="width: 25px;">L</th>
-                <th style="width: 25px;">T</th>
-                <th style="width: 30px;">Koli</th>
-                <th style="width: 50px;">Jumlah</th>
-                <th style="width: 40px;">Satuan</th>
-                <th style="width: 90px;">Tagihan</th>
-                <th style="width: 50px;">Tanda Terima</th>
+                <th style="width: 35px;">Koli</th>
+                <th style="width: 60px;">Jumlah</th>
+                <th style="width: 50px;">Satuan</th>
+                <th style="width: 100px;">Tagihan</th>
+                <th style="width: 60px;">Tanda Terima</th>
             </tr>
         </thead>
         <tbody>
@@ -104,9 +103,6 @@
                             @php 
                                 $totalJumlah += $item->jumlah;
                             @endphp
-                            <td class="text-center">{{ $item->p ?: '-' }}</td>
-                            <td class="text-center">{{ $item->l ?: '-' }}</td>
-                            <td class="text-center">{{ $item->t ?: '-' }}</td>
                             <td class="text-center">{{ $item->koli }}</td>
                             <td class="text-center">{{ number_format($item->jumlah, 3, ',', '.') }}</td>
                             <td class="text-center">{{ $item->satuan }}</td>
@@ -128,9 +124,6 @@
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>
-                        <td class="text-center">-</td>
-                        <td class="text-center">-</td>
-                        <td class="text-center">-</td>
                         <td class="text-right nowrap">
                             Rp {{ number_format($totalTagihan, 0, ',', '.') }}
                         </td>
@@ -142,18 +135,18 @@
                 @endif
             @empty
                 <tr>
-                    <td colspan="13" class="text-center">Tidak ada data untuk periode ini.</td>
+                    <td colspan="10" class="text-center">Tidak ada data untuk periode ini.</td>
                 </tr>
             @endforelse
         </tbody>
         <tfoot>
-            <tr style="background-color: #f2f2f2; font-weight: bold;">
-                <td colspan="9" class="text-right">TOTAL JUMLAH</td>
+            <tr style="background-color: #8B4513 !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact;">
+                <td colspan="6" class="text-right">TOTAL JUMLAH</td>
                 <td class="text-center">{{ number_format($totalJumlah, 3, ',', '.') }}</td>
                 <td colspan="3"></td>
             </tr>
-            <tr style="background-color: #e2e2e2; font-weight: bold;">
-                <td colspan="9" class="text-right">GRAND TOTAL</td>
+            <tr style="background-color: #A0522D !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact;">
+                <td colspan="6" class="text-right">GRAND TOTAL</td>
                 <td></td>
                 <td></td>
                 <td class="text-right nowrap">Rp {{ number_format($totalTagihanAll, 0, ',', '.') }}</td>

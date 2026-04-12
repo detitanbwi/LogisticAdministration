@@ -155,7 +155,7 @@
 <body onload="window.print()">
     @php
         $invoice = $finance->invoice;
-        $dpp = $invoice->items->sum(function($item) {
+        $dpp = $invoice->items->sum(function ($item) {
             return $item->jumlah * $item->harga_satuan;
         });
         $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
@@ -357,7 +357,8 @@
                         </tr>
                         <tr>
                             <td class="label-cell">Subtotal</td>
-                            <td class="text-right">Rp {{ number_format($item->jumlah * $item->harga_satuan, 0, ',', '.') }}</td>
+                            <td class="text-right">Rp {{ number_format($item->jumlah * $item->harga_satuan, 0, ',', '.') }}
+                            </td>
                         </tr>
                     @endforeach
 

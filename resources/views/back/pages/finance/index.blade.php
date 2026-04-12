@@ -207,6 +207,7 @@
             var table = $('#financeTable').DataTable();
             var printWindow = window.open('', '_blank');
             var totalGrandTagihan = 0;
+            var rows = '';
             table.rows({
                 search: 'applied'
             }).every(function () {
@@ -261,8 +262,12 @@
                                                                                         .filter-info p { margin: 2px 0; font-size: 10pt; }
                                                                                         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
                                                                                         th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
-                                                                                        th { background-color: #f0f0f0; font-weight: bold; }
-                                                                                        @media print { body { margin: 0; } }
+                                                                                        th { background-color: #8B4513 !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                                                                        @media print { 
+                                                                                            body { margin: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } 
+                                                                                            th { background-color: #8B4513 !important; color: white !important; }
+                                                                                            tfoot tr { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                                                                                        }
                                                                                     </style>
                                                                                 </head>
                                                                                 <body>
@@ -271,19 +276,19 @@
                                                                                     <table>
                                                                                         <thead>
                                                                                             <tr>
-                                                                                                <th>No</th>
-                                                                                                <th>No Invoice</th>
-                                                                                                <th>Pengirim</th>
-                                                                                                <th>Penerima</th>
-                                                                                                <th>Total Tagihan</th>
-                                                                                                <th>Status Tagihan</th>
-                                                                                                <th>Tanggal Tagih</th>
-                                                                                                <th>Masa Tunggakan</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">No</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">No Invoice</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Pengirim</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Penerima</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Total Tagihan</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Status Tagihan</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Tanggal Tagih</th>
+                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Masa Tunggakan</th>
                                                                                             </tr>
                                                                                         </thead>
                                                                                         <tbody>${rows}</tbody>
                                                                                         <tfoot>
-                                                                                            <tr style="font-weight: bold; background-color: #f0f0f0;">
+                                                                                            <tr style="font-weight: bold; background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
                                                                                                 <td colspan="4" style="text-align: right;">GRAND TOTAL</td>
                                                                                                 <td>${formattedGrandTotal}</td>
                                                                                                 <td colspan="3"></td>
