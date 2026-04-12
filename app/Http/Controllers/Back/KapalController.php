@@ -44,6 +44,12 @@ class KapalController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->editColumn('total_container', function($row) {
+                    return '<span class="badge bg-soft-info text-info px-3">' . ($row->total_container ?? 0) . ' Container</span>';
+                })
+                ->editColumn('total_invoice', function($row) {
+                    return '<span class="badge bg-soft-primary text-primary px-3">' . ($row->total_invoice ?? 0) . ' Invoice</span>';
+                })
                 ->addColumn('action', function($row){
                     $editUrl = route('admin.kapal.edit', $row->id);
                     $btn = '<div class="hstack gap-2 justify-content-end">';
@@ -59,7 +65,7 @@ class KapalController extends Controller
                     $btn .= '</div>';
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['total_container', 'total_invoice', 'action'])
                 ->make(true);
         }
         $startDate = \Carbon\Carbon::now()->startOfMonth();
