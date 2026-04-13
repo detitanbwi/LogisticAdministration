@@ -71,6 +71,7 @@
     @php 
         $no = 1; 
         $grandTotalJumlah = 0;
+        $grandTotalTagihan = 0;
     @endphp
     @forelse ($finances as $finance)
         @php
@@ -116,6 +117,7 @@
                     }
                 }
             }
+            $grandTotalTagihan += round($grand_total_val);
         @endphp
         <tr style="vertical-align: middle;">
             <td></td>{{-- Col A spacer --}}

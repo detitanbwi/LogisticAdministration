@@ -163,10 +163,9 @@
         });
         $fee_val = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
         $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
-        $total_all = $dpp_base + $fee_val;
-        if ($is_pkp) {
-            $total_all = round($total_all * 1.011);
-        }
+        $totalDpp = $dpp_base + $fee_val;
+        $ppn = $is_pkp ? $totalDpp * 0.011 : 0;
+        $grandTotal = $totalDpp + $ppn;
 
         $today = \Carbon\Carbon::now()->startOfDay();
         $tagih = $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->startOfDay() : null;
