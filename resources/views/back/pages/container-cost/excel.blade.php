@@ -89,6 +89,9 @@
         @php
             $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
             $dpp_base = $inv->items->sum(function($item) {
+                if (strtoupper($item->satuan) == 'UNIT') {
+                    return $item->koli * $item->harga_satuan;
+                }
                 return $item->jumlah * $item->harga_satuan;
             });
             $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
@@ -101,10 +104,17 @@
             $grandTotalTagihan += $grand_total_val;
 
             $masa_tunggakan = '-';
-            if ($inv->finance && $inv->finance->tanggal_tagih) {
-                $tgl_tagih = \Carbon\Carbon::parse($inv->finance->tanggal_tagih);
-                $tgl_transfer = $inv->finance->tgl_transfer ? \Carbon\Carbon::parse($inv->finance->tgl_transfer) : now();
-                $masa_tunggakan = $tgl_tagih->diffInDays($tgl_transfer) . ' Hari';
+            if ($inv->finance && $inv->finance->tgl_transfer) {
+                $masa_tunggakan = 'Lunas';
+            } else {
+                if ($inv->finance && $inv->finance->tanggal_tagih) {
+                    $today = \Carbon\Carbon::now()->startOfDay();
+                    $tagih = \Carbon\Carbon::parse($inv->finance->tanggal_tagih)->startOfDay();
+                    $diffDays = $tagih->diffInDays($today, false);
+                    if ($diffDays > 0) {
+                        $masa_tunggakan = intval($diffDays) . ' Hari';
+                    }
+                }
             }
             if ($inv->items) {
                 foreach($inv->items as $item) {
@@ -136,7 +146,13 @@
                 <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
                     {{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
                 <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                    {{ number_format($inv->items[0]->jumlah * $inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
+                    @php
+                        $sub = (strtoupper($inv->items[0]->satuan ?? '') == 'UNIT') 
+                            ? $inv->items[0]->koli * $inv->items[0]->harga_satuan 
+                            : $inv->items[0]->jumlah * $inv->items[0]->harga_satuan;
+                    @endphp
+                    {{ number_format($sub, 0, ',', '.') }}
+                </td>
             @else
                 <td style="border: 1px solid #000;">-</td>
                 <td style="border: 1px solid #000;">-</td>
@@ -196,7 +212,13 @@
                     <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
                         {{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
                     <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                        {{ number_format($inv->items[$i]->jumlah * $inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
+                        @php
+                            $subItem = (strtoupper($inv->items[$i]->satuan ?? '') == 'UNIT') 
+                                ? $inv->items[$i]->koli * $inv->items[$i]->harga_satuan 
+                                : $inv->items[$i]->jumlah * $inv->items[$i]->harga_satuan;
+                        @endphp
+                        {{ number_format($subItem, 0, ',', '.') }}
+                    </td>
                 </tr>
             @endfor
         @endif

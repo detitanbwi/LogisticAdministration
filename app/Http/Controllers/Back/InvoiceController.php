@@ -486,7 +486,12 @@ class InvoiceController extends Controller
                 $jumlahVal = $clean($rawJumlah);
                 $hargaSatuanVal = $clean($rawHarga);
                 
-                $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
+                if (strtoupper($itemData['satuan'] ?? '') == 'UNIT') {
+                    $subtotal = round((float)($itemData['koli'] ?? 0) * (float)$hargaSatuanVal);
+                    $jumlahVal = 0;
+                } else {
+                    $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                }
                 $totalTagihan += $subtotal;
 
                 $itemData['jumlah'] = $jumlahVal;
