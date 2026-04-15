@@ -5,20 +5,20 @@
     </tr>
     <tr style="vertical-align: middle;">
         <td></td>{{-- Col A spacer --}}
-        <th colspan="34" align="center" style="font-weight: bold; font-size: 14pt;">
+        <th colspan="29" align="center" style="font-weight: bold; font-size: 14pt;">
             {{ $filters['judul_print'] ?? 'REKAPITULASI INVOICE' }}
         </th>
     </tr>
     <tr style="vertical-align: middle;">
         <td></td>
-        <th colspan="34" align="center" style="font-weight: bold; font-size: 11pt;">
+        <th colspan="29" align="center" style="font-weight: bold; font-size: 11pt;">
             Periode: {{ !empty($filters['daterange']) ? $filters['daterange'] : 'Semua tanggal' }}
         </th>
     </tr>
     {{-- Row 3: Empty separator --}}
     <tr style="vertical-align: middle;">
         <td></td>
-        <td colspan="34"></td>
+        <td colspan="29"></td>
     </tr>
     {{-- Row 4: Table Header --}}
     <tr style="vertical-align: middle;">
@@ -45,11 +45,6 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Contr / Seal</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Layanan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jenis Barang</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">P</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">x</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">L</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">x</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">T</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Koli</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Jumlah</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Sat</th>
@@ -151,22 +146,12 @@
 
                 @if($inv->items && $inv->items->count() > 0)
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
-                    <td style="border: 1px solid #000;">{{ $inv->items[0]->p ?? '-' }}</td>
-                    <td style="border: 1px solid #000;">X</td>
-                    <td style="border: 1px solid #000;">{{ $inv->items[0]->l ?? '-' }}</td>
-                    <td style="border: 1px solid #000;">X</td>
-                    <td style="border: 1px solid #000;">{{ $inv->items[0]->t ?? '-' }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                     <td style="border: 1px solid #000;">
                         {{ number_format($inv->items[0]->jumlah, 3, ',', '.') }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
                 @else
-                    <td style="border: 1px solid #000;">-</td>
-                    <td style="border: 1px solid #000;">-</td>
-                    <td style="border: 1px solid #000;">-</td>
-                    <td style="border: 1px solid #000;">-</td>
-                    <td style="border: 1px solid #000;">-</td>
                     <td style="border: 1px solid #000;">-</td>
                     <td style="border: 1px solid #000;">-</td>
                     <td style="border: 1px solid #000;">-</td>
@@ -197,11 +182,6 @@
                     <tr style="vertical-align: middle;">
                         <td></td>{{-- Col A spacer --}}
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
-                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->p ?? '-' }}</td>
-                        <td style="border: 1px solid #000;">X</td>
-                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->l ?? '-' }}</td>
-                        <td style="border: 1px solid #000;">X</td>
-                        <td style="border: 1px solid #000;">{{ $inv->items[$i]->t ?? '-' }}</td>
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                         <td style="border: 1px solid #000;">
                             {{ number_format($inv->items[$i]->jumlah, 3, ',', '.') }}
@@ -214,13 +194,13 @@
         {{-- Total Accumulation Row --}}
         <tr style="vertical-align: middle; font-weight: bold; background-color: #f2f2f2;">
             <td></td>{{-- Col A spacer --}}
-            <td colspan="28" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
+            <td colspan="23" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
             <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalJumlah, 3, ',', '.') }}</td>
             <td colspan="7" style="border: 1px solid #000;"></td>
         </tr>
         <tr style="vertical-align: middle; font-weight: bold; background-color: #e2e2e2;">
             <td></td>{{-- Col A spacer --}}
-            <td colspan="32" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
+            <td colspan="27" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
             <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalTagihan, 0, ',', '.') }}</td>
             <td colspan="3" style="border: 1px solid #000;"></td>
         </tr>
