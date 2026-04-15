@@ -17,6 +17,10 @@ class InvoiceItemDetail extends Model
         'jumlah',
     ];
 
+    protected $casts = [
+        'jumlah' => 'decimal:4',
+    ];
+
     public function item()
     {
         return $this->belongsTo(InvoiceItem::class, 'invoice_item_id');

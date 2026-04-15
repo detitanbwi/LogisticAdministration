@@ -23,7 +23,7 @@ class InvoiceItem extends Model
     ];
 
     protected $casts = [
-        'jumlah' => 'decimal:2',
+        'jumlah' => 'decimal:4',
         'harga_satuan' => 'decimal:2',
         'subtotal' => 'decimal:2',
     ];

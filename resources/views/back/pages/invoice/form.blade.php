@@ -707,6 +707,11 @@
                 } else if (satuan === 'Kg') {
                     result = (p * l * t * koli) / 4000;
                 }
+                
+                // Store raw value with high precision in a data attribute
+                $(this).find('.det-jumlah').data('raw-value', result);
+                // Display with 3 decimals for user but keep at least 4 in background if possible?
+                // Actually, the user says "jangan ada pembulatan", so let's show 3 but calculate with more.
                 $(this).find('.det-jumlah').val(formatVal(result, 3));
             });
             updateSubTableSummary(rowId);
@@ -719,13 +724,17 @@
 
             $(`#detail_container_${rowId} .detail-row`).each(function() {
                 const koli = parseFloat($(this).find('.det-koli').val()) || 0;
-                const jumlah = parseCurrency($(this).find('.det-jumlah').val()) || 0;
+                // Use the raw value if available to avoid cumulative rounding errors
+                const rawVal = $(this).find('.det-jumlah').data('raw-value');
+                const jumlah = rawVal !== undefined ? parseFloat(rawVal) : (parseCurrency($(this).find('.det-jumlah').val()) || 0);
+                
                 totalKoli += koli;
                 totalJumlah += jumlah;
             });
 
             row.find('.total-koli-sub').text(totalKoli);
             row.find('.total-jumlah-sub').text(formatVal(totalJumlah, 3));
+            row.find('.total-jumlah-sub').data('raw-value', totalJumlah);
 
             return { totalKoli, totalJumlah };
         }
@@ -736,7 +745,9 @@
 
             // Sync to parent
             row.find('.koli-input').val(summary.totalKoli);
+            // Use up to 4 decimals for the hidden quantity to match database precision
             row.find('.qty-input').val(formatVal(summary.totalJumlah, 3));
+            $(`#jumlah_hidden_${rowId}`).val(summary.totalJumlah.toFixed(4));
 
             calculateSubtotal(rowId);
         }
