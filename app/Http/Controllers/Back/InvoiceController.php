@@ -223,10 +223,10 @@ class InvoiceController extends Controller
                     $hargaSatuanVal = $clean($item['harga_satuan'] ?? 0);
                     
                     if (strtoupper($item['satuan'] ?? '') == 'UNIT') {
-                        $subtotal = round((float)($item['koli'] ?? 0) * (float)$hargaSatuanVal);
+                        $subtotal = (float)($item['koli'] ?? 0) * (float)$hargaSatuanVal;
                         $jumlahVal = 0;
                     } else {
-                        $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                        $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
                     }
                     $totalTagihan += $subtotal;
 
@@ -271,12 +271,12 @@ class InvoiceController extends Controller
 
             // Calculate PPN if PKP
             if ($request->pkp_status == 'PKP') {
-                $totalTagihan += round($totalTagihan * 0.011);
+                $totalTagihan += $totalTagihan * 0.011;
             }
 
             // Create Finance
             $invoice->finance()->create([
-                'total_tagihan' => round($totalTagihan),
+                'total_tagihan' => $totalTagihan,
                 'ditagih_ke' => 'Penerima', // Default
                 'status_tagihan' => 'Belum',
             ]);
@@ -337,10 +337,10 @@ class InvoiceController extends Controller
                     $hargaSatuanVal = $clean($item['harga_satuan'] ?? 0);
                     
                     if (strtoupper($item['satuan'] ?? '') == 'UNIT') {
-                        $subtotal = round((float)($item['koli'] ?? 0) * (float)$hargaSatuanVal);
+                        $subtotal = (float)($item['koli'] ?? 0) * (float)$hargaSatuanVal;
                         $jumlahVal = 0;
                     } else {
-                        $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                        $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
                     }
                     $totalTagihan += $subtotal;
 
@@ -386,15 +386,15 @@ class InvoiceController extends Controller
 
             // Calculate PPN if PKP
             if ($request->pkp_status == 'PKP') {
-                $totalTagihan += round($totalTagihan * 0.011);
+                $totalTagihan += $totalTagihan * 0.011;
             }
 
             // Update Finance Total Tagihan
             if ($invoice->finance) {
-                $invoice->finance->update(['total_tagihan' => round($totalTagihan)]);
+                $invoice->finance->update(['total_tagihan' => $totalTagihan]);
             } else {
                 $invoice->finance()->create([
-                    'total_tagihan' => round($totalTagihan),
+                    'total_tagihan' => $totalTagihan,
                     'ditagih_ke' => 'Penerima',
                     'status_tagihan' => 'Belum',
                 ]);
@@ -487,10 +487,10 @@ class InvoiceController extends Controller
                 $hargaSatuanVal = $clean($rawHarga);
                 
                 if (strtoupper($itemData['satuan'] ?? '') == 'UNIT') {
-                    $subtotal = round((float)($itemData['koli'] ?? 0) * (float)$hargaSatuanVal);
+                    $subtotal = (float)($itemData['koli'] ?? 0) * (float)$hargaSatuanVal;
                     $jumlahVal = 0;
                 } else {
-                    $subtotal = round((float)$jumlahVal * (float)$hargaSatuanVal);
+                    $subtotal = (float)$jumlahVal * (float)$hargaSatuanVal;
                 }
                 $totalTagihan += $subtotal;
 
@@ -531,7 +531,7 @@ class InvoiceController extends Controller
         }
 
         $finance = new Finance([
-            'total_tagihan' => round($totalTagihan),
+            'total_tagihan' => $totalTagihan,
             'status_tagihan' => $request->status_pembayaran ?? 'Belum'
         ]);
         $invoice->setRelation('finance', $finance);

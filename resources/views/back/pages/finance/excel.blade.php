@@ -117,7 +117,7 @@
                     }
                 }
             }
-            $grandTotalTagihan += round($grand_total_val);
+            $grandTotalTagihan += $grand_total_val;
         @endphp
         <tr style="vertical-align: middle;">
             <td></td>{{-- Col A spacer --}}
@@ -154,7 +154,12 @@
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                 <td style="border: 1px solid #000;">
-                    {{ rtrim(rtrim(number_format($inv->items[0]->jumlah, 3, ',', '.'), '0'), ',') }}
+                    @php
+                        $val = (float)$inv->items[0]->jumlah;
+                        $factor = pow(10, 3);
+                        $truncated = floor($val * $factor) / $factor;
+                    @endphp
+                    {{ rtrim(rtrim(number_format($truncated, 3, ',', '.'), '0'), ',') }}
                 </td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
                 <td style="border: 1px solid #000;">
@@ -189,7 +194,7 @@
                 @endif
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ number_format(round($grand_total_val), 0, '', '') }}
+                {{ number_format($grand_total_val, 0, '', '') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $finance->bap_balik ?? '-' }}</td>
@@ -222,7 +227,12 @@
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                     <td style="border: 1px solid #000;">
-                        {{ rtrim(rtrim(number_format($inv->items[$i]->jumlah, 3, ',', '.'), '0'), ',') }}
+                        @php
+                            $val = (float)$inv->items[$i]->jumlah;
+                            $factor = pow(10, 3);
+                            $truncated = floor($val * $factor) / $factor;
+                        @endphp
+                        {{ rtrim(rtrim(number_format($truncated, 3, ',', '.'), '0'), ',') }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
                     <td style="border: 1px solid #000;">

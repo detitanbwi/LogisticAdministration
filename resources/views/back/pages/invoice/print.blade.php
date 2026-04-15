@@ -117,12 +117,12 @@
             return '';
         }
 
-        $dpp = round($invoice->items->sum('subtotal'));
-        $feeTotal = $invoice->additionalFees ? round($invoice->additionalFees->sum('harga')) : 0;
+        $dpp = $invoice->items->sum('subtotal');
+        $feeTotal = $invoice->additionalFees ? $invoice->additionalFees->sum('harga') : 0;
         $dpp_and_fee = $dpp + $feeTotal;
         $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
         $dpp_display = $dpp_and_fee;
-        $ppn = $is_pkp ? round($dpp_and_fee * 0.011) : 0;
+        $ppn = $is_pkp ? $dpp_and_fee * 0.011 : 0;
         $grandTotal = $dpp_and_fee + $ppn;
 
         // Parse layanan
@@ -295,9 +295,12 @@
 
                         </td>
                         <td class="text-center font-bold" style="border: 1px solid #000;">{{ $item->koli }}</td>
-                        <td class="text-center" style="border: 1px solid #000;">
-                            {{ number_format($item->jumlah, 3, ',', '.') }}
-                        </td>
+                            @php
+                                $val = (float)$item->jumlah;
+                                $factor = pow(10, 3);
+                                $truncated = floor($val * $factor) / $factor;
+                            @endphp
+                            {{ number_format($truncated, 3, ',', '.') }}
                         <td class="text-center" style="border: 1px solid #000;">{{ $item->satuan }}</td>
                         <td style="border: 1px solid #000;">
                             <div style="display: flex; justify-content: space-between;">
@@ -380,7 +383,7 @@
             <tr>
                 <td style="width: 20%; padding: 4px 10px; border-right: 1px solid #000;">Terbilang :</td>
                 <td class="text-center" style="padding: 4px 10px;">
-                    {{ terbilang(round($grandTotal)) }} Rupiah
+                    {{ terbilang($grandTotal) }} Rupiah
                 </td>
             </tr>
         </table>

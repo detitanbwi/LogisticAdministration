@@ -80,14 +80,14 @@
                     // Recalculate on-the-fly with consistent rounding
                     $dpp_base = $items->sum(function($item) {
                         if (strtoupper($item->satuan) == 'UNIT') {
-                            return round($item->koli * $item->harga_satuan);
+                            return $item->koli * $item->harga_satuan;
                         }
-                        return round($item->jumlah * $item->harga_satuan);
+                        return $item->jumlah * $item->harga_satuan;
                     });
-                    $fee_val = $inv->additionalFees ? round($inv->additionalFees->sum('harga')) : 0;
+                    $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
                     $totalTagihan = $dpp_base + $fee_val;
                     if (strtoupper($inv->pkp_status) == 'PKP') {
-                        $totalTagihan += round($totalTagihan * 0.011);
+                        $totalTagihan += $totalTagihan * 0.011;
                     }
                 @endphp
                 @if(count($items) > 0)
@@ -109,7 +109,12 @@
                                 }
                             @endphp
                             <td class="text-center">{{ $item->koli }}</td>
-                            <td class="text-center">{{ number_format($item->jumlah, 3, ',', '.') }}</td>
+                            @php
+                                $val = (float)$item->jumlah;
+                                $factor = pow(10, 3);
+                                $truncated = floor($val * $factor) / $factor;
+                            @endphp
+                            <td class="text-center">{{ number_format($truncated, 3, ',', '.') }}</td>
                             <td class="text-center">{{ $item->satuan }}</td>
                             @if($index === 0)
                                 <td rowspan="{{ $rowCount }}" class="text-right nowrap">

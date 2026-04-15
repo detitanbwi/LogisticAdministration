@@ -710,9 +710,8 @@
                 
                 // Store raw value with high precision in a data attribute
                 $(this).find('.det-jumlah').data('raw-value', result);
-                // Display with 3 decimals for user but keep at least 4 in background if possible?
-                // Actually, the user says "jangan ada pembulatan", so let's show 3 but calculate with more.
-                $(this).find('.det-jumlah').val(formatVal(result, 3));
+                // Truncate to 3 decimal places without rounding for display
+                $(this).find('.det-jumlah').val(formatValTruncate(result, 3));
             });
             updateSubTableSummary(rowId);
         }
@@ -733,7 +732,7 @@
             });
 
             row.find('.total-koli-sub').text(totalKoli);
-            row.find('.total-jumlah-sub').text(formatVal(totalJumlah, 3));
+            row.find('.total-jumlah-sub').text(formatValTruncate(totalJumlah, 3));
             row.find('.total-jumlah-sub').data('raw-value', totalJumlah);
 
             return { totalKoli, totalJumlah };
@@ -745,8 +744,8 @@
 
             // Sync to parent
             row.find('.koli-input').val(summary.totalKoli);
-            // Use up to 4 decimals for the hidden quantity to match database precision
-            row.find('.qty-input').val(formatVal(summary.totalJumlah, 3));
+            // Use 3 decimals truncated for display
+            row.find('.qty-input').val(formatValTruncate(summary.totalJumlah, 3));
             $(`#jumlah_hidden_${rowId}`).val(summary.totalJumlah.toFixed(4));
 
             calculateSubtotal(rowId);
@@ -775,6 +774,22 @@
             if (isNaN(val)) return '0';
             
             let str = precision !== null ? val.toFixed(precision) : val.toString();
+            let parts = str.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return parts.join(',');
+        }
+
+        // Helper to format number with truncation (no rounding)
+        function formatValTruncate(n, precision = 3) {
+            if (n === null || n === undefined || n === '') return '0';
+            let val = parseFloat(n);
+            if (isNaN(val)) return '0';
+            
+            // Truncate by multiplying 10^precision, floor, then dividing back
+            let factor = Math.pow(10, precision);
+            let truncated = Math.floor(val * factor) / factor;
+            
+            let str = truncated.toFixed(precision);
             let parts = str.split('.');
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             return parts.join(',');
@@ -1007,7 +1022,7 @@
             } else {
                 rawSubtotal = qty * price;
             }
-            const subtotal = Math.round(rawSubtotal);
+            const subtotal = rawSubtotal;
 
             $(`#subtotal_input_${id}`).val(subtotal);
             $(`#subtotal_display_${id}`).val(new Intl.NumberFormat('id-ID').format(subtotal));
@@ -1030,17 +1045,17 @@
 
             const pkpStatus = $('#pkp_status').val();
             let ppn = 0;
-            const totalDasar = Math.round(totalDPP + totalFees);
+            const totalDasar = totalDPP + totalFees;
             if (pkpStatus === 'PKP') {
                 // PKP dihitung dari (total Barang + total Tambahan)
-                ppn = Math.round(totalDasar * 0.011);
+                ppn = totalDasar * 0.011;
             }
 
             const grandTotal = totalDasar + ppn;
 
-            $('#totalDPP').text(new Intl.NumberFormat('id-ID').format(Math.round(totalDPP)));
+            $('#totalDPP').text(new Intl.NumberFormat('id-ID').format(totalDPP));
             $('#totalPPN').text(new Intl.NumberFormat('id-ID').format(ppn));
-            $('#totalFee').text(new Intl.NumberFormat('id-ID').format(Math.round(totalFees)));
+            $('#totalFee').text(new Intl.NumberFormat('id-ID').format(totalFees));
             $('#grandTotal').text(new Intl.NumberFormat('id-ID').format(grandTotal));
         }
     </script>
