@@ -295,12 +295,14 @@
 
                         </td>
                         <td class="text-center font-bold" style="border: 1px solid #000;">{{ $item->koli }}</td>
+                        <td class="text-center" style="border: 1px solid #000;">
                             @php
                                 $val = (float)$item->jumlah;
                                 $factor = pow(10, 3);
                                 $truncated = floor($val * $factor) / $factor;
                             @endphp
                             {{ number_format($truncated, 3, ',', '.') }}
+                        </td>
                         <td class="text-center" style="border: 1px solid #000;">{{ $item->satuan }}</td>
                         <td style="border: 1px solid #000;">
                             <div style="display: flex; justify-content: space-between;">
