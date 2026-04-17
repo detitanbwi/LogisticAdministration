@@ -191,7 +191,7 @@
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->terima_barang ? 'SUDAH' : 'BELUM' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->tujuanDaerah->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->status_pembayaran ?? '-' }}</td>
-                    <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->layanan ?? '-') }}</td>
+                    <td rowspan="{{ $rowCount }}" class="text-center">{{ strtoupper($inv->layanan->nama ?? '-') }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ mb_strtoupper($inv->pkp_status) }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->catatan_muntahan ?? '-' }}</td>
                 </tr>

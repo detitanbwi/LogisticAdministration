@@ -532,7 +532,7 @@ class InvoiceController extends Controller
         $invoice->setRelation('additionalFees', $addFees);
 
         if ($request->pkp_status == 'PKP') {
-            $totalTagihan += round($totalTagihan * 0.011);
+            $totalTagihan += ($totalTagihan * 0.011);
         }
 
         $finance = new Finance([
@@ -546,6 +546,7 @@ class InvoiceController extends Controller
 
     public function export(Request $request)
     {
+        set_time_limit(300);
         abort_unless(auth()->user()->can('view.invoice') || auth()->user()->can('print.invoice'), 403);
 
         $query = $this->getFilteredInvoices($request);
@@ -588,7 +589,7 @@ class InvoiceController extends Controller
 
     protected function getFilteredInvoices(Request $request)
     {
-        $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'additionalFees', 'tujuanDaerah', 'items', 'upDetail'])->select('invoice.*');
+        $query = Invoice::with(['container.kapal', 'container.tujuan', 'container.asal', 'pengirim', 'penerima', 'finance', 'additionalFees', 'tujuanDaerah', 'items', 'upDetail', 'layanan'])->select('invoice.*');
 
         if ($request->filled('daterange')) {
             $dates = explode(' - ', $request->daterange);

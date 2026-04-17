@@ -761,13 +761,18 @@
 
             $(`#detail_container_${rowId} .detail-row`).each(function() {
                 const koli = parseFloat($(this).find('.det-koli').val()) || 0;
-                // Use the raw value if available to avoid cumulative rounding errors
-                const rawVal = $(this).find('.det-jumlah').data('raw-value');
-                const jumlah = rawVal !== undefined ? parseFloat(rawVal) : (parseCurrency($(this).find('.det-jumlah').val()) || 0);
+                
+                // Use the displayed (truncated) value for summing to ensure 
+                // the summary matches the manual sum of what user sees.
+                const jumlahDisplay = $(this).find('.det-jumlah').val();
+                const truncatedRowVal = parseCurrency(jumlahDisplay);
                 
                 totalKoli += koli;
-                totalJumlah += jumlah;
+                totalJumlah += truncatedRowVal;
             });
+
+            // Clean up possible floating point noise (e.g., 0.1 + 0.2 = 0.300000004)
+            totalJumlah = Math.round(totalJumlah * 1000) / 1000;
 
             row.find('.total-koli-sub').text(totalKoli);
             row.find('.total-jumlah-sub').text(formatValTruncate(totalJumlah, 3));
