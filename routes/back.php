@@ -10,6 +10,7 @@ use App\Http\Controllers\Back\TujuanController;
 use App\Http\Controllers\Back\CustomerController;
 use App\Http\Controllers\Back\PackingListController;
 use App\Http\Controllers\Back\ContainerCostController;
+use App\Http\Controllers\Back\LayananController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin.guest')->group(function () {
@@ -40,6 +41,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('kapal', KapalController::class);
         Route::resource('tujuan', TujuanController::class);
         Route::resource('tujuan-daerah', App\Http\Controllers\Back\TujuanDaerahController::class)->only(['store']);
+        Route::resource('layanan', LayananController::class);
         Route::resource('judul-print', App\Http\Controllers\Back\JudulPrintController::class);
         Route::get('customer/export', [CustomerController::class, 'export'])->name('customer.export');
         Route::resource('customer', CustomerController::class);

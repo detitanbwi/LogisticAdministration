@@ -19,7 +19,7 @@ class Invoice extends Model
         'tgl_masuk',
         'container_id',
         'metode',
-        'layanan',
+        'layanan_id',
         'tujuan_daerah_id',
         'status_pembayaran',
         'pkp_status',
@@ -75,5 +75,10 @@ class Invoice extends Model
     public function tujuanDaerah(): BelongsTo
     {
         return $this->belongsTo(TujuanDaerah::class, 'tujuan_daerah_id');
+    }
+
+    public function layanan(): BelongsTo
+    {
+        return $this->belongsTo(Layanan::class, 'layanan_id');
     }
 }

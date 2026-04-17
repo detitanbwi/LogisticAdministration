@@ -141,7 +141,7 @@
                     {{ $inv->container ? $inv->container->nomor_container : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                    {{ strtoupper($inv->layanan ?? '-') }}
+                    {{ strtoupper($inv->layanan->nama ?? '-') }}
                 </td>
 
                 @if($inv->items && $inv->items->count() > 0)

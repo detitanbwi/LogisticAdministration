@@ -15,6 +15,7 @@ use App\Http\Requests\Back\UpdateInvoiceRequest;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Models\TujuanDaerah;
+use App\Models\Layanan;
 
 class InvoiceController extends Controller
 {
@@ -173,7 +174,8 @@ class InvoiceController extends Controller
         $tujuans = Tujuan::all();
         $customers = Customer::all();
         $judulPrints = \App\Models\JudulPrint::all();
-        return view('back.pages.invoice.index', compact('tujuans', 'judulPrints', 'customers'));
+        $layanans = Layanan::all();
+        return view('back.pages.invoice.index', compact('tujuans', 'judulPrints', 'customers', 'layanans'));
     }
 
     /**
@@ -186,8 +188,9 @@ class InvoiceController extends Controller
         $customers = Customer::all();
         $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
         $tujuanDaerahs = TujuanDaerah::all();
+        $layanans = Layanan::all();
 
-        return view('back.pages.invoice.form', compact('customers', 'containers', 'tujuanDaerahs'));
+        return view('back.pages.invoice.form', compact('customers', 'containers', 'tujuanDaerahs', 'layanans'));
     }
 
     /**
@@ -301,8 +304,9 @@ class InvoiceController extends Controller
         $customers = Customer::all();
         $containers = Container::with(['kapal', 'asal', 'tujuan'])->get();
         $tujuanDaerahs = TujuanDaerah::all();
+        $layanans = Layanan::all();
 
-        return view('back.pages.invoice.form', compact('invoice', 'customers', 'containers', 'tujuanDaerahs'));
+        return view('back.pages.invoice.form', compact('invoice', 'customers', 'containers', 'tujuanDaerahs', 'layanans'));
     }
 
     /**
@@ -466,6 +470,7 @@ class InvoiceController extends Controller
         $container = Container::with(['kapal', 'asal', 'tujuan'])->find($request->container_id);
         $invoice->setRelation('container', $container);
         $invoice->setRelation('tujuanDaerah', TujuanDaerah::find($request->tujuan_daerah_id));
+        $invoice->setRelation('layanan', Layanan::find($request->layanan_id));
 
         $items = collect();
         $totalTagihan = 0;

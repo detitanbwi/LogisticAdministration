@@ -101,7 +101,7 @@ return [
     [
         'title' => 'Master Data',
         'icon' => 'feather-database',
-        'can' => ['view.user', 'view.kapal', 'view.tujuan', 'view.customer', 'view.container'],
+        'can' => ['view.user', 'view.kapal', 'view.tujuan', 'view.customer', 'view.container', 'view.layanan'],
         'children' => [
             [
                 'title' => 'Users',
@@ -127,6 +127,11 @@ return [
                 'title' => 'Judul Cetak',
                 'url' => 'admin.judul-print.index',
                 'can' => 'view.customer', // we don't have separate permission for this yet, so bind to master data or user/admin
+            ],
+            [
+                'title' => 'Layanan',
+                'url' => 'admin.layanan.index',
+                'can' => 'view.layanan',
             ],
         ]
     ],

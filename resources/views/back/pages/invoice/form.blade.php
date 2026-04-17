@@ -198,17 +198,26 @@
                         </div>
 
                         <div class="mb-3">
-                            <x-back.select2 label="Metode Pengiriman" name="metode" :options="['FCL' => 'FCL', 'LCL' => 'LCL', 'Break Bulk' => 'Break Bulk']" :selected="$invoice->metode ?? 'FCL'" />
+                            <x-back.select2 label="Metode Pengiriman" name="metode" :options="['LCL' => 'LCL', 'FCL' => 'FCL', 'Ro-Ro' => 'Ro-Ro', 'SOC' => 'SOC', 'Break Bulk' => 'Break Bulk']" :selected="$invoice->metode ?? 'LCL'" />
                         </div>
 
                         <div class="mb-3">
-                            <x-back.select2 label="Layanan" name="layanan" :options="[
-        'Door to Door' => 'DOOR TO DOOR',
-        'CY to CY' => 'CY TO CY',
-        'CY to Door' => 'CY TO DOOR',
-        'Door to CY' => 'DOOR TO CY',
-        'Port to Port' => 'PORT TO PORT',
-    ]" :selected="$invoice->layanan ?? 'DOOR TO DOOR'" />
+                            <x-back.select2 label="Layanan" name="layanan_id" :options="$layanans->pluck('nama', 'id')->toArray()" :selected="$invoice->layanan_id ?? 1"
+                                placeholder="Pilih Layanan" createOptionForm="#collapseLayanan" toggleType="collapse" />
+                        </div>
+
+                        <!-- Inline Layanan Form -->
+                        <div class="collapse mb-3" id="collapseLayanan">
+                            <div class="card card-body bg-light border-0 shadow-sm py-3">
+                                <h6 class="fw-bold mb-3">Tambah Layanan Baru</h6>
+                                <div class="mb-3">
+                                    <x-back.text-input name="new_layanan" id="new_layanan" label="Nama Layanan" placeholder="Masukkan Nama Layanan (contoh: Door to Door)" />
+                                </div>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-sm btn-secondary px-3" onclick="$('#collapseLayanan').collapse('hide')">Batal</button>
+                                    <button type="button" class="btn btn-sm btn-primary px-3" onclick="saveLayanan()">Simpan</button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -518,7 +527,36 @@
                 }
             });
         }
-
+        function saveLayanan() {
+            var nama = $('#new_layanan').val();
+            if (!nama) {
+                Swal.fire('Error', 'Nama Layanan wajib diisi', 'error');
+                return;
+            }
+            $.ajax({
+                url: '{{ route("admin.layanan.store") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    nama: nama
+                },
+                success: function(res) {
+                    var $select = $('#layanan_id');
+                    var newOption = new Option(res.nama, res.id, true, true);
+                    $select.append(newOption).trigger('change');
+                    $('#new_layanan').val('');
+                    $('#collapseLayanan').collapse('hide');
+                    Swal.fire('Berhasil', 'Layanan berhasil ditambahkan', 'success');
+                },
+                error: function(xhr) {
+                    var message = 'Gagal menambahkan Layanan.';
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        message = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                    }
+                    Swal.fire('Error', message, 'error');
+                }
+            });
+        }
 
 
         // --- Item Logic ---

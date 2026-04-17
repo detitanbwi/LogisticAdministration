@@ -48,11 +48,12 @@
 
         @page {
             size: portrait;
-            margin: 1.25cm;
+            margin: 0;
         }
 
         @media print {
             body {
+                margin: 1.25cm;
                 padding: 0;
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
@@ -126,20 +127,21 @@
         $grandTotal = $dpp_and_fee + $ppn;
 
         // Parse layanan
-        $layananParts = explode(' to ', strtolower($invoice->layanan ?? 'cy to door'));
-        $part1 = strtoupper(trim($layananParts[0] ?? 'CY'));
-        $part2 = strtoupper(trim($layananParts[1] ?? 'DOOR'));
-        if (strtolower($invoice->layanan) == 'door to door') {
-            $part1 = 'DOOR';
-            $part2 = 'DOOR';
-        }
-        if (strtolower($invoice->layanan) == 'cy to cy') {
-            $part1 = 'CY';
-            $part2 = 'CY';
-        }
-        if (strtolower($invoice->layanan) == 'port to port') {
-            $part1 = 'PORT';
-            $part2 = 'PORT';
+        $layananName = $invoice->layanan->nama ?? '-';
+        $layananParts = explode(' to ', strtolower($layananName));
+
+        $displayParts = [];
+        if (count($layananParts) > 1) {
+            $displayParts[] = strtoupper(trim($layananParts[0]));
+            $displayParts[] = 'TO';
+            $displayParts[] = strtoupper(trim($layananParts[1]));
+        } else {
+            $words = explode(' ', strtoupper(trim($layananName)));
+            foreach ($words as $word) {
+                if (trim($word) !== '') {
+                    $displayParts[] = $word;
+                }
+            }
         }
     @endphp
 
@@ -232,7 +234,7 @@
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Layanan</td>
-                            <td style="padding: 2px;">: {{ strtoupper($invoice->layanan ?? '-') }}</td>
+                            <td style="padding: 2px;">: {{ strtoupper($invoice->layanan->nama ?? '-') }}</td>
                         </tr>
                         <tr>
                             <td style="padding: 2px;">Up</td>
@@ -267,9 +269,9 @@
 
         <div class="text-center font-bold" style="font-size: 11pt; margin: 8px 0;">
             <div style="display: flex; justify-content: space-around; width: 100%;">
-                <span>{{ $part1 }}</span>
-                <span>TO</span>
-                <span>{{ $part2 }}</span>
+                @foreach($displayParts as $part)
+                    <span>{{ $part }}</span>
+                @endforeach
             </div>
         </div>
 
@@ -297,7 +299,7 @@
                         <td class="text-center font-bold" style="border: 1px solid #000;">{{ $item->koli }}</td>
                         <td class="text-center" style="border: 1px solid #000;">
                             @php
-                                $val = (float)$item->jumlah;
+                                $val = (float) $item->jumlah;
                                 $factor = pow(10, 3);
                                 $truncated = floor($val * $factor) / $factor;
                             @endphp
@@ -349,9 +351,14 @@
                 <td rowspan="3" style="width: 60%; vertical-align: bottom; position: relative;">
                     <!-- Bank Account Info -->
                     <div style="text-align: center; margin-bottom: 5px;">
-                        BANK BCA<br>
-                        0072579401<br>
-                        PT.SINAR CEMARA JAYA
+                        <div style="font-size: 11pt; line-height: 1.2;">
+                            BANK BCA<br>
+                            0072579401<br>
+                            PT.SINAR CEMARA JAYA
+                        </div>
+                        <div style="color: #dc3545; font-weight: bold; font-size: 8pt; margin-top: 5px;">
+                            PEMBAYARAN SELAIN KE REKENING DIATAS BUKAN TANGGUNGJAWAB PERUSAHAAN !
+                        </div>
                     </div>
                 </td>
                 <td style="width: 20%; padding: 5px 10px;">Total DPP</td>
