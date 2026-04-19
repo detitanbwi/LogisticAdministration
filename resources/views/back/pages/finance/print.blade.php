@@ -272,7 +272,7 @@
                     </tr>
                     <tr>
                         <td class="label-cell">Layanan</td>
-                        <td>: {{ $invoice->layanan }}</td>
+                        <td>: {{ strtoupper(optional($invoice->layanan)->nama ?? '-') }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">BAP balik</td>

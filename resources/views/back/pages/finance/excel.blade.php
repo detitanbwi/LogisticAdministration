@@ -205,7 +205,7 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ strtoupper($finance->status_tagihan ?? '-') }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->layanan ?? '-') }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->layanan->nama ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $finance->ditagih_ke ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d/m/Y') : '-' }}

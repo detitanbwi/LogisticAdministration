@@ -182,7 +182,7 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->finance && $inv->finance->status_tagihan == 'lunas' ? 'LUNAS' : 'BELUM LUNAS' }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->layanan ?? '-') }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->layanan->nama ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->finance->ditagih_ke ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->finance && $inv->finance->tanggal_tagih ? $inv->finance->tanggal_tagih->format('d/m/Y') : '-' }}
