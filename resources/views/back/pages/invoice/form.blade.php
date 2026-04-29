@@ -749,7 +749,7 @@
                 // Store raw value with high precision in a data attribute
                 $(this).find('.det-jumlah').data('raw-value', result);
                 // Round to 3 decimal places for display (Excel style)
-                $(this).find('.det-jumlah').val(result.toFixed(3));
+                $(this).find('.det-jumlah').val(formatVal(result, 3));
             });
             updateSubTableSummary(rowId);
         }
@@ -773,7 +773,7 @@
             totalJumlah = Math.round(totalJumlah * 1000000) / 1000000;
 
             row.find('.total-koli-sub').text(totalKoli);
-            row.find('.total-jumlah-sub').text(totalJumlah.toFixed(3));
+            row.find('.total-jumlah-sub').text(formatVal(totalJumlah, 3));
             row.find('.total-jumlah-sub').data('raw-value', totalJumlah);
 
             return { totalKoli, totalJumlah };
@@ -786,7 +786,7 @@
             // Sync to parent
             row.find('.koli-input').val(summary.totalKoli);
             // Use 3 decimals rounded for display, matching Excel
-            row.find('.qty-input').val(summary.totalJumlah.toFixed(3));
+            row.find('.qty-input').val(formatVal(summary.totalJumlah, 3));
             $(`#jumlah_hidden_${rowId}`).val(summary.totalJumlah.toFixed(4));
 
             calculateSubtotal(rowId);
