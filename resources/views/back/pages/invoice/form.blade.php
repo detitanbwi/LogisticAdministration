@@ -748,8 +748,8 @@
                 
                 // Store raw value with high precision in a data attribute
                 $(this).find('.det-jumlah').data('raw-value', result);
-                // Truncate to 3 decimal places without rounding for display
-                $(this).find('.det-jumlah').val(formatValTruncate(result, 3));
+                // Round to 3 decimal places for display (Excel style)
+                $(this).find('.det-jumlah').val(result.toFixed(3));
             });
             updateSubTableSummary(rowId);
         }
@@ -762,20 +762,18 @@
             $(`#detail_container_${rowId} .detail-row`).each(function() {
                 const koli = parseFloat($(this).find('.det-koli').val()) || 0;
                 
-                // Use the displayed (truncated) value for summing to ensure 
-                // the summary matches the manual sum of what user sees.
-                const jumlahDisplay = $(this).find('.det-jumlah').val();
-                const truncatedRowVal = parseCurrency(jumlahDisplay);
+                // Excel style: sum the raw values, not the displayed ones
+                const rawRowVal = parseFloat($(this).find('.det-jumlah').data('raw-value')) || 0;
                 
                 totalKoli += koli;
-                totalJumlah += truncatedRowVal;
+                totalJumlah += rawRowVal;
             });
 
             // Clean up possible floating point noise (e.g., 0.1 + 0.2 = 0.300000004)
-            totalJumlah = Math.round(totalJumlah * 1000) / 1000;
+            totalJumlah = Math.round(totalJumlah * 1000000) / 1000000;
 
             row.find('.total-koli-sub').text(totalKoli);
-            row.find('.total-jumlah-sub').text(formatValTruncate(totalJumlah, 3));
+            row.find('.total-jumlah-sub').text(totalJumlah.toFixed(3));
             row.find('.total-jumlah-sub').data('raw-value', totalJumlah);
 
             return { totalKoli, totalJumlah };
@@ -787,8 +785,8 @@
 
             // Sync to parent
             row.find('.koli-input').val(summary.totalKoli);
-            // Use 3 decimals truncated for display
-            row.find('.qty-input').val(formatValTruncate(summary.totalJumlah, 3));
+            // Use 3 decimals rounded for display, matching Excel
+            row.find('.qty-input').val(summary.totalJumlah.toFixed(3));
             $(`#jumlah_hidden_${rowId}`).val(summary.totalJumlah.toFixed(4));
 
             calculateSubtotal(rowId);
