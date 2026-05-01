@@ -95,6 +95,27 @@
 
     @stack('modals')
 
+    <!-- Modal Progress Export -->
+    <div class="modal fade" id="exportProgressModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Memproses Eksport</h5>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <p id="exportProgressText" class="mb-3">Menyiapkan data...</p>
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div id="exportProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <p id="exportProgressDetail" class="text-muted small mb-0">Tunggu sebentar, jangan tutup halaman ini.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger" id="btnCancelExport">Batalkan Proses</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--! BEGIN: Vendors JS !-->
     <script src="{{ asset('back/assets/vendors/js/vendors.min.js') }}"></script>
     <!-- vendors.min.js {always must need to be top} -->

@@ -569,6 +569,10 @@ class InvoiceController extends Controller
     {
         abort_unless(auth()->user()->can('view.invoice') || auth()->user()->can('print.invoice'), 403);
 
+        if (!$request->filled('daterange')) {
+            return "<script>alert('Silakan pilih range tanggal terlebih dahulu.'); window.close();</script>";
+        }
+
         $query = $this->getFilteredInvoices($request);
         $invoices = $query->get();
 

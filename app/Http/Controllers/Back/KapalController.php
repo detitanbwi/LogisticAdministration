@@ -20,6 +20,8 @@ class KapalController extends Controller
             $endDate = \Carbon\Carbon::now()->endOfMonth();
 
             $daterange = $request->input('daterange');
+            $isAllTime = $request->has('daterange') && empty($daterange);
+
             if ($daterange) {
                 $dates = explode(' - ', $daterange);
                 if (count($dates) == 2) {
@@ -33,13 +35,17 @@ class KapalController extends Controller
             }
 
             $data = Kapal::query()
-                ->withCount(['containers as total_container' => function($q) use ($startDate, $endDate) {
-                    $q->whereBetween('etd', [$startDate, $endDate]);
+                ->withCount(['containers as total_container' => function($q) use ($startDate, $endDate, $isAllTime) {
+                    if (!$isAllTime) {
+                        $q->whereBetween('etd', [$startDate, $endDate]);
+                    }
                 }])
-                ->withCount(['invoices as total_invoice' => function($q) use ($startDate, $endDate) {
-                    $q->whereHas('container', function($qc) use ($startDate, $endDate) {
-                        $qc->whereBetween('etd', [$startDate, $endDate]);
-                    });
+                ->withCount(['invoices as total_invoice' => function($q) use ($startDate, $endDate, $isAllTime) {
+                    if (!$isAllTime) {
+                        $q->whereHas('container', function($qc) use ($startDate, $endDate) {
+                            $qc->whereBetween('etd', [$startDate, $endDate]);
+                        });
+                    }
                 }]);
 
             return DataTables::of($data)

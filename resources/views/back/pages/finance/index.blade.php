@@ -204,6 +204,15 @@
         });
 
         window.printTable = function () {
+            var daterange = $('#filterDaterange').val();
+            if (!daterange) {
+                Swal.fire({
+                    title: 'Perhatian!',
+                    text: 'Silakan pilih range tanggal terlebih dahulu untuk mencetak rekapitulasi.',
+                    icon: 'warning'
+                });
+                return;
+            }
             var table = $('#financeTable').DataTable();
             var printWindow = window.open('', '_blank');
             var totalGrandTagihan = 0;
@@ -332,25 +341,109 @@
         }
 
         window.exportExcel = function () {
-            var daterange = $('#filterDaterange').val() || '';
-            var status = $('#filterStatus').val() || '';
-            var asal = $('#filterAsal').val() || '';
-            var tujuan = $('#filterTujuan').val() || '';
-            var pengirim = $('#filterPengirim').val() || '';
-            var penerima = $('#filterPenerima').val() || '';
-            var judul = $('#filterJudulPrint').val() || '';
-            var search = $('#financeTable').DataTable().search() || '';
+            var daterange = $('#filterDaterange').val();
+            if (!daterange) {
+                Swal.fire({
+                    title: 'Perhatian!',
+                    text: 'Silakan pilih range tanggal terlebih dahulu untuk eksport excel.',
+                    icon: 'warning'
+                });
+                return;
+            }
 
-            var url = '{{ route('admin.finance.export') }}?daterange=' + encodeURIComponent(daterange) +
-                '&status=' + encodeURIComponent(status) +
-                '&asal_id=' + encodeURIComponent(asal) +
-                '&tujuan_id=' + encodeURIComponent(tujuan) +
-                '&pengirim_id=' + encodeURIComponent(pengirim) +
-                '&penerima_id=' + encodeURIComponent(penerima) +
-                '&judul_print_id=' + encodeURIComponent(judul) +
-                '&search=' + encodeURIComponent(search);
+            var filters = {
+                type: 'finance',
+                daterange: daterange,
+                status: $('#filterStatus').val() || '',
+                asal_id: $('#filterAsal').val() || '',
+                tujuan_id: $('#filterTujuan').val() || '',
+                pengirim_id: $('#filterPengirim').val() || '',
+                penerima_id: $('#filterPenerima').val() || '',
+                judul_print_id: $('#filterJudulPrint').val() || '',
+                search: $('#financeTable').DataTable().search() || ''
+            };
 
-            window.location.href = url;
+            startProgressiveExport(filters);
+        }
+
+        function startProgressiveExport(filters) {
+            var modal = new bootstrap.Modal(document.getElementById('exportProgressModal'));
+            var progressBar = $('#exportProgressBar');
+            var progressText = $('#exportProgressText');
+            var progressDetail = $('#exportProgressDetail');
+            var taskId = '';
+            var isCancelled = false;
+
+            modal.show();
+            progressBar.css('width', '0%').html('0%');
+            progressText.html('Menyiapkan data...');
+            progressDetail.html('Menghitung total records...');
+
+            // Init
+            $.post('{{ route("admin.export.init") }}', filters)
+                .done(function (res) {
+                    taskId = res.task_id;
+                    var total = res.total;
+                    progressText.html('Memproses ' + total + ' records...');
+                    
+                    processNextChunk(taskId, 0, total);
+                })
+                .fail(function (xhr) {
+                    modal.hide();
+                    var msg = xhr.responseJSON?.error || 'Gagal memulai eksport.';
+                    Swal.fire('Error', msg, 'error');
+                });
+
+            function processNextChunk(id, processed, total) {
+                if (isCancelled) return;
+
+                $.post('{{ route("admin.export.process") }}', { task_id: id })
+                    .done(function (res) {
+                        if (res.cancelled) {
+                            modal.hide();
+                            Swal.fire('Dibatalkan', 'Proses eksport telah dibatalkan.', 'info');
+                            return;
+                        }
+
+                        var current = res.processed;
+                        var percent = Math.round((current / total) * 100);
+                        progressBar.css('width', percent + '%').html(percent + '%');
+                        progressDetail.html('Diproses: ' + current + ' / ' + total);
+
+                        if (current < total) {
+                            processNextChunk(id, current, total);
+                        } else {
+                            // Done
+                            progressText.html('Menyusun file Excel...');
+                            progressDetail.html('Hampir selesai, file akan otomatis terunduh...');
+                            
+                            // Trigger download
+                            window.location.href = '{{ route("admin.export.download") }}?task_id=' + id;
+                            
+                            // Close modal after a delay to give browser time to start download
+                            setTimeout(function() {
+                                modal.hide();
+                                Swal.fire({
+                                    title: 'Berhasil',
+                                    text: 'Eksport selesai dan file sedang diunduh.',
+                                    icon: 'success',
+                                    timer: 3000,
+                                    timerProgressBar: true
+                                });
+                            }, 5000);
+                        }
+                    })
+                    .fail(function () {
+                        modal.hide();
+                        Swal.fire('Error', 'Terjadi kesalahan saat memproses data.', 'error');
+                    });
+            }
+
+            $('#btnCancelExport').off('click').on('click', function () {
+                isCancelled = true;
+                $.post('{{ route("admin.export.cancel") }}', { task_id: taskId });
+                modal.hide();
+            });
         }
     </script>
 @endpush

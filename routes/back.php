@@ -11,6 +11,7 @@ use App\Http\Controllers\Back\CustomerController;
 use App\Http\Controllers\Back\PackingListController;
 use App\Http\Controllers\Back\ContainerCostController;
 use App\Http\Controllers\Back\LayananController;
+use App\Http\Controllers\Back\ExportController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin.guest')->group(function () {
@@ -79,5 +80,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Laporan
         Route::get('laporan/print', [App\Http\Controllers\Back\LaporanController::class, 'print'])->name('laporan.print');
         Route::get('laporan', [App\Http\Controllers\Back\LaporanController::class, 'index'])->name('laporan.index');
+
+        // Progressive Export
+        Route::prefix('export-progressive')->name('export.')->group(function () {
+            Route::post('init', [ExportController::class, 'init'])->name('init');
+            Route::post('process', [ExportController::class, 'process'])->name('process');
+            Route::post('cancel', [ExportController::class, 'cancel'])->name('cancel');
+            Route::get('download', [ExportController::class, 'download'])->name('download');
+        });
     });
 });

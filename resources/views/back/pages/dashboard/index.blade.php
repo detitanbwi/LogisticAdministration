@@ -441,7 +441,7 @@
 
                 $('#dashboardDaterange').on('cancel.daterangepicker', function (ev, picker) {
                     $(this).val('');
-                    window.location.href = "{{ route('admin.dashboard') }}";
+                    window.location.href = "{{ route('admin.dashboard') }}?daterange=";
                 });
             }
         });

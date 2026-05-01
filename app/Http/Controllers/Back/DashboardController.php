@@ -17,6 +17,8 @@ class DashboardController extends Controller
         $endDate = \Carbon\Carbon::now()->endOfMonth();
 
         $daterange = $request->input('daterange');
+        $isAllTime = $request->has('daterange') && empty($daterange);
+
         if ($daterange) {
             $dates = explode(' - ', $daterange);
             if (count($dates) == 2) {
@@ -27,7 +29,7 @@ class DashboardController extends Controller
                     // Fallback to default
                 }
             }
-        } else {
+        } elseif (!$isAllTime) {
             $daterange = $startDate->format('m/d/Y') . ' - ' . $endDate->format('m/d/Y');
         }
 
@@ -49,10 +51,13 @@ class DashboardController extends Controller
         $total_belum_lunas = Finance::whereNull('tgl_transfer')->sum('total_tagihan');
 
         // Total Pendapatan = Sum of total_tagihan where paid - Range filtered (Periodic performance)
-        $total_pendapatan = Finance::whereNotNull('tgl_transfer')
-            ->whereHas('invoice', function ($q) use ($startDate, $endDate) {
+        $total_pendapatan_query = Finance::whereNotNull('tgl_transfer');
+        if (!$isAllTime) {
+            $total_pendapatan_query->whereHas('invoice', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
-            })->sum('total_tagihan');
+            });
+        }
+        $total_pendapatan = $total_pendapatan_query->sum('total_tagihan');
 
         // Belum Ditagih = status_tagihan is 'Belum' - Cumulative
         $belum_ditagih = Finance::where('status_tagihan', 'Belum')->count();
@@ -66,10 +71,14 @@ class DashboardController extends Controller
             ->get();
 
         // Vessel Summary for Dashboard - Filtered by ETD
-        $vessel_summary = Container::with('kapal')
-            ->leftJoin('invoice', 'container.id', '=', 'invoice.container_id')
-            ->whereBetween('container.etd', [$startDate, $endDate])
-            ->select('container.kapal_id', 'container.etd')
+        $vessel_summary_query = Container::with('kapal')
+            ->leftJoin('invoice', 'container.id', '=', 'invoice.container_id');
+        
+        if (!$isAllTime) {
+            $vessel_summary_query->whereBetween('container.etd', [$startDate, $endDate]);
+        }
+
+        $vessel_summary = $vessel_summary_query->select('container.kapal_id', 'container.etd')
             ->selectRaw('count(DISTINCT container.id) as total_container')
             ->selectRaw('count(invoice.id) as total_invoice')
             ->groupBy('container.kapal_id', 'container.etd')
