@@ -71,7 +71,7 @@
     @php
         function terbilang($angka)
         {
-            $angka = abs(intval($angka));
+            $angka = abs(round($angka));
             $baca = [
                 '',
                 'Satu',
@@ -123,7 +123,7 @@
         $dpp_and_fee = $dpp + $feeTotal;
         $is_pkp = strtoupper($invoice->pkp_status) == 'PKP';
         $dpp_display = $dpp_and_fee;
-        $ppn = $is_pkp ? $dpp_and_fee * 0.011 : 0;
+        $ppn = $is_pkp ? round($dpp_and_fee * 0.011) : 0;
         $grandTotal = $dpp_and_fee + $ppn;
 
         // Parse layanan
