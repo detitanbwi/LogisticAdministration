@@ -33,18 +33,18 @@ return [
     ],
     [
         'title' => 'Finance',
-        'can' => ['view.finance', 'edit.finance'],
+        'can' => ['view_rekapitulasi.finance', 'view_container_cost.finance', 'edit.finance'],
         'icon' => 'feather-credit-card',
         'children' => [
             [
                 'title' => 'Rekapitulasi',
                 'url' => 'admin.finance.index',
-                'can' => 'view.finance',
+                'can' => 'view_rekapitulasi.finance',
             ],
             [
                 'title' => 'Container Cost',
                 'url' => 'admin.container-cost.index',
-                'can' => 'view.container',
+                'can' => 'view_container_cost.finance',
             ],
         ]
     ],

@@ -124,7 +124,7 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $no++ }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
+                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->container->nomor_container ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->container->tipe_kontainer ?? '-' }}</td>
@@ -132,14 +132,14 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->container->kapal->nama_kapal ?? '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d/m/Y') : '-' }}
+                {{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->container->asal->nama_tujuan ?? '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->container->tujuan->nama_tujuan ?? '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->container && $inv->container->eta ? $inv->container->eta->format('d/m/Y') : '-' }}
+                {{ $inv->container && $inv->container->eta ? $inv->container->eta->format('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->no_hp ?? '-' }}</td>
@@ -196,11 +196,13 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ number_format($grand_total_val, 0, '', '') }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->tanda_terima ?? '-') }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->tanda_terima ?? '') == 'PENGIRIM' ? 'color: #FF0000; font-weight: bold;' : '' }}">
+                {{ strtoupper($inv->tanda_terima ?? '-') }}
+            </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $finance->bap_balik ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->tujuanDaerah->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->terima_barang ? $inv->terima_barang->format('d/m/Y') : '-' }}
+                {{ $inv->terima_barang ? $inv->terima_barang->format('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ strtoupper($finance->status_tagihan ?? '-') }}
@@ -208,14 +210,15 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->layanan->nama ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $finance->ditagih_ke ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d/m/Y') : '-' }}
+                {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $masaText }}</td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->status_pembayaran ?? '-') }}
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->status_pembayaran ?? '') == 'TAHAN' ? 'color: #FF0000; font-weight: bold;' : '' }}">
+                {{ strtoupper($inv->status_pembayaran ?? '-') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d/m/Y') : '-' }}
+                {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->catatan_muntahan ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $finance->catatan ?? '-' }}</td>

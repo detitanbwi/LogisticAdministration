@@ -15,7 +15,7 @@ class FinanceController extends Controller
      */
     public function index(Request $request)
     {
-        abort_unless(auth()->user()->can('view.finance'), 403);
+        abort_unless(auth()->user()->can('view_rekapitulasi.finance'), 403);
 
         if ($request->ajax()) {
             $query = Finance::with(['invoice.pengirim', 'invoice.penerima', 'invoice.items', 'invoice.additionalFees'])->select('finance.*');
@@ -53,7 +53,13 @@ class FinanceController extends Controller
             }
 
             if ($request->filled('status')) {
-                $query->where('status_tagihan', $request->status);
+                if (in_array($request->status, ['Belum', 'Sudah ditagih'])) {
+                    $query->where('status_tagihan', $request->status);
+                } else if ($request->status == 'Belum Lunas') {
+                    $query->whereNull('tgl_transfer');
+                } else if ($request->status == 'Lunas') {
+                    $query->whereNotNull('tgl_transfer');
+                }
             }
 
             return DataTables::of($query)
@@ -103,12 +109,12 @@ class FinanceController extends Controller
                 })
                 ->addColumn('tgl_transfer', function ($row) {
                     if ($row->tgl_transfer) {
-                        return '<span class="badge bg-soft-success text-success">' . \Carbon\Carbon::parse($row->tgl_transfer)->format('d-m-Y') . '</span>';
+                        return '<span class="badge bg-soft-success text-success">' . \Carbon\Carbon::parse($row->tgl_transfer)->format('d-M-Y') . '</span>';
                     }
                     return '<span class="badge bg-soft-danger text-danger">Belum dibayar</span>';
                 })
                 ->addColumn('tanggal_tagih', function ($row) {
-                    return $row->tanggal_tagih ? \Carbon\Carbon::parse($row->tanggal_tagih)->format('d-m-Y') : '-';
+                    return $row->tanggal_tagih ? \Carbon\Carbon::parse($row->tanggal_tagih)->format('d-M-Y') : '-';
                 })
                 ->addColumn('masa_tunggakan', function ($row) {
                     if (!$row->tanggal_tagih)
@@ -234,7 +240,7 @@ class FinanceController extends Controller
 
     public function print(Finance $finance)
     {
-        abort_unless(auth()->user()->can('view.finance') || auth()->user()->can('print.finance'), 403);
+        abort_unless(auth()->user()->can('view_rekapitulasi.finance') || auth()->user()->can('print.finance'), 403);
 
         $finance->load([
             'invoice.pengirim',
@@ -253,7 +259,7 @@ class FinanceController extends Controller
 
     public function export(Request $request)
     {
-        abort_unless(auth()->user()->can('view.finance') || auth()->user()->can('print.finance'), 403);
+        abort_unless(auth()->user()->can('view_rekapitulasi.finance') || auth()->user()->can('print.finance'), 403);
 
         $query = Finance::with(['invoice.pengirim', 'invoice.penerima', 'invoice.items', 'invoice.container.kapal', 'invoice.container.asal', 'invoice.container.tujuan', 'invoice.additionalFees', 'invoice.tujuanDaerah'])->select('finance.*');
 
@@ -290,7 +296,13 @@ class FinanceController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status_tagihan', $request->status);
+            if (in_array($request->status, ['Belum', 'Sudah ditagih'])) {
+                $query->where('status_tagihan', $request->status);
+            } else if ($request->status == 'Belum Lunas') {
+                $query->whereNull('tgl_transfer');
+            } else if ($request->status == 'Lunas') {
+                $query->whereNotNull('tgl_transfer');
+            }
         }
 
         if ($request->filled('search')) { // from datatables search

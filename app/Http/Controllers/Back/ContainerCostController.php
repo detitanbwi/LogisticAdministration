@@ -15,6 +15,7 @@ class ContainerCostController extends Controller
      */
     public function index(Request $request)
     {
+        abort_unless(auth()->user()->can('view_container_cost.finance'), 403);
         if ($request->ajax()) {
             $query = Container::with(['kapal', 'asal', 'tujuan'])->withCount('invoices');
             return datatables()->of($query)
@@ -39,17 +40,17 @@ class ContainerCostController extends Controller
                     return $row->kapal ? $row->kapal->nama_kapal : '-';
                 })
                 ->addColumn('etd', function ($row) {
-                    return $row->etd ? \Carbon\Carbon::parse($row->etd)->format('d-m-Y') : '-';
+                    return $row->etd ? \Carbon\Carbon::parse($row->etd)->format('d-M-Y') : '-';
                 })
                 ->addColumn('jumlah_invoice', function ($row) {
                     return '<span class="badge bg-soft-info text-info">' . $row->invoices_count . ' Invoice</span>';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '<div class="hstack gap-2 justify-content-end">';
-                    if (auth()->user()->can('view.container') || auth()->user()->can('print.invoice')) {
+                    if (auth()->user()->can('view_container_cost.finance') || auth()->user()->can('print.invoice')) {
                         $btn .= '<a href="' . route('admin.container-cost.print', $row->id) . '" class="avatar-text avatar-md bg-soft-primary text-primary" title="Print Rekap Container" target="_blank"><i class="feather feather-printer"></i></a>';
                     }
-                    if (auth()->user()->can('view.container') || auth()->user()->can('print.invoice')) {
+                    if (auth()->user()->can('view_container_cost.finance') || auth()->user()->can('print.invoice')) {
                         $btn .= '<a href="' . route('admin.container-cost.export', $row->id) . '" class="avatar-text avatar-md bg-soft-success text-success" title="Export Excel"><i class="feather feather-download"></i></a>';
                     }
                     if (auth()->user()->can('edit.container')) {

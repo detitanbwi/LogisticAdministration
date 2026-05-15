@@ -59,7 +59,7 @@
                                     @foreach ($permissions as $permission)
                                         <div class="col-lg-3 col-md-4 col-sm-6">
                                             <x-back.checkbox id="perm_{{ $permission['id'] }}" name="permissions[]"
-                                                :value="$permission['name']" :label="ucfirst($permission['action'])" :checked="in_array(
+                                                :value="$permission['name']" :label="str_replace('_', ' ', ucfirst($permission['action']))" :checked="in_array(
                                                     $permission['name'],
                                                     old('permissions', $rolePermissions),
                                                 )"

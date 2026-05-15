@@ -42,7 +42,7 @@ class TransaksiController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('tanggal', function ($row) {
-                    return \Carbon\Carbon::parse($row->tanggal)->format('d/m/Y');
+                    return \Carbon\Carbon::parse($row->tanggal)->format('d-M-Y');
                 })
                 ->editColumn('jenis', function ($row) {
                     $badge = $row->jenis == 'pemasukan' ? 'success' : 'danger';

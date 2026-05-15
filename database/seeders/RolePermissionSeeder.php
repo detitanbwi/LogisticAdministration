@@ -28,7 +28,7 @@ class RolePermissionSeeder extends Seeder
             'kapal' => ['*'],
             'tujuan' => ['*'],
             'invoice' => ['*', 'print_per_invoice'],
-            'finance' => ['view', 'edit'],
+            'finance' => ['view', 'edit', 'view_rekapitulasi', 'view_container_cost'],
             'kategori_keuangan' => ['*'],
             'rekening_bank' => ['*'],
             'transaksi' => ['*'],

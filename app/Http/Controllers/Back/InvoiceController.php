@@ -41,7 +41,17 @@ class InvoiceController extends Controller
             }
 
             if ($request->filled('status')) {
-                $query->where('status_pembayaran', $request->status);
+                if (in_array($request->status, ['Serahkan', 'Tahan'])) {
+                    $query->where('status_pembayaran', $request->status);
+                } else if ($request->status == 'Belum') {
+                    $query->whereHas('finance', function ($q) {
+                        $q->whereNull('tgl_transfer');
+                    });
+                } else if ($request->status == 'Bayar') {
+                    $query->whereHas('finance', function ($q) {
+                        $q->whereNotNull('tgl_transfer');
+                    });
+                }
             }
 
             if ($request->filled('is_pkp')) {
@@ -103,7 +113,7 @@ class InvoiceController extends Controller
                     return $row->no_invoice;
                 })
                 ->editColumn('etd', function ($row) {
-                    return $row->container && $row->container->etd ? $row->container->etd->format('d-m-Y') : '-';
+                    return $row->container && $row->container->etd ? $row->container->etd->format('d-M-Y') : '-';
                 })
                 ->addColumn('asal', function ($row) {
                     return $row->container && $row->container->asal ? $row->container->asal->nama_tujuan : '-';
@@ -607,7 +617,17 @@ class InvoiceController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status_pembayaran', $request->status);
+            if (in_array($request->status, ['Serahkan', 'Tahan'])) {
+                $query->where('status_pembayaran', $request->status);
+            } else if ($request->status == 'Belum') {
+                $query->whereHas('finance', function ($q) {
+                    $q->whereNull('tgl_transfer');
+                });
+            } else if ($request->status == 'Bayar') {
+                $query->whereHas('finance', function ($q) {
+                    $q->whereNotNull('tgl_transfer');
+                });
+            }
         }
 
         if ($request->filled('is_pkp')) {

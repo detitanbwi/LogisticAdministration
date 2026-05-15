@@ -63,6 +63,7 @@
                 <th style="width: 50px;">Satuan</th>
                 <th style="width: 100px;">Tagihan</th>
                 <th style="width: 60px;">Tanda Terima</th>
+                <th style="width: 60px;">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -99,7 +100,7 @@
                             @if($index === 0)
                                 <td rowspan="{{ $rowCount }}" class="text-center">{{ $globalNo++ }}</td>
                                 <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->no_invoice }}</td>
-                                <td rowspan="{{ $rowCount }}" class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-m-Y') : '-' }}</td>
+                                <td rowspan="{{ $rowCount }}" class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-M-Y') : '-' }}</td>
                                 <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
                                 <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
                             @endif
@@ -120,7 +121,12 @@
                                 <td rowspan="{{ $rowCount }}" class="text-right nowrap">
                                     Rp {{ number_format($totalTagihan, 0, ',', '.') }}
                                 </td>
-                                <td rowspan="{{ $rowCount }}" class="text-center">SCJ</td>
+                                <td rowspan="{{ $rowCount }}" class="text-center" style="{{ strtoupper($inv->tanda_terima ?? '') == 'PENGIRIM' ? 'color: red; font-weight: bold;' : '' }}">
+                                    {{ strtoupper($inv->tanda_terima ?? 'SCJ') }}
+                                </td>
+                                <td rowspan="{{ $rowCount }}" class="text-center" style="{{ strtoupper($inv->status_pembayaran ?? '') == 'TAHAN' ? 'color: red; font-weight: bold;' : '' }}">
+                                    {{ strtoupper($inv->status_pembayaran ?? '-') }}
+                                </td>
                             @endif
                         </tr>
                     @endforeach
@@ -128,7 +134,7 @@
                     <tr>
                         <td class="text-center">{{ $globalNo++ }}</td>
                         <td class="text-center">{{ $inv->no_invoice }}</td>
-                        <td class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-m-Y') : '-' }}</td>
+                        <td class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-M-Y') : '-' }}</td>
                         <td>{{ $inv->pengirim->nama ?? '-' }}</td>
                         <td>{{ $inv->penerima->nama ?? '-' }}</td>
                         <td class="text-center">-</td>
@@ -137,7 +143,12 @@
                         <td class="text-right nowrap">
                             Rp {{ number_format($totalTagihan, 0, ',', '.') }}
                         </td>
-                        <td class="text-center">SCJ</td>
+                        <td class="text-center" style="{{ strtoupper($inv->tanda_terima ?? '') == 'PENGIRIM' ? 'color: red; font-weight: bold;' : '' }}">
+                            {{ strtoupper($inv->tanda_terima ?? 'SCJ') }}
+                        </td>
+                        <td class="text-center" style="{{ strtoupper($inv->status_pembayaran ?? '') == 'TAHAN' ? 'color: red; font-weight: bold;' : '' }}">
+                            {{ strtoupper($inv->status_pembayaran ?? '-') }}
+                        </td>
                     </tr>
                     @php 
                         $totalTagihanAll += $totalTagihan;
@@ -153,7 +164,7 @@
             <tr style="background-color: #8B4513 !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact;">
                 <td colspan="6" class="text-right">TOTAL JUMLAH</td>
                 <td class="text-center">{{ number_format($totalJumlah, 3, ',', '.') }}</td>
-                <td colspan="3"></td>
+                <td colspan="4"></td>
             </tr>
             <tr style="background-color: #A0522D !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact;">
                 <td colspan="6" class="text-right">GRAND TOTAL</td>

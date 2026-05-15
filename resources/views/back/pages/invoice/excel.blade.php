@@ -52,8 +52,9 @@
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Biaya Tambahan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Total Tagihan</th>
         <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">STTS PKP</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Tanda Terima</th>
-        <th style="font-weight: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice - Barang</th>
+        <th style="width: bold; background-color: #fce4d6; border: 1px solid #000;">Tanda Terima</th>
+        <th style="width: bold; background-color: #fce4d6; border: 1px solid #000;">Status (Tahan/Serahkan)</th>
+        <th style="width: bold; background-color: #fce4d6; border: 1px solid #000;">Catatan Invoice - Barang</th>
     </tr>
     <tbody>
         @php 
@@ -87,7 +88,7 @@
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $index + 1 }}</td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                    {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-m-Y') : '-' }}
+                    {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-M-Y') : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     {{ $inv->pengirim ? $inv->pengirim->nama : '-' }}
@@ -129,10 +130,10 @@
                     {{ $inv->tujuanDaerah ? $inv->tujuanDaerah->nama : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                    {{ $inv->container && $inv->container->etd ? \Carbon\Carbon::parse($inv->container->etd)->format('d-m-Y') : '-' }}
+                    {{ $inv->container && $inv->container->etd ? \Carbon\Carbon::parse($inv->container->etd)->format('d-M-Y') : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                    {{ $inv->container && $inv->container->eta ? \Carbon\Carbon::parse($inv->container->eta)->format('d-m-Y') : '-' }}
+                    {{ $inv->container && $inv->container->eta ? \Carbon\Carbon::parse($inv->container->eta)->format('d-M-Y') : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     {{ $inv->container ? $inv->container->tipe_kontainer : '-' }}
@@ -174,7 +175,12 @@
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}
                 </td>
-                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->tanda_terima ?? '-' }}</td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->tanda_terima ?? '') == 'PENGIRIM' ? 'color: #FF0000; font-weight: bold;' : '' }}">
+                    {{ strtoupper($inv->tanda_terima ?? '-') }}
+                </td>
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->status_pembayaran ?? '') == 'TAHAN' ? 'color: #FF0000; font-weight: bold;' : '' }}">
+                    {{ strtoupper($inv->status_pembayaran ?? '-') }}
+                </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->catatan_muntahan ?? '-' }}</td>
             </tr>
             @if($rowCount > 1)
@@ -196,13 +202,13 @@
             <td></td>{{-- Col A spacer --}}
             <td colspan="23" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
             <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalJumlah, 3, ',', '.') }}</td>
-            <td colspan="7" style="border: 1px solid #000;"></td>
+            <td colspan="8" style="border: 1px solid #000;"></td>
         </tr>
         <tr style="vertical-align: middle; font-weight: bold; background-color: #e2e2e2;">
             <td></td>{{-- Col A spacer --}}
             <td colspan="27" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
             <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalTagihan, 0, ',', '.') }}</td>
-            <td colspan="3" style="border: 1px solid #000;"></td>
+            <td colspan="4" style="border: 1px solid #000;"></td>
         </tr>
     </tbody>
 </table>

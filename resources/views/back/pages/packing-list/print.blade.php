@@ -162,7 +162,7 @@
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $no++ }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->no_invoice }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">
-                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d/m/Y') : '-' }}
+                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-M-Y') : '-' }}
                     </td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->pengirim->no_hp ?? '-' }}</td>

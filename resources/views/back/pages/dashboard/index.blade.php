@@ -305,12 +305,12 @@
     </div>
 
     {{-- 9. Total Pendapatan --}}
-    @if(auth()->user()->hasRole('admin') || auth()->user()->can('view.finance') || auth()->user()->can('view.transaksi'))
+    @can('view_total_pendapatan.dashboard')
         <div class="dash-total-card mb-4">
             <span class="total-label"><i class="feather-trending-up"></i> Total Pendapatan</span>
             <span class="total-value">Rp {{ number_format($total_pendapatan, 0, ',', '.') }}</span>
         </div>
-    @endif
+    @endcan
 
     {{-- Vessel Summary --}}
     <div class="row mb-4">

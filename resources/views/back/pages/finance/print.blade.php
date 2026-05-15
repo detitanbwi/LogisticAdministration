@@ -198,7 +198,7 @@
                     </tr>
                     <tr>
                         <td class="label-cell">Tanggal masuk</td>
-                        <td>: {{ ($invoice->tgl_masuk ?? $invoice->created_at)->format('d-m-Y') }}</td>
+                        <td>: {{ ($invoice->tgl_masuk ?? $invoice->created_at)->format('d-M-Y') }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">Pengirim</td>
@@ -264,11 +264,11 @@
 
                     <tr>
                         <td class="label-cell">Tanda terima</td>
-                        <td>: {{ $invoice->tanda_terima }}</td>
+                        <td style="{{ strtoupper($invoice->tanda_terima ?? '') == 'PENGIRIM' ? 'color: red; font-weight: bold;' : '' }}">: {{ $invoice->tanda_terima }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">Status Tahan-serahkan</td>
-                        <td>: {{ $invoice->status_pembayaran }}</td>
+                        <td style="{{ strtoupper($invoice->status_pembayaran ?? '') == 'TAHAN' ? 'color: red; font-weight: bold;' : '' }}">: {{ $invoice->status_pembayaran }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">Layanan</td>
@@ -318,13 +318,13 @@
                     <tr>
                         <td class="label-cell">ETD</td>
                         <td>:
-                            {{ $invoice->container && $invoice->container->etd ? $invoice->container->etd->format('d-m-Y') : '-' }}
+                            {{ $invoice->container && $invoice->container->etd ? $invoice->container->etd->format('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell">ETA</td>
                         <td>:
-                            {{ $invoice->container && $invoice->container->eta ? $invoice->container->eta->format('d-m-Y') : '-' }}
+                            {{ $invoice->container && $invoice->container->eta ? $invoice->container->eta->format('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
@@ -398,7 +398,7 @@
                     <tr>
                         <td class="label-cell">Terima barang</td>
                         <td>:
-                            {{ $invoice->terima_barang ? \Carbon\Carbon::parse($invoice->terima_barang)->format('d-m-Y') : '-' }}
+                            {{ $invoice->terima_barang ? \Carbon\Carbon::parse($invoice->terima_barang)->format('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
@@ -412,13 +412,13 @@
                     <tr>
                         <td class="label-cell">Tanggal Tagih</td>
                         <td>:
-                            {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d-m-Y') : '-' }}
+                            {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell">Tanggal transfer</td>
                         <td>:
-                            {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d-m-Y') : '-' }}
+                            {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
