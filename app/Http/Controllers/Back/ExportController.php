@@ -343,8 +343,8 @@ class ExportController extends Controller
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
-                    $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
-                    $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                    $start_date = \Carbon\Carbon::parse(trim($dates[0]))->startOfDay();
+                    $end_date = \Carbon\Carbon::parse(trim($dates[1]))->endOfDay();
                     $query->whereHas('container', function ($q) use ($start_date, $end_date) {
                         $q->whereBetween('etd', [$start_date, $end_date]);
                     });
@@ -385,8 +385,8 @@ class ExportController extends Controller
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
-                    $start_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
-                    $end_date = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                    $start_date = \Carbon\Carbon::parse(trim($dates[0]))->startOfDay();
+                    $end_date = \Carbon\Carbon::parse(trim($dates[1]))->endOfDay();
                     $query->whereHas('invoice.container', function ($q) use ($start_date, $end_date) {
                         $q->whereBetween('etd', [$start_date, $end_date]);
                     });

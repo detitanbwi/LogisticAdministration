@@ -23,14 +23,14 @@ class DashboardController extends Controller
             $dates = explode(' - ', $daterange);
             if (count($dates) == 2) {
                 try {
-                    $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
-                    $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                    $startDate = \Carbon\Carbon::parse(trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::parse(trim($dates[1]))->endOfDay();
                 } catch (\Exception $e) {
                     // Fallback to default
                 }
             }
         } elseif (!$isAllTime) {
-            $daterange = $startDate->format('m/d/Y') . ' - ' . $endDate->format('m/d/Y');
+            $daterange = $startDate->format('d-M-Y') . ' - ' . $endDate->format('d-M-Y');
         }
 
         // Periodic but also used as base for some filters below if needed

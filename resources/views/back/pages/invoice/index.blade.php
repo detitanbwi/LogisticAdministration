@@ -227,13 +227,13 @@
                     autoUpdateInput: false,
                     locale: {
                         cancelLabel: 'Clear',
-                        format: 'MM/DD/YYYY'
+                        format: 'DD-MMM-YYYY'
                     }
                 });
 
                 $('#filterDaterange').on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format(
-                        'MM/DD/YYYY'));
+                    $(this).val(picker.startDate.format('DD-MMM-YYYY') + ' - ' + picker.endDate.format(
+                        'DD-MMM-YYYY'));
                     $('#invoiceTable').DataTable().ajax.reload();
                 });
 

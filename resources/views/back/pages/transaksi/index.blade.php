@@ -103,12 +103,12 @@
                     autoUpdateInput: false,
                     locale: {
                         cancelLabel: 'Clear',
-                        format: 'YYYY-MM-DD'
+                        format: 'DD-MMM-YYYY'
                     }
                 });
 
                 $('#filterDate').on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+                    $(this).val(picker.startDate.format('DD-MMM-YYYY') + ' - ' + picker.endDate.format('DD-MMM-YYYY'));
                     reloadTableAndSummary();
                 });
 
