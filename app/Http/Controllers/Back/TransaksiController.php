@@ -32,8 +32,8 @@ class TransaksiController extends Controller
                 ->when($request->daterange, function ($query) use ($request) {
                     $dates = explode(' - ', $request->daterange);
                     if (count($dates) == 2) {
-                        $start = \Carbon\Carbon::parse($dates[0])->startOfDay();
-                        $end = \Carbon\Carbon::parse($dates[1])->endOfDay();
+                        $start = \Carbon\Carbon::parseIndonesian($dates[0])->startOfDay();
+                        $end = \Carbon\Carbon::parseIndonesian($dates[1])->endOfDay();
                         $query->whereBetween('tanggal', [$start, $end]);
                     }
                 })
@@ -91,8 +91,8 @@ class TransaksiController extends Controller
             ->when($request->daterange, function ($query) use ($request) {
                 $dates = explode(' - ', $request->daterange);
                 if (count($dates) == 2) {
-                    $start = \Carbon\Carbon::parse($dates[0])->startOfDay();
-                    $end = \Carbon\Carbon::parse($dates[1])->endOfDay();
+                    $start = \Carbon\Carbon::parseIndonesian($dates[0])->startOfDay();
+                    $end = \Carbon\Carbon::parseIndonesian($dates[1])->endOfDay();
                     $query->whereBetween('tanggal', [$start, $end]);
                 }
             });

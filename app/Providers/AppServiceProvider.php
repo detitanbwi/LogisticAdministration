@@ -30,5 +30,27 @@ class AppServiceProvider extends ServiceProvider
         Blade::component('back.components.form.radio', 'back.radio');
         Blade::component('back.components.form.wysiwyg', 'back.wysiwyg');
         Blade::component('back.components.form.textarea', 'back.textarea');
+
+        \Carbon\Carbon::macro('parseIndonesian', function ($dateString) {
+            $map = [
+                'Januari' => 'January',
+                'Februari' => 'February',
+                'Maret' => 'March',
+                'April' => 'April',
+                'Mei' => 'May',
+                'Juni' => 'June',
+                'Juli' => 'July',
+                'Agustus' => 'August',
+                'September' => 'September',
+                'Oktober' => 'October',
+                'November' => 'November',
+                'Desember' => 'December',
+                'Agu' => 'Aug',
+                'Okt' => 'Oct',
+                'Des' => 'Dec',
+            ];
+            $str = str_ireplace(array_keys($map), array_values($map), $dateString);
+            return \Carbon\Carbon::parse($str);
+        });
     }
 }

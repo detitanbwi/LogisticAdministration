@@ -26,8 +26,8 @@ class KapalController extends Controller
                 $dates = explode(' - ', $daterange);
                 if (count($dates) == 2) {
                     try {
-                        $startDate = \Carbon\Carbon::parse(trim($dates[0]))->startOfDay();
-                        $endDate = \Carbon\Carbon::parse(trim($dates[1]))->endOfDay();
+                        $startDate = \Carbon\Carbon::parseIndonesian(trim($dates[0]))->startOfDay();
+                        $endDate = \Carbon\Carbon::parseIndonesian(trim($dates[1]))->endOfDay();
                     } catch (\Exception $e) {
                         // Fallback to default
                     }
