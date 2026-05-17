@@ -179,7 +179,7 @@
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $no++ }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->no_invoice }}</td>
                     <td rowspan="{{ $rowCount }}" class="text-center">
-                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-M-Y') : '-' }}
+                        {{ $inv->tgl_masuk ? $inv->tgl_masuk->translatedFormat('d-M-Y') : '-' }}
                     </td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
                     <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
@@ -291,7 +291,7 @@
                             <td>{{ $op->komponen }}</td>
                             <td class="text-right">{{ number_format($op->nominal, 0, ',', '.') }}</td>
                             <td class="text-center">
-                                {{ $op->tanggal_transfer ? \Carbon\Carbon::parse($op->tanggal_transfer)->format('d-M-Y') : '-' }}
+                                {{ $op->tanggal_transfer ? \Carbon\Carbon::parse($op->tanggal_transfer)->translatedFormat('d-M-Y') : '-' }}
                             </td>
                         </tr>
                     @empty

@@ -129,7 +129,7 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $no++ }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-M-Y') : '-' }}
+                {{ $inv->tgl_masuk ? $inv->tgl_masuk->translatedFormat('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->no_hp ?? '-' }}</td>
@@ -187,18 +187,18 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ strtoupper($inv->layanan->nama ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->finance->ditagih_ke ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->finance && $inv->finance->tanggal_tagih ? $inv->finance->tanggal_tagih->format('d-M-Y') : '-' }}
+                {{ $inv->finance && $inv->finance->tanggal_tagih ? $inv->finance->tanggal_tagih->translatedFormat('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $masa_tunggakan }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->terima_barang ? $inv->terima_barang->format('d-M-Y') : '-' }}
+                {{ $inv->terima_barang ? $inv->terima_barang->translatedFormat('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->status_pembayaran ?? '') == 'TAHAN' ? 'color: #FF0000; font-weight: bold;' : '' }}">
                 {{ strtoupper($inv->status_pembayaran ?? '-') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->finance && $inv->finance->tgl_transfer ? $inv->finance->tgl_transfer->format('d-M-Y') : '-' }}
+                {{ $inv->finance && $inv->finance->tgl_transfer ? $inv->finance->tgl_transfer->translatedFormat('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->catatan_muntahan ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->finance->catatan ?? '-' }}</td>
@@ -271,7 +271,7 @@
         <td></td>
         <td colspan="3" style="border: 1px solid #000;">{{ $cost->komponen }}</td>
         <td style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">Rp {{ number_format($cost->nominal, 0, ',', '.') }}</td>
-        <td style="border: 1px solid #000; text-align: center;">{{ $cost->tanggal_transfer ? $cost->tanggal_transfer->format('d-M-Y') : '-' }}</td>
+        <td style="border: 1px solid #000; text-align: center;">{{ $cost->tanggal_transfer ? $cost->tanggal_transfer->translatedFormat('d-M-Y') : '-' }}</td>
     </tr>
     @php $totalPengeluaran += $cost->nominal; @endphp
     @endforeach

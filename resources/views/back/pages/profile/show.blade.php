@@ -46,7 +46,7 @@
                         </li>
                         <li class="list-group-item px-0 py-3 d-flex align-items-center justify-content-between">
                             <span class="text-muted fw-medium">Member Since</span>
-                            <span class="fw-bold">{{ $user->created_at->format('d F Y') }}</span>
+                            <span class="fw-bold">{{ $user->created_at->translatedFormat('d F Y') }}</span>
                         </li>
                     </ul>
                 </div>

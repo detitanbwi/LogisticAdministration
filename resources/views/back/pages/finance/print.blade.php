@@ -198,7 +198,7 @@
                     </tr>
                     <tr>
                         <td class="label-cell">Tanggal masuk</td>
-                        <td>: {{ ($invoice->tgl_masuk ?? $invoice->created_at)->format('d-M-Y') }}</td>
+                        <td>: {{ ($invoice->tgl_masuk ?? $invoice->created_at)->translatedFormat('d-M-Y') }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">Pengirim</td>
@@ -318,13 +318,13 @@
                     <tr>
                         <td class="label-cell">ETD</td>
                         <td>:
-                            {{ $invoice->container && $invoice->container->etd ? $invoice->container->etd->format('d-M-Y') : '-' }}
+                            {{ $invoice->container && $invoice->container->etd ? $invoice->container->etd->translatedFormat('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell">ETA</td>
                         <td>:
-                            {{ $invoice->container && $invoice->container->eta ? $invoice->container->eta->format('d-M-Y') : '-' }}
+                            {{ $invoice->container && $invoice->container->eta ? $invoice->container->eta->translatedFormat('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
@@ -398,7 +398,7 @@
                     <tr>
                         <td class="label-cell">Terima barang</td>
                         <td>:
-                            {{ $invoice->terima_barang ? \Carbon\Carbon::parse($invoice->terima_barang)->format('d-M-Y') : '-' }}
+                            {{ $invoice->terima_barang ? \Carbon\Carbon::parse($invoice->terima_barang)->translatedFormat('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
@@ -412,13 +412,13 @@
                     <tr>
                         <td class="label-cell">Tanggal Tagih</td>
                         <td>:
-                            {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->format('d-M-Y') : '-' }}
+                            {{ $finance->tanggal_tagih ? \Carbon\Carbon::parse($finance->tanggal_tagih)->translatedFormat('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell">Tanggal transfer</td>
                         <td>:
-                            {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->format('d-M-Y') : '-' }}
+                            {{ $finance->tgl_transfer ? \Carbon\Carbon::parse($finance->tgl_transfer)->translatedFormat('d-M-Y') : '-' }}
                         </td>
                     </tr>
                     <tr>

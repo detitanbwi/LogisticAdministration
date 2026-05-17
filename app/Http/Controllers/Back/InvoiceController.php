@@ -113,7 +113,7 @@ class InvoiceController extends Controller
                     return $row->no_invoice;
                 })
                 ->editColumn('etd', function ($row) {
-                    return $row->container && $row->container->etd ? $row->container->etd->format('d-M-Y') : '-';
+                    return $row->container && $row->container->etd ? $row->container->etd->translatedFormat('d-M-Y') : '-';
                 })
                 ->addColumn('asal', function ($row) {
                     return $row->container && $row->container->asal ? $row->container->asal->nama_tujuan : '-';

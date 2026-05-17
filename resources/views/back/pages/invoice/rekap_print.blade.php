@@ -100,7 +100,7 @@
                             @if($index === 0)
                                 <td rowspan="{{ $rowCount }}" class="text-center">{{ $globalNo++ }}</td>
                                 <td rowspan="{{ $rowCount }}" class="text-center">{{ $inv->no_invoice }}</td>
-                                <td rowspan="{{ $rowCount }}" class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-M-Y') : '-' }}</td>
+                                <td rowspan="{{ $rowCount }}" class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->translatedFormat('d-M-Y') : '-' }}</td>
                                 <td rowspan="{{ $rowCount }}">{{ $inv->pengirim->nama ?? '-' }}</td>
                                 <td rowspan="{{ $rowCount }}">{{ $inv->penerima->nama ?? '-' }}</td>
                             @endif
@@ -134,7 +134,7 @@
                     <tr>
                         <td class="text-center">{{ $globalNo++ }}</td>
                         <td class="text-center">{{ $inv->no_invoice }}</td>
-                        <td class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->format('d-M-Y') : '-' }}</td>
+                        <td class="text-center nowrap">{{ $inv->container && $inv->container->etd ? $inv->container->etd->translatedFormat('d-M-Y') : '-' }}</td>
                         <td>{{ $inv->pengirim->nama ?? '-' }}</td>
                         <td>{{ $inv->penerima->nama ?? '-' }}</td>
                         <td class="text-center">-</td>

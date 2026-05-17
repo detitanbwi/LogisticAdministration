@@ -76,7 +76,7 @@ class KapalController extends Controller
         }
         $startDate = \Carbon\Carbon::now()->startOfMonth();
         $endDate = \Carbon\Carbon::now()->endOfMonth();
-        $daterange = $startDate->format('d-M-Y') . ' - ' . $endDate->format('d-M-Y');
+        $daterange = $startDate->translatedFormat('d-M-Y') . ' - ' . $endDate->translatedFormat('d-M-Y');
 
         return view('back.pages.kapal.index', compact('daterange'));
     }

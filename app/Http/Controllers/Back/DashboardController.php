@@ -30,7 +30,7 @@ class DashboardController extends Controller
                 }
             }
         } elseif (!$isAllTime) {
-            $daterange = $startDate->format('d-M-Y') . ' - ' . $endDate->format('d-M-Y');
+            $daterange = $startDate->translatedFormat('d-M-Y') . ' - ' . $endDate->translatedFormat('d-M-Y');
         }
 
         // Periodic but also used as base for some filters below if needed

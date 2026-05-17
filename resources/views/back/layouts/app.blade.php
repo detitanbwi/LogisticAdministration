@@ -118,6 +118,26 @@
 
     <!--! BEGIN: Vendors JS !-->
     <script src="{{ asset('back/assets/vendors/js/vendors.min.js') }}"></script>
+    <script>
+        if (typeof moment !== 'undefined') {
+            moment.defineLocale('id', {
+                months : 'Januari_Februari_Maret_April_Mei_Juni_Juli_Agustus_September_Oktober_November_Desember'.split('_'),
+                monthsShort : 'Jan_Feb_Mar_Apr_Mei_Jun_Jul_Agu_Sep_Okt_Nov_Des'.split('_'),
+                weekdays : 'Minggu_Senin_Selasa_Rabu_Kamis_Jumat_Sabtu'.split('_'),
+                weekdaysShort : 'Min_Sen_Sel_Rab_Kam_Jum_Sab'.split('_'),
+                weekdaysMin : 'Mg_Sn_Sl_Rb_Km_Jm_Sb'.split('_'),
+                longDateFormat : {
+                    LT : 'HH.mm',
+                    LTS : 'HH.mm.ss',
+                    L : 'DD/MM/YYYY',
+                    LL : 'D MMMM YYYY',
+                    LLL : 'D MMMM YYYY [pukul] HH.mm',
+                    LLLL : 'dddd, D MMMM YYYY [pukul] HH.mm'
+                }
+            });
+            moment.locale('id');
+        }
+    </script>
     <!-- vendors.min.js {always must need to be top} -->
     <script src="{{ asset('back/assets/vendors/js/daterangepicker.min.js') }}"></script>
     <script src="{{ asset('back/assets/vendors/js/apexcharts.min.js') }}"></script>

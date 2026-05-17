@@ -82,7 +82,7 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $no++ }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-M-Y') : '-' }}
+                {{ $inv->tgl_masuk ? $inv->tgl_masuk->translatedFormat('d-M-Y') : '-' }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->nama ?? '-' }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->pengirim->no_hp ?? '-' }}</td>

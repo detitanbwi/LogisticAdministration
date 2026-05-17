@@ -36,7 +36,7 @@ class PackingListController extends Controller
                     return $row->kapal ? $row->kapal->nama_kapal : '-';
                 })
                 ->addColumn('etd', function ($row) {
-                    return $row->etd ? \Carbon\Carbon::parse($row->etd)->format('d-M-Y') : '-';
+                    return $row->etd ? \Carbon\Carbon::parse($row->etd)->translatedFormat('d-M-Y') : '-';
                 })
                 ->addColumn('jumlah_invoice', function ($row) {
                     return '<span class="badge bg-soft-info text-info">' . $row->invoices_count . ' Invoice</span>';

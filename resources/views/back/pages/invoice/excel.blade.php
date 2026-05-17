@@ -88,7 +88,7 @@
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $index + 1 }}</td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->no_invoice }}</td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                    {{ $inv->tgl_masuk ? $inv->tgl_masuk->format('d-M-Y') : '-' }}
+                    {{ $inv->tgl_masuk ? $inv->tgl_masuk->translatedFormat('d-M-Y') : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     {{ $inv->pengirim ? $inv->pengirim->nama : '-' }}
@@ -130,10 +130,10 @@
                     {{ $inv->tujuanDaerah ? $inv->tujuanDaerah->nama : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                    {{ $inv->container && $inv->container->etd ? \Carbon\Carbon::parse($inv->container->etd)->format('d-M-Y') : '-' }}
+                    {{ $inv->container && $inv->container->etd ? \Carbon\Carbon::parse($inv->container->etd)->translatedFormat('d-M-Y') : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                    {{ $inv->container && $inv->container->eta ? \Carbon\Carbon::parse($inv->container->eta)->format('d-M-Y') : '-' }}
+                    {{ $inv->container && $inv->container->eta ? \Carbon\Carbon::parse($inv->container->eta)->translatedFormat('d-M-Y') : '-' }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     {{ $inv->container ? $inv->container->tipe_kontainer : '-' }}
