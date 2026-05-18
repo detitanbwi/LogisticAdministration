@@ -39,11 +39,12 @@ class FinanceRecapExport implements FromView, ShouldAutoSize, WithStyles, WithCo
     public function columnFormats(): array
     {
         return [
-            'U' => '#,##0', // Harga Satuan
-            'V' => '#,##0', // Subtotal
-            'W' => '#,##0', // DPP
-            'X' => '#,##0', // Biaya Tambahan
-            'Y' => '#,##0', // Total Tagihan
+            'W' => '#,##0.###', // Jumlah
+            'Y' => '#,##0', // Harga Satuan
+            'Z' => '#,##0', // Subtotal
+            'AA' => '#,##0', // DPP
+            'AB' => '#,##0', // Biaya Tambahan
+            'AC' => '#,##0', // Total Tagihan
         ];
     }
 }

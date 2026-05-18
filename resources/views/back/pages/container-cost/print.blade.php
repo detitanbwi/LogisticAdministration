@@ -155,9 +155,7 @@
             @forelse ($container->invoices as $inv)
                 @php
                     $rowCount = $inv->items->count() > 0 ? $inv->items->count() : 1;
-                    $dpp_base = $inv->items->sum(function($item) {
-                        return $item->jumlah * $item->harga_satuan;
-                    });
+                    $dpp_base = $inv->items->sum('subtotal');
                     $fee_val = $inv->additionalFees ? $inv->additionalFees->sum('harga') : 0;
                     $dpp_and_fee_val = $dpp_base + $fee_val;
                     $is_pkp = strtoupper($inv->pkp_status) == 'PKP';
@@ -192,7 +190,7 @@
                         </td>
                         <td class="text-center">{{ $inv->items[0]->satuan }}</td>
                         <td class="text-right">{{ number_format($inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($inv->items[0]->jumlah * $inv->items[0]->harga_satuan, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($inv->items[0]->subtotal, 0, ',', '.') }}</td>
                     @else
                         <td>-</td>
                         <td class="text-center">-</td>
@@ -224,7 +222,7 @@
                             </td>
                             <td class="text-center">{{ $inv->items[$i]->satuan }}</td>
                             <td class="text-right">{{ number_format($inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
-                            <td class="text-right">{{ number_format($inv->items[$i]->jumlah * $inv->items[$i]->harga_satuan, 0, ',', '.') }}</td>
+                            <td class="text-right">{{ number_format($inv->items[$i]->subtotal, 0, ',', '.') }}</td>
                         </tr>
                     @endfor
                 @endif

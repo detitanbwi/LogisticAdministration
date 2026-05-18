@@ -154,16 +154,11 @@
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                 <td style="border: 1px solid #000;">
-                    @php
-                        $val = (float)$inv->items[0]->jumlah;
-                        $factor = pow(10, 3);
-                        $truncated = floor($val * $factor) / $factor;
-                    @endphp
-                    {{ rtrim(rtrim(number_format($truncated, 3, ',', '.'), '0'), ',') }}
+                    {{ round($inv->items[0]->jumlah, 3) }}
                 </td>
                 <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
                 <td style="border: 1px solid #000;">
-                    {{ number_format($inv->items[0]->harga_satuan, 0, '', '') }}
+                    {{ round($inv->items[0]->harga_satuan) }}
                 </td>
                 <td style="border: 1px solid #000;">
                     @php
@@ -171,7 +166,7 @@
                             ? $inv->items[0]->koli * $inv->items[0]->harga_satuan 
                             : $inv->items[0]->jumlah * $inv->items[0]->harga_satuan;
                     @endphp
-                    {{ number_format($sub, 0, '', '') }}
+                    {{ round($sub) }}
                 </td>
             @else
                 <td style="border: 1px solid #000;">-</td>
@@ -183,18 +178,18 @@
             @endif
 
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ number_format($dpp_display, 0, '', '') }}
+                {{ round($dpp_display) }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 @if($inv->additionalFees && $inv->additionalFees->count() > 0)
-                    {{ number_format($inv->additionalFees->sum('harga'), 0, '', '') }}
+                    {{ round($inv->additionalFees->sum('harga')) }}
                     ({{ $inv->additionalFees->pluck('nama')->implode(', ') }})
                 @else
                     -
                 @endif
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
-                {{ number_format($grand_total_val, 0, '', '') }}
+                {{ round($grand_total_val) }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->tanda_terima ?? '') == 'PENGIRIM' ? 'color: #FF0000; font-weight: bold;' : '' }}">
                 {{ strtoupper($inv->tanda_terima ?? '-') }}
@@ -230,16 +225,11 @@
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                     <td style="border: 1px solid #000;">
-                        @php
-                            $val = (float)$inv->items[$i]->jumlah;
-                            $factor = pow(10, 3);
-                            $truncated = floor($val * $factor) / $factor;
-                        @endphp
-                        {{ rtrim(rtrim(number_format($truncated, 3, ',', '.'), '0'), ',') }}
+                        {{ round($inv->items[$i]->jumlah, 3) }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
                     <td style="border: 1px solid #000;">
-                        {{ number_format($inv->items[$i]->harga_satuan, 0, '', '') }}
+                        {{ round($inv->items[$i]->harga_satuan) }}
                     </td>
                     <td style="border: 1px solid #000;">
                         @php
@@ -247,7 +237,7 @@
                                 ? $inv->items[$i]->koli * $inv->items[$i]->harga_satuan 
                                 : $inv->items[$i]->subtotal;
                         @endphp
-                        {{ number_format($subItem, 0, '', '') }}
+                        {{ round($subItem) }}
                     </td>
                 </tr>
             @endfor
@@ -262,13 +252,13 @@
     <tr style="vertical-align: middle; font-weight: bold; background-color: #f2f2f2;">
         <td></td>{{-- Col A spacer --}}
         <td colspan="21" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
-        <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalJumlah, 3, ',', '.') }}</td>
+        <td style="border: 1px solid #000;" align="center">{{ round($grandTotalJumlah, 3) }}</td>
         <td colspan="20" style="border: 1px solid #000;"></td>
     </tr>
     <tr style="vertical-align: middle; font-weight: bold; background-color: #e2e2e2;">
         <td></td>{{-- Col A spacer --}}
-        <td colspan="25" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
-        <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalTagihan, 0, ',', '.') }}</td>
-        <td colspan="16" style="border: 1px solid #000;"></td>
+        <td colspan="27" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
+        <td style="border: 1px solid #000;" align="center">{{ round($grandTotalTagihan) }}</td>
+        <td colspan="14" style="border: 1px solid #000;"></td>
     </tr>
 </table>

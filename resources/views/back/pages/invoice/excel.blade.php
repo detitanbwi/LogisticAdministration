@@ -149,7 +149,7 @@
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->jenis_barang }}</td>
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->koli }}</td>
                     <td style="border: 1px solid #000;">
-                        {{ number_format($inv->items[0]->jumlah, 3, ',', '.') }}
+                        {{ round($inv->items[0]->jumlah, 3) }}
                     </td>
                     <td style="border: 1px solid #000;">{{ $inv->items[0]->satuan }}</td>
                 @else
@@ -159,19 +159,19 @@
                     <td style="border: 1px solid #000;">-</td>
                 @endif
 
-                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                    {{ number_format($dpp_display, 0, ',', '.') }}
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ round($dpp_display) }}
                 </td>
-                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                     @if($inv->additionalFees && $inv->additionalFees->count() > 0)
-                        {{ number_format($inv->additionalFees->sum('harga'), 0, ',', '.') }}
+                        {{ round($inv->additionalFees->sum('harga')) }}
                         ({{ $inv->additionalFees->pluck('nama')->implode(', ') }})
                     @else
                         -
                     @endif
                 </td>
-                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; mso-number-format:'\@';" data-type="string">
-                    {{ number_format(round($grand_total_val), 0, ',', '.') }}
+                <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
+                    {{ round($grand_total_val) }}
                 </td>
                 <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}
                 </td>
@@ -190,7 +190,7 @@
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->jenis_barang }}</td>
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->koli }}</td>
                         <td style="border: 1px solid #000;">
-                            {{ number_format($inv->items[$i]->jumlah, 3, ',', '.') }}
+                            {{ round($inv->items[$i]->jumlah, 3) }}
                         </td>
                         <td style="border: 1px solid #000;">{{ $inv->items[$i]->satuan }}</td>
                     </tr>
@@ -201,13 +201,13 @@
         <tr style="vertical-align: middle; font-weight: bold; background-color: #f2f2f2;">
             <td></td>{{-- Col A spacer --}}
             <td colspan="23" style="border: 1px solid #000;" align="right">TOTAL JUMLAH</td>
-            <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalJumlah, 3, ',', '.') }}</td>
+            <td style="border: 1px solid #000;" align="center">{{ round($grandTotalJumlah, 3) }}</td>
             <td colspan="8" style="border: 1px solid #000;"></td>
         </tr>
         <tr style="vertical-align: middle; font-weight: bold; background-color: #e2e2e2;">
             <td></td>{{-- Col A spacer --}}
             <td colspan="27" style="border: 1px solid #000;" align="right">GRAND TOTAL</td>
-            <td style="border: 1px solid #000;" align="center">{{ number_format($grandTotalTagihan, 0, ',', '.') }}</td>
+            <td style="border: 1px solid #000;" align="center">{{ round($grandTotalTagihan) }}</td>
             <td colspan="4" style="border: 1px solid #000;"></td>
         </tr>
     </tbody>
