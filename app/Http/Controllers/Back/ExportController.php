@@ -351,7 +351,19 @@ class ExportController extends Controller
                 }
             }
 
-            if ($request->filled('status')) $query->where('status_pembayaran', $request->status);
+            if ($request->filled('status')) {
+                if (in_array($request->status, ['Serahkan', 'Tahan'])) {
+                    $query->where('status_pembayaran', $request->status);
+                } else if ($request->status == 'Belum') {
+                    $query->whereHas('finance', function ($q) {
+                        $q->whereNull('tgl_transfer');
+                    });
+                } else if ($request->status == 'Bayar') {
+                    $query->whereHas('finance', function ($q) {
+                        $q->whereNotNull('tgl_transfer');
+                    });
+                }
+            }
             if ($request->filled('is_pkp')) {
                 if ($request->is_pkp == '1') $query->where('pkp_status', 'PKP');
                 else $query->where(function($q) { $q->where('pkp_status', '!=', 'PKP')->orWhereNull('pkp_status'); });
@@ -393,7 +405,15 @@ class ExportController extends Controller
                 }
             }
 
-            if ($request->filled('status')) $query->where('status_tagihan', $request->status);
+            if ($request->filled('status')) {
+                if (in_array($request->status, ['Belum', 'Sudah ditagih'])) {
+                    $query->where('status_tagihan', $request->status);
+                } else if ($request->status == 'Belum Lunas') {
+                    $query->whereNull('tgl_transfer');
+                } else if ($request->status == 'Lunas') {
+                    $query->whereNotNull('tgl_transfer');
+                }
+            }
 
             return $query;
         }
