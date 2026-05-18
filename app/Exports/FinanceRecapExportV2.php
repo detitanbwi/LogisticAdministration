@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class FinanceRecapExport implements FromView, ShouldAutoSize, WithStyles, WithColumnFormatting
+class FinanceRecapExportV2 implements FromView, ShouldAutoSize, WithStyles, WithColumnFormatting
 {
     protected $data;
     protected $filters;
@@ -24,7 +24,7 @@ class FinanceRecapExport implements FromView, ShouldAutoSize, WithStyles, WithCo
 
     public function view(): View
     {
-        return view('back.pages.finance.excel', [
+        return view('back.pages.finance.excel_v2', [
             'finances' => $this->data,
             'filters' => $this->filters
         ]);

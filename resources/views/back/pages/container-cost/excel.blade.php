@@ -177,7 +177,7 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ round($grand_total_val) }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->tanda_terima ?? '') == 'PENGIRIM' ? 'color: #FF0000; font-weight: bold;' : '' }}">
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ trim(strtoupper($inv->tanda_terima ?? '')) == 'PENGIRIM' ? 'color: #FF0000; font-weight: bold;' : '' }}">
                 {{ strtoupper($inv->tanda_terima ?? '-') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $inv->terima_barang ? 'SUDAH' : 'BELUM' }}</td>
@@ -190,11 +190,11 @@
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->finance && $inv->finance->tanggal_tagih ? $inv->finance->tanggal_tagih->translatedFormat('d-M-Y') : '-' }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ $masa_tunggakan }}</td>
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ $masa_tunggakan !== 'Lunas' && $masa_tunggakan !== '-' ? 'color: #FF0000; font-weight: bold;' : '' }}">{{ $masa_tunggakan }}</td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">
                 {{ $inv->terima_barang ? $inv->terima_barang->translatedFormat('d-M-Y') : '-' }}
             </td>
-            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ strtoupper($inv->status_pembayaran ?? '') == 'TAHAN' ? 'color: #FF0000; font-weight: bold;' : '' }}">
+            <td rowspan="{{ $rowCount }}" style="border: 1px solid #000; {{ trim(strtoupper($inv->status_pembayaran ?? '')) == 'TAHAN' ? 'color: #FF0000; font-weight: bold;' : '' }}">
                 {{ strtoupper($inv->status_pembayaran ?? '-') }}
             </td>
             <td rowspan="{{ $rowCount }}" style="border: 1px solid #000;">{{ mb_strtoupper($inv->pkp_status ?? '-') }}</td>

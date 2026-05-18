@@ -124,6 +124,37 @@ class GenericArrayExport implements FromCollection, ShouldAutoSize, WithStyles, 
              }
         }
 
+        // Apply Red Colors for Finance
+        if (isset($this->meta['type']) && $this->meta['type'] !== 'invoice') {
+            $redColor = new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED);
+            
+            // Loop from row 5 (data starts) to last row
+            for ($row = 5; $row <= $lastRow; $row++) {
+                // Tanda Terima (AD)
+                $tt = trim(strtoupper($sheet->getCell("AD{$row}")->getValue() ?? ''));
+                if ($tt === 'PENGIRIM') {
+                    $sheet->getStyle("AD{$row}")->getFont()->setColor($redColor)->setBold(true);
+                }
+                
+                // Masa Tunggakan (AL)
+                $mt = trim($sheet->getCell("AL{$row}")->getValue() ?? '');
+                // Warnai merah jika ada isinya, dan bukan 'Lunas' atau kosong (bahkan '-' jika tgl_transfer kosong tetap merah)
+                if ($mt !== '' && $mt !== 'Lunas') {
+                    // Pastikan bukan row summary/grand total
+                    $labelCheck = $sheet->getCell("Z{$row}")->getValue();
+                    if (!(is_string($labelCheck) && (strpos($labelCheck, 'TOTAL') !== false || strpos($labelCheck, 'GRAND') !== false))) {
+                        $sheet->getStyle("AL{$row}")->getFont()->setColor($redColor)->setBold(true);
+                    }
+                }
+                
+                // Status (AM)
+                $st = trim(strtoupper($sheet->getCell("AM{$row}")->getValue() ?? ''));
+                if ($st === 'TAHAN') {
+                    $sheet->getStyle("AM{$row}")->getFont()->setColor($redColor)->setBold(true);
+                }
+            }
+        }
+
         return [];
     }
 

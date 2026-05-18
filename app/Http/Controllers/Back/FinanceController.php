@@ -261,6 +261,11 @@ class FinanceController extends Controller
     {
         abort_unless(auth()->user()->can('view_rekapitulasi.finance') || auth()->user()->can('print.finance'), 403);
 
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+
         $query = Finance::with(['invoice.pengirim', 'invoice.penerima', 'invoice.items', 'invoice.container.kapal', 'invoice.container.asal', 'invoice.container.tujuan', 'invoice.additionalFees', 'invoice.tujuanDaerah'])->select('finance.*');
 
         $query->whereHas('invoice.container', function ($q) use ($request) {
