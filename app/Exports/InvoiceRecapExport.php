@@ -32,16 +32,35 @@ class InvoiceRecapExport implements FromView, ShouldAutoSize, WithStyles, WithCo
     public function styles(Worksheet $sheet)
     {
         $sheet->getStyle($sheet->calculateWorksheetDimension())->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+        $currentRow = 6;
+        $redColor = new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED);
+
+        foreach ($this->data as $inv) {
+            $rowCount = $inv->items && $inv->items->count() > 0 ? $inv->items->count() : 1;
+            $endRow = $currentRow + $rowCount - 1;
+
+            // Check Tanda Terima (Col AD)
+            if (trim(strtoupper($inv->tanda_terima ?? '')) === 'PENGIRIM') {
+                $sheet->getStyle("AD{$currentRow}:AD{$endRow}")->getFont()->setColor($redColor)->setBold(true);
+            }
+            // Check Status Tahan/Serahkan (Col AE)
+            if (trim(strtoupper($inv->status_pembayaran ?? '')) === 'TAHAN') {
+                $sheet->getStyle("AE{$currentRow}:AE{$endRow}")->getFont()->setColor($redColor)->setBold(true);
+            }
+
+            $currentRow = $endRow + 1;
+        }
+
         return [];
     }
 
     public function columnFormats(): array
     {
         return [
-            'Y' => '#,##0.###', // Jumlah
-            'AA' => '#,##0', // DPP
-            'AB' => '#,##0', // Biaya Tambahan
-            'AC' => '#,##0', // Total Tagihan
+            'X' => '#,##0.###', // Jumlah
+            'Z' => '#,##0', // DPP
+            'AB' => '#,##0', // Total Tagihan
         ];
     }
 }

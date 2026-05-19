@@ -33,40 +33,47 @@ class DashboardController extends Controller
             $daterange = $startDate->translatedFormat('d-M-Y') . ' - ' . $endDate->translatedFormat('d-M-Y');
         }
 
-        // Periodic but also used as base for some filters below if needed
-        $invoiceBase = Invoice::whereBetween('created_at', [$startDate, $endDate]);
-
-        // Status counts - Made cumulative (all time) to better represent current state
-        $total_invoice = Invoice::count();
-        $pkp = Invoice::where('pkp_status', 'PKP')->count();
-        $non_pkp = Invoice::where('pkp_status', 'Non PKP')->count();
-
-        // Lunas = Paid (has tgl_transfer) - Cumulative
-        $lunas = Finance::whereNotNull('tgl_transfer')->count();
-
-        // Belum Lunas = Unpaid (no tgl_transfer) - Cumulative
-        $belum_lunas = Finance::whereNull('tgl_transfer')->count();
-
-        // Total Belum Lunas = Total unpaid balance - Cumulative
-        $total_belum_lunas = Finance::whereNull('tgl_transfer')->sum('total_tagihan');
-
-        // Total Pendapatan = Sum of total_tagihan where paid - Range filtered (Periodic performance)
-        $total_pendapatan = 0;
-        if (auth()->user()->can('view_total_pendapatan.dashboard')) {
-            $total_pendapatan_query = Finance::whereNotNull('tgl_transfer');
-            if (!$isAllTime) {
-                $total_pendapatan_query->whereHas('invoice', function ($q) use ($startDate, $endDate) {
-                    $q->whereBetween('created_at', [$startDate, $endDate]);
-                });
-            }
-            $total_pendapatan = $total_pendapatan_query->sum('total_tagihan');
+        // Invoice base query with container etd filter
+        $invoiceQuery = Invoice::query();
+        if (!$isAllTime) {
+            $invoiceQuery->whereHas('container', function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('etd', [$startDate, $endDate]);
+            });
         }
 
-        // Belum Ditagih = status_tagihan is 'Belum' - Cumulative
-        $belum_ditagih = Finance::where('status_tagihan', 'Belum')->count();
+        // Finance base query with container etd filter
+        $financeQuery = Finance::query();
+        if (!$isAllTime) {
+            $financeQuery->whereHas('invoice.container', function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('etd', [$startDate, $endDate]);
+            });
+        }
 
-        // Sudah Ditagih = status_tagihan is 'Sudah ditagih' - Cumulative
-        $sudah_ditagih = Finance::where('status_tagihan', 'Sudah ditagih')->count();
+        // Status counts - Periodic
+        $total_invoice = (clone $invoiceQuery)->count();
+        $pkp = (clone $invoiceQuery)->where('pkp_status', 'PKP')->count();
+        $non_pkp = (clone $invoiceQuery)->where('pkp_status', 'Non PKP')->count();
+
+        // Lunas = Paid (has tgl_transfer)
+        $lunas = (clone $financeQuery)->whereNotNull('tgl_transfer')->count();
+
+        // Belum Lunas = Unpaid (no tgl_transfer)
+        $belum_lunas = (clone $financeQuery)->whereNull('tgl_transfer')->count();
+
+        // Total Belum Lunas = Total unpaid balance
+        $total_belum_lunas = (clone $financeQuery)->whereNull('tgl_transfer')->sum('total_tagihan');
+
+        // Total Pendapatan = Sum of total_tagihan where paid
+        $total_pendapatan = 0;
+        if (auth()->user()->can('view_total_pendapatan.dashboard')) {
+            $total_pendapatan = (clone $financeQuery)->whereNotNull('tgl_transfer')->sum('total_tagihan');
+        }
+
+        // Belum Ditagih = status_tagihan is 'Belum'
+        $belum_ditagih = (clone $financeQuery)->where('status_tagihan', 'Belum')->count();
+
+        // Sudah Ditagih = status_tagihan is 'Sudah ditagih'
+        $sudah_ditagih = (clone $financeQuery)->where('status_tagihan', 'Sudah ditagih')->count();
 
         $recent_invoices = Invoice::with(['pengirim', 'finance'])
             ->latest()

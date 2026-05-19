@@ -46,17 +46,17 @@ class FinanceRecapExport implements FromView, ShouldAutoSize, WithStyles, WithCo
             $rowCount = $inv->items && $inv->items->count() > 0 ? $inv->items->count() : 1;
             $endRow = $currentRow + $rowCount - 1;
 
-            // Check Tanda Terima (Col AD)
+            // Check Tanda Terima (Col AC)
             if (trim(strtoupper($inv->tanda_terima ?? '')) === 'PENGIRIM') {
-                $sheet->getStyle("AD{$currentRow}:AD{$endRow}")->getFont()->setColor($redColor)->setBold(true);
+                $sheet->getStyle("AC{$currentRow}:AC{$endRow}")->getFont()->setColor($redColor)->setBold(true);
             }
-            // Check Masa Tunggakan (Col AL) - jika belum lunas
+            // Check Masa Tunggakan (Col AK) - jika belum lunas
             if (!$finance->tgl_transfer) {
-                $sheet->getStyle("AL{$currentRow}:AL{$endRow}")->getFont()->setColor($redColor)->setBold(true);
+                $sheet->getStyle("AK{$currentRow}:AK{$endRow}")->getFont()->setColor($redColor)->setBold(true);
             }
-            // Check Status Tahan/Serahkan (Col AM)
+            // Check Status Tahan/Serahkan (Col AL)
             if (trim(strtoupper($inv->status_pembayaran ?? '')) === 'TAHAN') {
-                $sheet->getStyle("AM{$currentRow}:AM{$endRow}")->getFont()->setColor($redColor)->setBold(true);
+                $sheet->getStyle("AL{$currentRow}:AL{$endRow}")->getFont()->setColor($redColor)->setBold(true);
             }
 
             $currentRow = $endRow + 1;
@@ -68,12 +68,11 @@ class FinanceRecapExport implements FromView, ShouldAutoSize, WithStyles, WithCo
     public function columnFormats(): array
     {
         return [
-            'W' => '#,##0.###', // Jumlah
-            'Y' => '#,##0', // Harga Satuan
-            'Z' => '#,##0', // Subtotal
-            'AA' => '#,##0', // DPP
-            'AB' => '#,##0', // Biaya Tambahan
-            'AC' => '#,##0', // Total Tagihan
+            'V' => '#,##0.###', // Jumlah
+            'X' => '#,##0', // Harga Satuan
+            'Y' => '#,##0', // Subtotal
+            'Z' => '#,##0', // DPP
+            'AB' => '#,##0', // Total Tagihan
         ];
     }
 }

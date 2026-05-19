@@ -32,10 +32,18 @@ class ExportController extends Controller
         
         Storage::put("temp_exports/{$taskId}.json", json_encode([]));
 
+        $filters = $request->all();
+        if (!empty($filters['judul_print_id'])) {
+            $judulObj = JudulPrint::find($filters['judul_print_id']);
+            if ($judulObj) {
+                $filters['judul_print'] = $judulObj->nama;
+            }
+        }
+
         // Store filters and state in Cache
         Cache::put("export_{$taskId}", [
             'type' => $type,
-            'filters' => $request->all(),
+            'filters' => $filters,
             'total' => $total,
             'processed' => 0,
             'cancelled' => false,

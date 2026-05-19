@@ -124,10 +124,10 @@ class GenericArrayExport implements FromCollection, ShouldAutoSize, WithStyles, 
              }
         }
 
-        // Apply Red Colors for Finance
+        // Apply Red Colors for Finance and Invoice
+        $redColor = new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED);
+        
         if (isset($this->meta['type']) && $this->meta['type'] !== 'invoice') {
-            $redColor = new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED);
-            
             // Loop from row 5 (data starts) to last row
             for ($row = 5; $row <= $lastRow; $row++) {
                 // Tanda Terima (AD)
@@ -151,6 +151,14 @@ class GenericArrayExport implements FromCollection, ShouldAutoSize, WithStyles, 
                 $st = trim(strtoupper($sheet->getCell("AM{$row}")->getValue() ?? ''));
                 if ($st === 'TAHAN') {
                     $sheet->getStyle("AM{$row}")->getFont()->setColor($redColor)->setBold(true);
+                }
+            }
+        } else if (isset($this->meta['type']) && $this->meta['type'] === 'invoice') {
+            for ($row = 5; $row <= $lastRow; $row++) {
+                // Tanda Terima (AE)
+                $tt = trim(strtoupper($sheet->getCell("AE{$row}")->getValue() ?? ''));
+                if ($tt === 'PENGIRIM') {
+                    $sheet->getStyle("AE{$row}")->getFont()->setColor($redColor)->setBold(true);
                 }
             }
         }

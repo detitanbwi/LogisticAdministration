@@ -215,102 +215,19 @@
                 });
                 return;
             }
-            var table = $('#financeTable').DataTable();
-            var printWindow = window.open('', '_blank');
-            var totalGrandTagihan = 0;
-            var rows = '';
-            table.rows({
-                search: 'applied'
-            }).every(function () {
-                var data = this.data();
-                
-                // Accumulate total tagihan for Grand Total
-                if(data.total_tagihan) {
-                    var numericTotal = data.total_tagihan.replace(/[^0-9]/g, '');
-                    totalGrandTagihan += parseInt(numericTotal) || 0;
-                }
+            var queryParams = new URLSearchParams({
+                daterange: daterange,
+                status: $('#filterStatus').val() || '',
+                asal_id: $('#filterAsal').val() || '',
+                tujuan_id: $('#filterTujuan').val() || '',
+                pengirim_id: $('#filterPengirim').val() || '',
+                penerima_id: $('#filterPenerima').val() || '',
+                judul_print_id: $('#filterJudulPrint').val() || '',
+                search: $('#financeTable').DataTable().search() || ''
+            }).toString();
 
-                var statusMasa = data.masa_tunggakan;
-                // remove HTML from masa_tunggakan/status
-                var tempDiv = document.createElement('div');
-
-                tempDiv.innerHTML = data.status_tagihan;
-                var statusText = tempDiv.textContent || tempDiv.innerText || '';
-
-                tempDiv.innerHTML = data.masa_tunggakan;
-                var masaText = tempDiv.textContent || tempDiv.innerText || '';
-
-                rows += '<tr>' +
-                    '<td>' + data.DT_RowIndex + '</td>' +
-                    '<td>' + data.no_invoice + '</td>' +
-                    '<td>' + data.pengirim + '</td>' +
-                    '<td>' + data.penerima + '</td>' +
-                    '<td>' + data.total_tagihan + '</td>' +
-                    '<td>' + statusText + '</td>' +
-                    '<td>' + (data.tanggal_tagih ? data.tanggal_tagih : '-') + '</td>' +
-                    '<td>' + masaText + '</td>' +
-                    '</tr>';
-            });
-
-            var formattedGrandTotal = 'Rp ' + totalGrandTagihan.toLocaleString('id-ID');
-
-            var filterInfo = '';
-            var asal = $('#filterAsal option:selected').text();
-            var tujuan = $('#filterTujuan option:selected').text();
-            if ($('#filterAsal').val()) filterInfo += '<p><strong>Asal:</strong> ' + asal + '</p>';
-            if ($('#filterTujuan').val()) filterInfo += '<p><strong>Tujuan:</strong> ' + tujuan + '</p>';
-            if ($('#filterDaterange').val()) filterInfo += '<p><strong>Periode:</strong> ' + $('#filterDaterange').val() + '</p>';
-
-            var title = $('#filterJudulPrint option:selected').val() ? $('#filterJudulPrint option:selected').text() : 'LAPORAN PEMBAYARAN REKAPITULASI FINANCE';
-            printWindow.document.write(`
-                                                                                <html>
-                                                                                <head>
-                                                                                    <title>${title}</title>
-                                                                                    <style>
-                                                                                        body { font-family: Arial, sans-serif; font-size: 11pt; margin: 1.25cm; }
-                                                                                        h2 { text-align: center; margin-bottom: 25px; }
-                                                                                        .filter-info { margin-bottom: 15px; }
-                                                                                        .filter-info p { margin: 2px 0; font-size: 10pt; }
-                                                                                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                                                                                        th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; font-size: 10pt; }
-                                                                                        th { background-color: #8B4513 !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                                                                                        @media print { 
-                                                                                            body { margin: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } 
-                                                                                            th { background-color: #8B4513 !important; color: white !important; }
-                                                                                            tfoot tr { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                                                                                        }
-                                                                                    </style>
-                                                                                </head>
-                                                                                <body>
-                                                                                    <h2>${title}</h2>
-                                                                                    <div class="filter-info">${filterInfo}</div>
-                                                                                    <table>
-                                                                                        <thead>
-                                                                                            <tr>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">No</th>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">No Invoice</th>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Pengirim</th>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Penerima</th>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Total Tagihan</th>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Status Tagihan</th>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Tanggal Tagih</th>
-                                                                                                <th style="background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; font-weight: bold; text-align: center;">Masa Tunggakan</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        <tbody>${rows}</tbody>
-                                                                                        <tfoot>
-                                                                                            <tr style="font-weight: bold; background-color: #8B4513 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
-                                                                                                <td colspan="4" style="text-align: right;">GRAND TOTAL</td>
-                                                                                                <td>${formattedGrandTotal}</td>
-                                                                                                <td colspan="3"></td>
-                                                                                            </tr>
-                                                                                        </tfoot>
-                                                                                    </table>
-                                                                                    <script>window.print();<\/script>
-                                                                                </body>
-                                                                                </html>
-                                                                            `);
-            printWindow.document.close();
+            var printUrl = '{{ route("admin.finance.rekap_print") }}?' + queryParams;
+            window.open(printUrl, '_blank');
         }
 
         window.submitJudulPrint = function () {

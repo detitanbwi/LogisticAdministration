@@ -74,6 +74,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('invoice', App\Http\Controllers\Back\InvoiceController::class);
 
         Route::get('finance/export', [App\Http\Controllers\Back\FinanceController::class, 'export'])->name('finance.export');
+        Route::get('finance/rekap-print', [App\Http\Controllers\Back\FinanceController::class, 'rekapPrint'])->name('finance.rekap_print');
         Route::get('finance/{finance}/print', [App\Http\Controllers\Back\FinanceController::class, 'print'])->name('finance.print');
         Route::resource('finance', App\Http\Controllers\Back\FinanceController::class)->only(['index', 'edit', 'update']);
 

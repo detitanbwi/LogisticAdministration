@@ -338,4 +338,89 @@ class FinanceController extends Controller
             'daterange' => $request->daterange
         ]), 'FinanceRekap_' . date('YmdHis') . '.xlsx');
     }
+
+    public function rekapPrint(Request $request)
+    {
+        abort_unless(auth()->user()->can('view_rekapitulasi.finance') || auth()->user()->can('print.finance'), 403);
+
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+
+        $query = Finance::with(['invoice.pengirim', 'invoice.penerima', 'invoice.items', 'invoice.container.kapal', 'invoice.container.asal', 'invoice.container.tujuan', 'invoice.additionalFees', 'invoice.tujuanDaerah'])->select('finance.*');
+
+        $query->whereHas('invoice.container', function ($q) use ($request) {
+            if ($request->filled('asal_id')) {
+                $q->where('asal_id', $request->asal_id);
+            }
+            if ($request->filled('tujuan_id')) {
+                $q->where('tujuan_id', $request->tujuan_id);
+            }
+        });
+
+        if ($request->filled('pengirim_id')) {
+            $query->whereHas('invoice', function ($q) use ($request) {
+                $q->where('pengirim_id', $request->pengirim_id);
+            });
+        }
+
+        if ($request->filled('penerima_id')) {
+            $query->whereHas('invoice', function ($q) use ($request) {
+                $q->where('penerima_id', $request->penerima_id);
+            });
+        }
+
+        if ($request->filled('daterange')) {
+            $dates = explode(' - ', $request->daterange);
+            if (count($dates) == 2) {
+                $start_date = \Carbon\Carbon::parseIndonesian(trim($dates[0]))->startOfDay();
+                $end_date = \Carbon\Carbon::parseIndonesian(trim($dates[1]))->endOfDay();
+                $query->whereHas('invoice.container', function ($q) use ($start_date, $end_date) {
+                    $q->whereBetween('etd', [$start_date, $end_date]);
+                });
+            }
+        }
+
+        if ($request->filled('status')) {
+            if (in_array($request->status, ['Belum', 'Sudah ditagih'])) {
+                $query->where('status_tagihan', $request->status);
+            } else if ($request->status == 'Belum Lunas') {
+                $query->whereNull('tgl_transfer');
+            } else if ($request->status == 'Lunas') {
+                $query->whereNotNull('tgl_transfer');
+            }
+        }
+
+        if ($request->filled('search')) {
+            $keyword = $request->search;
+            $query->where(function ($q) use ($keyword) {
+                $q->whereHas('invoice', function ($inv) use ($keyword) {
+                    $inv->where('no_invoice', 'like', "%{$keyword}%");
+                })
+                    ->orWhereHas('invoice.pengirim', function ($pg) use ($keyword) {
+                        $pg->where('nama', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('invoice.penerima', function ($pn) use ($keyword) {
+                        $pn->where('nama', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        $judulPrint = null;
+        if ($request->filled('judul_print_id')) {
+            $judulObj = \App\Models\JudulPrint::find($request->judul_print_id);
+            if ($judulObj) {
+                $judulPrint = $judulObj->nama;
+            }
+        }
+
+        $finances = $query->get();
+        $filters = [
+            'judul_print' => $judulPrint,
+            'daterange' => $request->daterange
+        ];
+
+        return view('back.pages.finance.rekap_print', compact('finances', 'filters'));
+    }
 }
